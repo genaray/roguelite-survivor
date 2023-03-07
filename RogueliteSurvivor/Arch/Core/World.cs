@@ -278,7 +278,7 @@ public partial class World : IDisposable
 
         // Update moved entity from the remove
         var movedEntityInfo = EntityInfo[movedEntity];
-        movedEntityInfo.Archetype = from;
+        //movedEntityInfo.Archetype = from;
         movedEntityInfo.Slot = entityInfo.Slot;
         EntityInfo[movedEntity] = movedEntityInfo;
 
@@ -315,7 +315,7 @@ public partial class World : IDisposable
 
         // Update info of moved entity which replaced the removed entity.
         var movedEntityInfo = EntityInfo[movedEntityId];
-        movedEntityInfo.Archetype = entityInfo.Archetype;
+        //movedEntityInfo.Archetype = entityInfo.Archetype;
         movedEntityInfo.Slot = entityInfo.Slot;
         EntityInfo[movedEntityId] = movedEntityInfo;
 
