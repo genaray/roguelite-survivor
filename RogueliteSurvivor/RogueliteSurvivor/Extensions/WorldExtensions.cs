@@ -6,11 +6,7 @@ namespace RogueliteSurvivor.Extensions
     {
         public static void TryDestroy(this World world, in Entity entity)
         {
-            try
-            {
-                world.Destroy(entity);
-            }
-            catch { }
+            world.Destroy(entity);
         }
     }
 }

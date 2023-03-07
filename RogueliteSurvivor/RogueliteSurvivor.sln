@@ -5,6 +5,10 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RogueliteSurvivor", "RogueliteSurvivor\RogueliteSurvivor.csproj", "{AAC99B70-1E72-4617-AA32-E87F393A6EDC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arch", "Arch\Arch.csproj", "{A6A42B03-1A23-4622-902B-DF86DB76EBC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arch.SourceGen", "Arch.SourceGen\Arch.SourceGen.csproj", "{FBEB25B3-38A7-41BC-858E-8F85EB3664ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{AAC99B70-1E72-4617-AA32-E87F393A6EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAC99B70-1E72-4617-AA32-E87F393A6EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAC99B70-1E72-4617-AA32-E87F393A6EDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6A42B03-1A23-4622-902B-DF86DB76EBC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6A42B03-1A23-4622-902B-DF86DB76EBC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6A42B03-1A23-4622-902B-DF86DB76EBC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6A42B03-1A23-4622-902B-DF86DB76EBC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBEB25B3-38A7-41BC-858E-8F85EB3664ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBEB25B3-38A7-41BC-858E-8F85EB3664ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBEB25B3-38A7-41BC-858E-8F85EB3664ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBEB25B3-38A7-41BC-858E-8F85EB3664ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

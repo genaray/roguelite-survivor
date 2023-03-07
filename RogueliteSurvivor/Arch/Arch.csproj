@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net7.0; net6.0; netstandard2.1</TargetFrameworks>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Nullable>enable</Nullable>
+    <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+
+    <PackageId>Arch</PackageId>
+    <Title>Arch</Title>
+    <Version>1.1.9</Version>
+    <Authors>genaray</Authors>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Description>A high performance c# net.6 and net.7 archetype based ECS ( Entity component system ).</Description>
+    <PackageReleaseNotes>
+      Fixed structural changes memory leak.
+      Added destroy, set, add and remove operations for QueryDescriptions to target a range of entities.
+      Fixed proper entityinfo update and leak.
+      Small performance improvements.
+    </PackageReleaseNotes>
+    <PackageTags>c#;.net;.net6;.net7;ecs;game;entity;gamedev; game-development; game-engine; entity-component-system;</PackageTags>
+
+    <PackageProjectUrl>https://github.com/genaray/Arch</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/genaray/Arch.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <IsPackable>true</IsPackable>
+
+    <LangVersion>11</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Copyright>Apache2.0</Copyright>
+    <PackageLicenseUrl></PackageLicenseUrl>
+
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Arch.Benchmarks" />
+    <InternalsVisibleTo Include="Arch.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="System" />
+    <Using Include="System.Collections" />
+    <Using Include="System.Collections.Generic" />
+    <Using Include="System.Diagnostics" />
+    <Using Include="System.Diagnostics.CodeAnalysis" />
+    <Using Include="System.IO" />
+    <Using Include="System.Linq" />
+    <Using Include="System.Runtime.CompilerServices" />
+    <Using Include="System.Runtime.InteropServices" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Arch.SourceGen\Arch.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Collections.Pooled" Version="2.0.0-preview.27" />
+    <PackageReference Include="CommunityToolkit.HighPerformance" Version="7.1.2" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
+    <PackageReference Include="ZeroAllocJobScheduler" Version="1.0.2" />
+  </ItemGroup>
+
+</Project>

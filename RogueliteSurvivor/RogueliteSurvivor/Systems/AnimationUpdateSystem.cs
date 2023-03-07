@@ -15,7 +15,7 @@ namespace RogueliteSurvivor.Systems
         }
 
         public void Update(GameTime gameTime, float totalElapsedTime)
-        {
+        {   
             world.Query(in query, (in Entity entity, ref Animation anim) =>
             {
                 anim.Count += (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
