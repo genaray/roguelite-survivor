@@ -11,6 +11,7 @@ namespace RogueliteSurvivor.Containers
         public string Name { get; set; }
         public string Folder { get; set; }
         public string MapFilename { get; set; }
+        public string Description { get; set; }
         public string[] TilesetImages { get; set; }
         public Vector2 Start { get; set; }
         public MapUnlockRequirementContainer UnlockRequirement { get; set; }
@@ -30,6 +31,7 @@ namespace RogueliteSurvivor.Containers
                 Name = (string)map["name"],
                 Folder = (string)map["folder"],
                 MapFilename = (string)map["mapFilename"],
+                Description = (string)map["description"],
                 TilesetImages = getTilesetImages(map),
                 Start = new Vector2((int)map["startingX"], (int)map["startingY"]),
                 UnlockRequirement = MapUnlockRequirementContainer.ToMapUnlockRequirementContainer(map["mapUnlockRequirement"]),

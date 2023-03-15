@@ -113,8 +113,8 @@ namespace RogueliteSurvivor.Systems
             int x, y;
             do
             {
-                x = random.Next(int.Max(0, (int)playerPosition.X - (int)offset.X), int.Min(map.Map.Width * map.Map.TileWidth, (int)playerPosition.X + (int)offset.X));
-                y = random.Next(int.Max(0, (int)playerPosition.Y - (int)offset.Y), int.Min(map.Map.Height * map.Map.TileHeight, (int)playerPosition.Y + (int)offset.Y));
+                x = random.Next(int.Max(0, (int)(playerPosition.X - (2 * offset.X))), int.Min(map.Map.Width * map.Map.TileWidth, (int)(playerPosition.X + (2 * offset.X))));
+                y = random.Next(int.Max(0, (int)(playerPosition.Y - (2 * offset.Y))), int.Min(map.Map.Height * map.Map.TileHeight, (int)(playerPosition.Y + (2 * offset.Y))));
             } while (((x > (playerPosition.X - offset.X) && x < (playerPosition.X + offset.X)) 
                         && (y > (playerPosition.Y - offset.Y) && y < (playerPosition.Y + offset.Y)))
                         || !map.IsTileWalkable(x, y));

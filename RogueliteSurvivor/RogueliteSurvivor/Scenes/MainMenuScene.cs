@@ -34,6 +34,7 @@ namespace RogueliteSurvivor.Scenes
         private CreditsContainer creditsContainer = null;
 
         private int statsPage = 0;
+        private int mapDescriptionLength = 80;
 
 
         public MainMenuScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
@@ -53,6 +54,11 @@ namespace RogueliteSurvivor.Scenes
                     { "MainMenuButtons", Content.Load<Texture2D>(Path.Combine("UI", "main-menu-buttons")) },
                     { "CharacterSelectButtons", Content.Load<Texture2D>(Path.Combine("UI", "character-selection-buttons")) },
                 };
+
+                foreach(var map in mapContainers)
+                {
+                    textures.Add(map.Name, Content.Load<Texture2D>(Path.Combine("Maps", map.Folder, map.Name)));
+                }
             }
 
             if (fonts == null)
@@ -167,7 +173,8 @@ namespace RogueliteSurvivor.Scenes
                 }
                 else if(state == MainMenuState.MapSelection)
                 {
-                    if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
+                    if ((kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
+                        && unlockedMaps.Exists(a => a.Name == selectedMap))
                     {
                         state = MainMenuState.MainMenu;
                         retVal = "loading";
@@ -179,27 +186,25 @@ namespace RogueliteSurvivor.Scenes
                         state = MainMenuState.CharacterSelection;
                         readyForInput = false;
                     }
-                    else if (unlockedMaps.Count > 1) 
+                    else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
                     {
-                        if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
+                        if (selectedMap != mapContainers[0].Name)
                         {
-                            if (selectedMap != unlockedMaps[0].Name)
-                            {
-                                int index = unlockedMaps.IndexOf(unlockedMaps.Where(a => a.Name == selectedMap).First()) - 1;
-                                selectedMap = unlockedMaps[index].Name;
-                            }
-                            readyForInput = false;
+                            int index = mapContainers.IndexOf(mapContainers.Where(a => a.Name == selectedMap).First()) - 1;
+                            selectedMap = mapContainers[index].Name;
                         }
-                        else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
-                        {
-                            if (selectedMap != unlockedMaps.Last().Name)
-                            {
-                                int index = unlockedMaps.IndexOf(unlockedMaps.Where(a => a.Name == selectedMap).First()) + 1;
-                                selectedMap = unlockedMaps[index].Name;
-                            }
-                            readyForInput = false;
-                        }
+                        readyForInput = false;
                     }
+                    else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
+                    {
+                        if (selectedMap != mapContainers.Last().Name)
+                        {
+                            int index = mapContainers.IndexOf(mapContainers.Where(a => a.Name == selectedMap).First()) + 1;
+                            selectedMap = mapContainers[index].Name;
+                        }
+                        readyForInput = false;
+                    }
+                    
                 }
                 else if (state == MainMenuState.Credits)
                 {
@@ -357,23 +362,88 @@ namespace RogueliteSurvivor.Scenes
                     Color.White
                 );
 
-                int counter = 0;
-                foreach(var map in unlockedMaps)
-                {
-                    _spriteBatch.DrawString(
-                        fonts["Font"],
-                        map.Name,
-                        new Vector2(GetWidthOffset(2) - 45, GetHeightOffset(2) + counter),
-                        selectedMap == map.Name ? Color.Green : Color.White
-                    );
-
-                    counter += 32;
-                }
+                var map = mapContainers.Where(a => a.Name == selectedMap).First();
 
                 _spriteBatch.DrawString(
                     fonts["Font"],
-                    "Press Esc on the keyboard or B on the controller to go back",
-                    new Vector2(GetWidthOffset(2) - 200, GetHeightOffset(2) + 32 + counter),
+                    map.Name,
+                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2)),
+                    Color.White
+                );
+
+                _spriteBatch.Draw(
+                    textures[map.Name],
+                    new Vector2(GetWidthOffset(10.66f) + 48, GetHeightOffset(2) + 64),
+                    new Rectangle(0, 0, 64, 64),
+                    Color.White,
+                    0f,
+                    new Vector2(32, 32),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                if (unlockedMaps.Exists(a => a.Name == selectedMap))
+                {
+                    List<string> descriptionLines = new List<string>();
+                    if (map.Description.Length < mapDescriptionLength)
+                    {
+                        descriptionLines.Add(map.Description);
+                    }
+                    else
+                    {
+                        int startCharacter = 0;
+                        do
+                        {
+                            int nextSpace = map.Description.LastIndexOf(' ', startCharacter + mapDescriptionLength, mapDescriptionLength);
+                            descriptionLines.Add(map.Description.Substring(startCharacter, nextSpace - startCharacter));
+                            startCharacter = nextSpace + 1;
+                        } while (map.Description.Substring(startCharacter).Length > mapDescriptionLength);
+                        descriptionLines.Add(map.Description.Substring(startCharacter));
+                    }
+
+                    int counter = 0;
+                    foreach (var descriptionLine in descriptionLines)
+                    {
+                        _spriteBatch.DrawString(
+                            fonts["FontSmall"],
+                            descriptionLine,
+                            new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                            Color.White
+                        );
+                        counter += 12;
+                    }
+                    counter += 12;
+
+                    _spriteBatch.DrawString(
+                        fonts["FontSmall"],
+                        string.Concat("Best Time: ", float.Round(progressionContainer.LevelProgressions.Where(a => a.Name == map.Name).First().BestTime, 2)),
+                        new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                        Color.White
+                    );
+                }
+                else
+                {
+                    _spriteBatch.DrawString(
+                        fonts["FontSmall"],
+                        "Locked",
+                        new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2)),
+                        Color.White
+                    );
+                }
+                
+
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    "Press left and right to cycle through the stat pages",
+                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 116),
+                    Color.White
+                );
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    "Press Esc on the keyboard or B on the controller to return to the main menu",
+                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 128),
                     Color.White
                 );
             }
