@@ -654,7 +654,7 @@
 /processorParam:TextureFormat=Color
 /build:Pickups/player-pickups.png
 
-#begin Player/PlayerBlue.png
+#begin Player/FireWizard.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -664,9 +664,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Player/PlayerBlue.png
+/build:Player/FireWizard.png
 
-#begin Player/PlayerRed.png
+#begin Player/IceWizard.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -676,9 +676,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Player/PlayerRed.png
+/build:Player/IceWizard.png
 
-#begin Player/PlayerYellow.png
+#begin Player/LightningWizard.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -688,7 +688,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Player/PlayerYellow.png
+/build:Player/LightningWizard.png
 
 #begin Spells/fire-explosion.png
 /importer:TextureImporter
@@ -762,18 +762,6 @@
 /processorParam:TextureFormat=Color
 /build:Spells/lightning-strike.png
 
-#begin UI/character-selection-buttons.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:UI/character-selection-buttons.png
-
 #begin UI/level-up-buttons.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -797,4 +785,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:UI/main-menu-buttons.png
+
+#begin UI/player-select-outline.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/player-select-outline.png
 

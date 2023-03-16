@@ -27,16 +27,16 @@ namespace RogueliteSurvivor.Systems
                     }
                     else if (vel.Vector.Y < 0)
                     {
-                        if (anim.FirstFrame != 6)
+                        if (anim.FirstFrame != 9)
                         {
-                            anim.Reset(6, 8);
+                            anim.Reset(9, 11);
                         }
                     }
                     else if (vel.Vector.X > 0)
                     {
-                        if (anim.FirstFrame != 9)
+                        if (anim.FirstFrame != 6)
                         {
-                            anim.Reset(9, 11);
+                            anim.Reset(6, 8);
                         }
                     }
                     else if (vel.Vector.X < 0)

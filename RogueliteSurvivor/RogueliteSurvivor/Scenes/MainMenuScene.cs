@@ -34,7 +34,7 @@ namespace RogueliteSurvivor.Scenes
         private CreditsContainer creditsContainer = null;
 
         private int statsPage = 0;
-        private int mapDescriptionLength = 80;
+        private int descriptionLength = 80;
 
 
         public MainMenuScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
@@ -52,7 +52,10 @@ namespace RogueliteSurvivor.Scenes
                 textures = new Dictionary<string, Texture2D>
                 {
                     { "MainMenuButtons", Content.Load<Texture2D>(Path.Combine("UI", "main-menu-buttons")) },
-                    { "CharacterSelectButtons", Content.Load<Texture2D>(Path.Combine("UI", "character-selection-buttons")) },
+                    { "PlayerSelectOutline", Content.Load<Texture2D>(Path.Combine("UI", "player-select-outline")) },
+                    { "FireWizard", Content.Load<Texture2D>(Path.Combine("Player", "FireWizard")) },
+                    { "IceWizard", Content.Load<Texture2D>(Path.Combine("Player", "IceWizard")) },
+                    { "LightningWizard", Content.Load<Texture2D>(Path.Combine("Player", "LightningWizard")) },
                 };
 
                 foreach(var map in mapContainers)
@@ -137,19 +140,6 @@ namespace RogueliteSurvivor.Scenes
                 {
                     if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
-                        switch (selectedButton)
-                        {
-                            case 1:
-                                selectedPlayer = "Fire";
-                                break;
-                            case 2:
-                                selectedPlayer = "Ice";
-                                break;
-                            case 3:
-                                selectedPlayer = "Lightning";
-                                break;
-                        }
-
                         state = MainMenuState.MapSelection;
                         setUnlockedMaps();
                         readyForInput = false;
@@ -157,11 +147,13 @@ namespace RogueliteSurvivor.Scenes
                     else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
                     {
                         selectedButton = int.Max(selectedButton - 1, 1);
+                        setSelectedPlayer();
                         readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
                     {
                         selectedButton = int.Min(selectedButton + 1, 3);
+                        setSelectedPlayer();
                         readyForInput = false;
                     }
                     else if (gState.Buttons.B == ButtonState.Pressed || kState.IsKeyDown(Keys.Escape))
@@ -311,45 +303,108 @@ namespace RogueliteSurvivor.Scenes
                 );
 
                 _spriteBatch.Draw(
-                    textures["CharacterSelectButtons"],
-                    new Vector2(GetWidthOffset(2) - 80, GetHeightOffset(2) + 32),
-                    new Rectangle(0 + selectedButton == 1 ? 64 : 0, 64, 64, 64),
+                    textures["PlayerSelectOutline"],
+                    new Vector2(GetWidthOffset(10.66f) + ((selectedButton - 1) * 24), GetHeightOffset(2)),
+                    new Rectangle(0, 0, 20, 20),
                     Color.White,
                     0f,
-                    new Vector2(32, 32),
+                    new Vector2(10, 10),
                     1f,
                     SpriteEffects.None,
                     0f
                 );
 
                 _spriteBatch.Draw(
-                    textures["CharacterSelectButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 32),
-                    new Rectangle(0 + selectedButton == 2 ? 64 : 0, 128, 64, 64),
+                    textures["FireWizard"],
+                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2)),
+                    new Rectangle(16, 0, 16, 16),
                     Color.White,
                     0f,
-                    new Vector2(32, 32),
+                    new Vector2(8, 8),
                     1f,
                     SpriteEffects.None,
                     0f
                 );
 
                 _spriteBatch.Draw(
-                    textures["CharacterSelectButtons"],
-                    new Vector2(GetWidthOffset(2) + 80, GetHeightOffset(2) + 32),
-                    new Rectangle(0 + selectedButton == 3 ? 64 : 0, 192, 64, 64),
+                    textures["IceWizard"],
+                    new Vector2(GetWidthOffset(10.66f) + 24, GetHeightOffset(2)),
+                    new Rectangle(16, 0, 16, 16),
                     Color.White,
                     0f,
-                    new Vector2(32, 32),
+                    new Vector2(8, 8),
                     1f,
                     SpriteEffects.None,
                     0f
                 );
+
+                _spriteBatch.Draw(
+                    textures["LightningWizard"],
+                    new Vector2(GetWidthOffset(10.66f) + 48, GetHeightOffset(2)),
+                    new Rectangle(16, 0, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                int counter = 0;
+                foreach (var paragraph in playerContainers[selectedPlayer].Description)
+                {
+                    List<string> descriptionLines = new List<string>();
+                    if (paragraph.Length < descriptionLength)
+                    {
+                        descriptionLines.Add(paragraph);
+                    }
+                    else
+                    {
+                        int startCharacter = 0;
+                        do
+                        {
+                            int nextSpace = paragraph.LastIndexOf(' ', startCharacter + descriptionLength, descriptionLength);
+                            descriptionLines.Add(paragraph.Substring(startCharacter, nextSpace - startCharacter));
+                            startCharacter = nextSpace + 1;
+                        } while (paragraph.Substring(startCharacter).Length > descriptionLength);
+                        descriptionLines.Add(paragraph.Substring(startCharacter));
+                    }
+
+                    
+                    foreach (var descriptionLine in descriptionLines)
+                    {
+                        _spriteBatch.DrawString(
+                            fonts["FontSmall"],
+                            descriptionLine,
+                            new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                            Color.White
+                        );
+                        counter += 12;
+                    }
+                    counter += 12;
+                }
+
+                counter += 12;
 
                 _spriteBatch.DrawString(
-                    fonts["Font"],
-                    "Press Esc on the keyboard or B on the controller to go back",
-                    new Vector2(GetWidthOffset(2) - 200, GetHeightOffset(2) + 96),
+                            fonts["FontSmall"],
+                            string.Concat("Primary Spell: ", playerContainers[selectedPlayer].StartingSpell),
+                            new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                            Color.White
+                        );
+                counter += 12;
+                _spriteBatch.DrawString(
+                            fonts["FontSmall"],
+                            string.Concat("Secondary Spell: ", playerContainers[selectedPlayer].SecondarySpell),
+                            new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                            Color.White
+                        );
+                counter += 12;
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    "Press Esc on the keyboard or B on the controller to return to the main menu",
+                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 128),
                     Color.White
                 );
             }
@@ -386,7 +441,7 @@ namespace RogueliteSurvivor.Scenes
                 if (unlockedMaps.Exists(a => a.Name == selectedMap))
                 {
                     List<string> descriptionLines = new List<string>();
-                    if (map.Description.Length < mapDescriptionLength)
+                    if (map.Description.Length < descriptionLength)
                     {
                         descriptionLines.Add(map.Description);
                     }
@@ -395,10 +450,10 @@ namespace RogueliteSurvivor.Scenes
                         int startCharacter = 0;
                         do
                         {
-                            int nextSpace = map.Description.LastIndexOf(' ', startCharacter + mapDescriptionLength, mapDescriptionLength);
+                            int nextSpace = map.Description.LastIndexOf(' ', startCharacter + descriptionLength, descriptionLength);
                             descriptionLines.Add(map.Description.Substring(startCharacter, nextSpace - startCharacter));
                             startCharacter = nextSpace + 1;
-                        } while (map.Description.Substring(startCharacter).Length > mapDescriptionLength);
+                        } while (map.Description.Substring(startCharacter).Length > descriptionLength);
                         descriptionLines.Add(map.Description.Substring(startCharacter));
                     }
 
@@ -436,13 +491,13 @@ namespace RogueliteSurvivor.Scenes
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    "Press left and right to cycle through the stat pages",
+                    "Press left and right to cycle through the maps",
                     new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 116),
                     Color.White
                 );
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    "Press Esc on the keyboard or B on the controller to return to the main menu",
+                    "Press Esc on the keyboard or B on the controller to return to player selection",
                     new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 128),
                     Color.White
                 );
@@ -612,6 +667,22 @@ namespace RogueliteSurvivor.Scenes
             };
 
             return gameSettings;
+        }
+
+        private void setSelectedPlayer()
+        {
+            switch (selectedButton)
+            {
+                case 1:
+                    selectedPlayer = "Fire";
+                    break;
+                case 2:
+                    selectedPlayer = "Ice";
+                    break;
+                case 3:
+                    selectedPlayer = "Lightning";
+                    break;
+            }
         }
 
         private void setUnlockedMaps()

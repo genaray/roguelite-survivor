@@ -2,7 +2,11 @@
   "data": [
     {
       "name": "Fire",
-      "texture": "PlayerRed",
+      "displayName": "Igidus",
+      "description": [
+        "Igdus is fierce, impatient and sincere. Something to be expected from someone with an unsettling past."
+      ],
+      "texture": "FireWizard",
       "startingSpell": "Fireball",
       "secondarySpell": "FireExplosion",
       "health": 100,
@@ -16,14 +20,18 @@
       },
       "spriteSheet": {
         "framesPerRow": 3,
-        "framesPerColumn": 8,
+        "framesPerColumn": 4,
         "rotation": "none",
         "scale": 1
       }
     },
     {
       "name": "Ice",
-      "texture": "PlayerBlue",
+      "displayName": "Cetaz",
+      "description": [
+        "Cetaz is intrepid, whimsical, innocent and perhaps a little too anxious. This is to be expected from somebody with his position."
+      ],
+      "texture": "IceWizard",
       "startingSpell": "IceShard",
       "secondarySpell": "IceSpikes",
       "health": 100,
@@ -37,14 +45,18 @@
       },
       "spriteSheet": {
         "framesPerRow": 3,
-        "framesPerColumn": 8,
+        "framesPerColumn": 4,
         "rotation": "none",
         "scale": 1
       }
     },
     {
       "name": "Lightning",
-      "texture": "PlayerYellow",
+      "displayName": "Lavander",
+      "description": [
+        "Lavander is calm, light-hearted, humorous and perhaps a little too impatient. This isn't surprising considering for someone with her upbringing."
+      ],
+      "texture": "LightningWizard",
       "startingSpell": "LightningBlast",
       "secondarySpell": "LightningStrike",
       "health": 100,
@@ -58,7 +70,7 @@
       },
       "spriteSheet": {
         "framesPerRow": 3,
-        "framesPerColumn": 8,
+        "framesPerColumn": 4,
         "rotation": "none",
         "scale": 1
       }

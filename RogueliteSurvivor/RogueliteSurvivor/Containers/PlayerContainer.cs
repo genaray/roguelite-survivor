@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.Constants;
+using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Containers
 {
@@ -7,6 +8,8 @@ namespace RogueliteSurvivor.Containers
     {
         public PlayerContainer() { }
         public string Name { get; set; }
+        public string DisplayName { get; set; }
+        public List<string> Description { get; set; }
         public string Texture { get; set; }
         public Spells StartingSpell { get; set; }
         public Spells SecondarySpell { get; set; }
@@ -23,6 +26,8 @@ namespace RogueliteSurvivor.Containers
             return new PlayerContainer()
             {
                 Name = (string)player["name"],
+                DisplayName = (string)player["displayName"],
+                Description = getDescriptionParagraphs(player["description"]),
                 Texture = (string)player["texture"],
                 StartingSpell = ((string)player["startingSpell"]).GetSpellFromString(),
                 SecondarySpell = ((string)player["secondarySpell"]).GetSpellFromString(),
@@ -31,6 +36,16 @@ namespace RogueliteSurvivor.Containers
                 Animation = AnimationContainer.ToAnimationContainer(player["animation"]),
                 SpriteSheet = SpriteSheetContainer.ToSpriteSheetContainer(player["spriteSheet"])
             };
+        }
+
+        private static List<string> getDescriptionParagraphs(JToken description)
+        {
+            List<string> paragraphs = new List<string>();
+            foreach (var paragraph in description)
+            {
+                paragraphs.Add((string)paragraph);
+            }
+            return paragraphs;
         }
     }
 }
