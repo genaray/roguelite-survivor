@@ -546,6 +546,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/FontSmall.spritefont
 
+#begin Hud/ExperienceBar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Hud/ExperienceBar.png
+
 #begin Hud/HealthBar.png
 /importer:TextureImporter
 /processor:TextureProcessor

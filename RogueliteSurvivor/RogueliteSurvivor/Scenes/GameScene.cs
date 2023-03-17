@@ -120,6 +120,7 @@ namespace RogueliteSurvivor.Scenes
 
                 { "StatBar", Content.Load<Texture2D>(Path.Combine("Hud", "StatBar")) },
                 { "HealthBar", Content.Load<Texture2D>(Path.Combine("Hud", "HealthBar")) },
+                { "ExperienceBar", Content.Load<Texture2D>(Path.Combine("Hud", "ExperienceBar")) },
                 { "StatsBackground", Content.Load<Texture2D>(Path.Combine("Hud", "StatsBackground")) },
 
                 { "LevelUpChoices", Content.Load<Texture2D>(Path.Combine("UI", "level-up-buttons")) },
@@ -256,7 +257,7 @@ namespace RogueliteSurvivor.Scenes
             player = world.Create<Player, EntityStatus, Position, Velocity, Speed, AttackSpeed, SpellDamage, SpellEffectChance, Pierce, AreaOfEffect, Animation, SpriteSheet, Target, Spell1, Spell2, Health, KillCount, Body>();
 
             player.Set(
-                new Player() { Level = 1, ExperienceToNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), TotalExperience = 0 },
+                new Player() { Level = 1, ExperienceToNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), ExperienceRequiredForNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), TotalExperience = 0 },
                 new EntityStatus(),
                 new Position() { XY = new Vector2(mapContainer.Start.X, mapContainer.Start.Y) },
                 new Velocity() { Vector = Vector2.Zero },
@@ -367,7 +368,8 @@ namespace RogueliteSurvivor.Scenes
                     {
                         stateChangeTime = 0f;
                         playerInfo.Level++;
-                        playerInfo.ExperienceToNextLevel += ExperienceHelper.ExperienceRequiredForLevel(playerInfo.Level + 1);
+                        playerInfo.ExperienceRequiredForNextLevel = ExperienceHelper.ExperienceRequiredForLevel(playerInfo.Level + 1);
+                        playerInfo.ExperienceToNextLevel += playerInfo.ExperienceRequiredForNextLevel;
                         var playerHealth = player.Get<Health>();
                         playerHealth.Max += 5;
                         playerHealth.Current = playerHealth.Max;
