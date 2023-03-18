@@ -8,7 +8,6 @@
       ],
       "texture": "FireWizard",
       "startingSpell": "Fireball",
-      "secondarySpell": "FireExplosion",
       "health": 100,
       "speed": 100,
       "animation": {
@@ -33,7 +32,6 @@
       ],
       "texture": "IceWizard",
       "startingSpell": "IceShard",
-      "secondarySpell": "IceSpikes",
       "health": 100,
       "speed": 100,
       "animation": {
@@ -58,7 +56,6 @@
       ],
       "texture": "LightningWizard",
       "startingSpell": "LightningBlast",
-      "secondarySpell": "LightningStrike",
       "health": 100,
       "speed": 100,
       "animation": {

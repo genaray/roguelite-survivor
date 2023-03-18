@@ -2,8 +2,11 @@
 using Arch.Core.Extensions;
 using Box2D.NetStandard.Dynamics.World;
 using Microsoft.Xna.Framework;
+using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
+using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -117,7 +120,30 @@ namespace RogueliteSurvivor.Helpers
             return retVal;
         }
 
-        public static bool ProcessPickup(ref Entity player, PickupType pickupType)
+        public static PickupType GetPickupTypeFromString(this string pickupString)
+        {
+            switch (pickupString)
+            {
+                case "None":
+                    return PickupType.None;
+                case "Fireball":
+                    return PickupType.Fireball;
+                case "FireExplosion":
+                    return PickupType.FireExplosion;
+                case "IceShard":
+                    return PickupType.IceShard;
+                case "IceSpikes":
+                    return PickupType.IceSpikes;
+                case "LightningBlast":
+                    return PickupType.LightningBlast;
+                case "LightningStrike":
+                    return PickupType.LightningStrike;
+                default:
+                    return PickupType.None;
+            }
+        }
+
+        public static bool ProcessPickup(ref Entity player, PickupType pickupType, Dictionary<Spells, SpellContainer> spellContainers)
         {
             bool destroy = true;
             float pickupAmount = GetPickupAmount(pickupType);
@@ -159,6 +185,25 @@ namespace RogueliteSurvivor.Helpers
                         destroy = false;
                     }
                     break;
+                case PickupType.Fireball:
+                case PickupType.FireExplosion:
+                case PickupType.IceShard:
+                case PickupType.IceSpikes:
+                case PickupType.LightningBlast:
+                case PickupType.LightningStrike:
+                    var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
+                    if (spells.Count == 1)
+                    {
+                        player.Add(SpellFactory.CreateSpell<Spell2>(spellContainers[pickupType.ToString().GetSpellFromString()]));
+                    }
+                    else if(spells.Count == 2)
+                    {
+                        player.Add(SpellFactory.CreateSpell<Spell3>(spellContainers[pickupType.ToString().GetSpellFromString()]));
+                    }
+                    processAttackSpeed(player, 0f);
+                    processDamage(player, 0f);
+                    processSpellEffectChance(player, 0f);
+                    break;
             }
 
             return destroy;
@@ -169,6 +214,8 @@ namespace RogueliteSurvivor.Helpers
             AttackSpeed attackSpeed = player.Get<AttackSpeed>();
             attackSpeed.CurrentAttackSpeed += attackSpeed.BaseAttackSpeed * pickupAmount;
 
+            var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
+
             if (player.TryGet(out Spell1 spell1))
             {
                 spell1.CurrentAttacksPerSecond = attackSpeed.CurrentAttackSpeed * spell1.BaseAttacksPerSecond;
@@ -178,6 +225,11 @@ namespace RogueliteSurvivor.Helpers
             {
                 spell2.CurrentAttacksPerSecond = attackSpeed.CurrentAttackSpeed * spell2.BaseAttacksPerSecond;
                 player.Set(spell2);
+            }
+            if (player.TryGet(out Spell3 spell3))
+            {
+                spell3.CurrentAttacksPerSecond = attackSpeed.CurrentAttackSpeed * spell3.BaseAttacksPerSecond;
+                player.Set(spell3);
             }
 
             player.Set(attackSpeed);
@@ -198,6 +250,11 @@ namespace RogueliteSurvivor.Helpers
                 spell2.CurrentDamage = spellDamage.CurrentSpellDamage * spell2.BaseDamage;
                 player.Set(spell2);
             }
+            if (player.TryGet(out Spell3 spell3))
+            {
+                spell3.CurrentDamage = spellDamage.CurrentSpellDamage * spell3.BaseDamage;
+                player.Set(spell3);
+            }
 
             player.Set(spellDamage);
         }
@@ -216,6 +273,11 @@ namespace RogueliteSurvivor.Helpers
             {
                 spell2.CurrentEffectChance = spellEffectChance.CurrentSpellEffectChance * spell2.BaseEffectChance;
                 player.Set(spell2);
+            }
+            if (player.TryGet(out Spell3 spell3))
+            {
+                spell3.CurrentEffectChance = spellEffectChance.CurrentSpellEffectChance * spell3.BaseEffectChance;
+                player.Set(spell3);
             }
 
             player.Set(spellEffectChance);

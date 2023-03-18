@@ -41,8 +41,26 @@ namespace RogueliteSurvivor.Systems
 
                 if (kState.IsKeyDown(Keys.Tab) || gState.Buttons.Y == ButtonState.Pressed)
                 {
-                    statPageInt = (statPageInt + 1) % System.Enum.GetValues(typeof(StatPage)).Length;
-                    statPage = (StatPage)statPageInt;
+                    incrementStatPageInt();
+
+                    Entity? player = null;
+                    world.Query(in query, (in Entity entity) =>
+                    {
+                        player = entity;
+                    });
+
+                    if(player.HasValue)
+                    {
+                        if (statPage == StatPage.Spell2 && !player.Value.Has<Spell2>())
+                        {
+                            incrementStatPageInt();
+                        }
+                        if (statPage == StatPage.Spell3 && !player.Value.Has<Spell3>())
+                        {
+                            incrementStatPageInt();
+                        }
+                    }
+                    
                     stateChangeTime = 0f;
                 }
             }
@@ -50,6 +68,12 @@ namespace RogueliteSurvivor.Systems
             {
                 stateChangeTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
+        }
+
+        private void incrementStatPageInt()
+        {
+            statPageInt = (statPageInt + 1) % System.Enum.GetValues(typeof(StatPage)).Length;
+            statPage = (StatPage)statPageInt;
         }
 
         public void Render(GameTime gameTime, SpriteBatch spriteBatch, Dictionary<string, Texture2D> textures, Entity player, float totalElapsedTime, GameState gameState, int layer, float scaleFactor)
@@ -152,6 +176,12 @@ namespace RogueliteSurvivor.Systems
                             if (entity.TryGet(out Spell2 spell2))
                             {
                                 renderSpellStats(spriteBatch, counter, spell2, pierce, areaOfEffect);
+                            }
+                            break;
+                        case StatPage.Spell3:
+                            if (entity.TryGet(out Spell3 spell3))
+                            {
+                                renderSpellStats(spriteBatch, counter, spell3, pierce, areaOfEffect);
                             }
                             break;
                     }

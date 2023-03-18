@@ -12,5 +12,6 @@ namespace RogueliteSurvivor.Constants
         Spells,
         Spell1,
         Spell2,
+        Spell3
     }
 }

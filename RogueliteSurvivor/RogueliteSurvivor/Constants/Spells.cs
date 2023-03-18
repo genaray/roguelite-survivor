@@ -20,6 +20,19 @@ namespace RogueliteSurvivor.Constants
 
     public static class SpellsExtensions
     {
+        public static List<Spells> PlayerUsableSpells()
+        {
+            return new List<Spells>()
+            {
+                Spells.Fireball,
+                Spells.FireExplosion,
+                Spells.IceShard,
+                Spells.IceSpikes,
+                Spells.LightningBlast,
+                Spells.LightningStrike,
+            };
+        }
+
         public static Spells GetSpellFromString(this string spellString)
         {
             switch(spellString)

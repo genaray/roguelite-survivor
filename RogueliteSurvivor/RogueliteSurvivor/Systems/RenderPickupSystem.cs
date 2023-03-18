@@ -39,7 +39,7 @@ namespace RogueliteSurvivor.Systems
                             Color.White,
                             0f,
                             new Vector2(8, 8),
-                            1f,
+                            .75f,
                             SpriteEffects.None,
                             .1f
                         );

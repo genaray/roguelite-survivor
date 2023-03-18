@@ -12,7 +12,6 @@ namespace RogueliteSurvivor.Containers
         public List<string> Description { get; set; }
         public string Texture { get; set; }
         public Spells StartingSpell { get; set; }
-        public Spells SecondarySpell { get; set; }
         public int Health { get; set; }
         public float Speed { get; set; }
         public AnimationContainer Animation { get; set; }
@@ -30,7 +29,6 @@ namespace RogueliteSurvivor.Containers
                 Description = getDescriptionParagraphs(player["description"]),
                 Texture = (string)player["texture"],
                 StartingSpell = ((string)player["startingSpell"]).GetSpellFromString(),
-                SecondarySpell = ((string)player["secondarySpell"]).GetSpellFromString(),
                 Health = (int)player["health"],
                 Speed = (float)player["speed"],
                 Animation = AnimationContainer.ToAnimationContainer(player["animation"]),

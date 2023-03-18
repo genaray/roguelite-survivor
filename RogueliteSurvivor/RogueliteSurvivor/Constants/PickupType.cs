@@ -10,5 +10,11 @@
         SpellEffectChance,
         Pierce,
         AreaOfEffect,
+        Fireball,
+        FireExplosion,
+        IceShard,
+        IceSpikes,
+        LightningBlast,
+        LightningStrike
     }
 }

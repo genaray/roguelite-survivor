@@ -254,7 +254,7 @@ namespace RogueliteSurvivor.Scenes
             body.position = new System.Numerics.Vector2(mapContainer.Start.X, mapContainer.Start.Y) / PhysicsConstants.PhysicsToPixelsRatio;
             body.fixedRotation = true;
 
-            player = world.Create<Player, EntityStatus, Position, Velocity, Speed, AttackSpeed, SpellDamage, SpellEffectChance, Pierce, AreaOfEffect, Animation, SpriteSheet, Target, Spell1, Spell2, Health, KillCount, Body>();
+            player = world.Create<Player, EntityStatus, Position, Velocity, Speed, AttackSpeed, SpellDamage, SpellEffectChance, Pierce, AreaOfEffect, Animation, SpriteSheet, Target, Spell1, Health, KillCount, Body>();
 
             player.Set(
                 new Player() { Level = 1, ExperienceToNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), ExperienceRequiredForNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), TotalExperience = 0 },
@@ -271,7 +271,6 @@ namespace RogueliteSurvivor.Scenes
                 PlayerFactory.GetPlayerSpriteSheet(playerContainers[gameSettings.PlayerName], textures),
                 new Target(),
                 SpellFactory.CreateSpell<Spell1>(spellContainers[playerContainers[gameSettings.PlayerName].StartingSpell]),
-                SpellFactory.CreateSpell<Spell2>(spellContainers[playerContainers[gameSettings.PlayerName].SecondarySpell]),
                 new Health() { Current = playerContainers[gameSettings.PlayerName].Health, Max = playerContainers[gameSettings.PlayerName].Health },
                 new KillCount(),
                 BodyFactory.CreateCircularBody(player, 14, physicsWorld, body, 99)
@@ -292,7 +291,7 @@ namespace RogueliteSurvivor.Scenes
                     if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
                         gameState = GameState.Running;
-                        PickupHelper.ProcessPickup(ref player, selectedLevelUpChoice);
+                        PickupHelper.ProcessPickup(ref player, selectedLevelUpChoice, spellContainers);
                         stateChangeTime = 0f;
                     }
                     else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
@@ -378,16 +377,35 @@ namespace RogueliteSurvivor.Scenes
 
                         gameState = GameState.LevelUp;
 
-                        RandomTable<PickupType> pickupTable = new RandomTable<PickupType>()
-                            .Add(PickupType.AttackSpeed, 10)
-                            .Add(PickupType.Damage, 10)
-                            .Add(PickupType.MoveSpeed, 3)
-                            .Add(PickupType.SpellEffectChance, 1)
-                            .Add(PickupType.Pierce, 1)
-                            .Add(PickupType.AreaOfEffect, 1);
+                        RandomTable<PickupType> pickupTable = new RandomTable<PickupType>();
+                        var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
+
+                        if (playerInfo.Level % 5 == 0 && spells.Count < 3)
+                        {
+                            var playerUsableSpells = SpellsExtensions.PlayerUsableSpells();
+                            playerUsableSpells.RemoveAll(a => spells.Exists(b => a == ((ISpell)b).Spell));
+
+                            foreach(var usableSpell in playerUsableSpells)
+                            {
+                                pickupTable.Add(usableSpell.ToString().GetPickupTypeFromString(), 1);
+                            }
+                        }
+                        else
+                        {
+                            pickupTable
+                                .Add(PickupType.AttackSpeed, 10)
+                                .Add(PickupType.Damage, 10)
+                                .Add(PickupType.MoveSpeed, 3)
+                                .Add(PickupType.SpellEffectChance, 1)
+                                .Add(PickupType.Pierce, 1)
+                                .Add(PickupType.AreaOfEffect, 1);
+                        }
+                        
+                            
 
                         levelUpChoices.Clear();
-                        for(int i = 0; i < 4; i++)
+                        int max = Math.Min(4, pickupTable.NumberOfEntries);
+                        for(int i = 0; i < max; i++)
                         {
                             PickupType choice;
                             do

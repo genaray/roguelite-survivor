@@ -388,14 +388,7 @@ namespace RogueliteSurvivor.Scenes
 
                 _spriteBatch.DrawString(
                             fonts["FontSmall"],
-                            string.Concat("Primary Spell: ", playerContainers[selectedPlayer].StartingSpell),
-                            new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
-                            Color.White
-                        );
-                counter += 12;
-                _spriteBatch.DrawString(
-                            fonts["FontSmall"],
-                            string.Concat("Secondary Spell: ", playerContainers[selectedPlayer].SecondarySpell),
+                            string.Concat("Primary Spell: ", playerContainers[selectedPlayer].StartingSpell.GetReadableSpellName()),
                             new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
                             Color.White
                         );

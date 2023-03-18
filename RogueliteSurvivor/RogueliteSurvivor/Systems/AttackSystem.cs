@@ -26,6 +26,9 @@ namespace RogueliteSurvivor.Systems
         QueryDescription spell2Query = new QueryDescription()
                                 .WithAll<Target, Spell2>();
 
+        QueryDescription spell3Query = new QueryDescription()
+                                .WithAll<Target, Spell3>();
+
 
 
         public AttackSystem(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers)
@@ -47,6 +50,11 @@ namespace RogueliteSurvivor.Systems
             world.Query(in spell2Query, (in Entity entity, ref Position pos, ref Target target, ref Spell2 spell2) =>
             {
                 spell2.Cooldown = processSpell(gameTime, entity, pos, target, spell2);
+            });
+
+            world.Query(in spell3Query, (in Entity entity, ref Position pos, ref Target target, ref Spell3 spell3) =>
+            {
+                spell3.Cooldown = processSpell(gameTime, entity, pos, target, spell3);
             });
         }
 

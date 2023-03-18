@@ -15,6 +15,8 @@ namespace RogueliteSurvivor.Utils
             _totalWeight = 0;
         }
 
+        public int NumberOfEntries { get { return _entries.Count; } }
+
         public RandomTable<T> Add(T name, int weight)
         {
             if (weight > 0)
