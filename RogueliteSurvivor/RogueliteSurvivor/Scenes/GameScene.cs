@@ -117,6 +117,8 @@ namespace RogueliteSurvivor.Scenes
                 { "FireExplosion", Content.Load<Texture2D>(Path.Combine("Spells", "fire-explosion")) },
                 { "IceSpikes", Content.Load<Texture2D>(Path.Combine("Spells", "ice-spikes")) },
                 { "LightningStrike", Content.Load<Texture2D>(Path.Combine("Spells", "lightning-strike")) },
+                { "FireAura", Content.Load<Texture2D>(Path.Combine("Spells", "fire-aura")) },
+                { "IceAura", Content.Load<Texture2D>(Path.Combine("Spells", "ice-aura")) },
 
                 { "StatBar", Content.Load<Texture2D>(Path.Combine("Hud", "StatBar")) },
                 { "HealthBar", Content.Load<Texture2D>(Path.Combine("Hud", "HealthBar")) },
@@ -255,6 +257,7 @@ namespace RogueliteSurvivor.Scenes
             body.fixedRotation = true;
 
             player = world.Create<Player, EntityStatus, Position, Velocity, Speed, AttackSpeed, SpellDamage, SpellEffectChance, Pierce, AreaOfEffect, Animation, SpriteSheet, Target, Spell1, Health, KillCount, Body>();
+            Spell1 spell = SpellFactory.CreateSpell<Spell1>(spellContainers[playerContainers[gameSettings.PlayerName].StartingSpell]);
 
             player.Set(
                 new Player() { Level = 1, ExperienceToNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), ExperienceRequiredForNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), TotalExperience = 0 },
@@ -266,15 +269,22 @@ namespace RogueliteSurvivor.Scenes
                 new SpellDamage(1f),
                 new SpellEffectChance(1f),
                 new Pierce(0),
-                new AreaOfEffect(1),
+                new AreaOfEffect(1f),
                 PlayerFactory.GetPlayerAnimation(playerContainers[gameSettings.PlayerName]),
                 PlayerFactory.GetPlayerSpriteSheet(playerContainers[gameSettings.PlayerName], textures),
                 new Target(),
-                SpellFactory.CreateSpell<Spell1>(spellContainers[playerContainers[gameSettings.PlayerName].StartingSpell]),
+                spell,
                 new Health() { Current = playerContainers[gameSettings.PlayerName].Health, Max = playerContainers[gameSettings.PlayerName].Health },
                 new KillCount(),
                 BodyFactory.CreateCircularBody(player, 14, physicsWorld, body, 99)
             );
+
+            if(spell.Type == SpellType.Aura)
+            {
+                var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect);
+                spell.Child = aura;
+                player.Set(spell);
+            }
         }
 
         public override string Update(GameTime gameTime, params object[] values)
@@ -291,7 +301,7 @@ namespace RogueliteSurvivor.Scenes
                     if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
                         gameState = GameState.Running;
-                        PickupHelper.ProcessPickup(ref player, selectedLevelUpChoice, spellContainers);
+                        PickupHelper.ProcessPickup(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers);
                         stateChangeTime = 0f;
                     }
                     else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)

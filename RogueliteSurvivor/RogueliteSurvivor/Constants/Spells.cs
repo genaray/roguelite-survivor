@@ -11,8 +11,10 @@ namespace RogueliteSurvivor.Constants
         None,
         Fireball,
         FireExplosion,
+        FireAura,
         IceShard,
         IceSpikes,
+        IceAura,
         LightningBlast,
         LightningStrike,
         EnemyMelee,
@@ -26,8 +28,10 @@ namespace RogueliteSurvivor.Constants
             {
                 Spells.Fireball,
                 Spells.FireExplosion,
+                Spells.FireAura,
                 Spells.IceShard,
                 Spells.IceSpikes,
+                Spells.IceAura,
                 Spells.LightningBlast,
                 Spells.LightningStrike,
             };
@@ -43,10 +47,14 @@ namespace RogueliteSurvivor.Constants
                     return Spells.Fireball;
                 case "FireExplosion":
                     return Spells.FireExplosion;
+                case "FireAura":
+                    return Spells.FireAura;
                 case "IceShard":
                     return Spells.IceShard;
                 case "IceSpikes":
                     return Spells.IceSpikes;
+                case "IceAura":
+                    return Spells.IceAura;
                 case "LightningBlast":
                     return Spells.LightningBlast;
                 case "LightningStrike":
@@ -66,10 +74,14 @@ namespace RogueliteSurvivor.Constants
                     return "Fireball";
                 case Spells.FireExplosion:
                     return "Fire Explosion";
+                case Spells.FireAura:
+                    return "Fire Aura";
                 case Spells.IceShard:
                     return "Ice Shard";
                 case Spells.IceSpikes:
                     return "Ice Spikes";
+                case Spells.IceAura:
+                    return "Ice Aura";
                 case Spells.LightningBlast:
                     return "Lightning Blast";
                 case Spells.LightningStrike:

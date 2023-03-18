@@ -32,6 +32,8 @@ namespace RogueliteSurvivor.Helpers
                     return new Rectangle(xOffset, 256, 64, 64);
                 case PickupType.FireExplosion:
                     return new Rectangle(xOffset, 320, 64, 64);
+                case PickupType.FireAura:
+                    return new Rectangle(128 + xOffset, 384, 64, 64);
                 case PickupType.IceShard:
                     return new Rectangle(xOffset, 384, 64, 64);
                 case PickupType.IceSpikes:

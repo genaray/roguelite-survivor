@@ -1,6 +1,8 @@
 ﻿using Arch.Core;
 using Arch.Core.Extensions;
+using Box2D.NetStandard.Collision;
 using Box2D.NetStandard.Dynamics.Bodies;
+using Box2D.NetStandard.Dynamics.Fixtures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RogueliteSurvivor.ComponentFactories;
@@ -10,6 +12,7 @@ using RogueliteSurvivor.Containers;
 using RogueliteSurvivor.Physics;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace RogueliteSurvivor.Systems
 {
@@ -21,13 +24,13 @@ namespace RogueliteSurvivor.Systems
         Dictionary<Spells, SpellContainer> spellContainers;
 
         QueryDescription spell1Query = new QueryDescription()
-                                .WithAll<Target, Spell1>();
+                                .WithAll<Spell1>();
 
         QueryDescription spell2Query = new QueryDescription()
-                                .WithAll<Target, Spell2>();
+                                .WithAll<Spell2>();
 
         QueryDescription spell3Query = new QueryDescription()
-                                .WithAll<Target, Spell3>();
+                                .WithAll<Spell3>();
 
 
 
@@ -42,23 +45,23 @@ namespace RogueliteSurvivor.Systems
 
         public void Update(GameTime gameTime, float totalElapsedTime, float scaleFactor)
         {
-            world.Query(in spell1Query, (in Entity entity, ref Position pos, ref Target target, ref Spell1 spell1) =>
+            world.Query(in spell1Query, (in Entity entity, ref Position pos, ref Spell1 spell1) =>
             {
-                spell1.Cooldown = processSpell(gameTime, entity, pos, target, spell1);
+                spell1.Cooldown = processSpell(gameTime, entity, pos, spell1);
             });
 
-            world.Query(in spell2Query, (in Entity entity, ref Position pos, ref Target target, ref Spell2 spell2) =>
+            world.Query(in spell2Query, (in Entity entity, ref Position pos, ref Spell2 spell2) =>
             {
-                spell2.Cooldown = processSpell(gameTime, entity, pos, target, spell2);
+                spell2.Cooldown = processSpell(gameTime, entity, pos, spell2);
             });
 
-            world.Query(in spell3Query, (in Entity entity, ref Position pos, ref Target target, ref Spell3 spell3) =>
+            world.Query(in spell3Query, (in Entity entity, ref Position pos, ref Spell3 spell3) =>
             {
-                spell3.Cooldown = processSpell(gameTime, entity, pos, target, spell3);
+                spell3.Cooldown = processSpell(gameTime, entity, pos, spell3);
             });
         }
 
-        private float processSpell(GameTime gameTime, Entity entity, Position pos, Target target, ISpell spell)
+        private float processSpell(GameTime gameTime, Entity entity, Position pos, ISpell spell)
         {
             spell.Cooldown += (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
 
@@ -67,74 +70,118 @@ namespace RogueliteSurvivor.Systems
             {
                 spell.Cooldown -= spell.CurrentAttackSpeed;
 
-                SpellEffects effect = SpellEffects.None;
-                if (spell.Effect != SpellEffects.None)
+                if (spell.Type != SpellType.Aura)
                 {
-                    if (random.Next(1000) < (spell.CurrentEffectChance * 1000))
+                    var target = entity.Get<Target>();
+                    SpellEffects effect = SpellEffects.None;
+                    if (spell.Effect != SpellEffects.None)
                     {
-                        effect = spell.Effect;
+                        if (random.Next(1000) < (spell.CurrentEffectChance * 1000))
+                        {
+                            effect = spell.Effect;
+                        }
+                    }
+
+                    if (spell.Type == SpellType.Projectile)
+                    {
+                        SpellFactory.CreateProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect);
+                    }
+                    else if (spell.Type == SpellType.SingleTarget)
+                    {
+                        SpellFactory.CreateSingleTarget(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect);
                     }
                 }
+                else
+                {
+                    var body = (Body)spell.Child.Get(typeof(Body));
+                    var aura = spell.Child.Get<Aura>();
+                    AABB aabb = new AABB(
+                        body.GetPosition() - System.Numerics.Vector2.One * aura.BaseRadius * aura.RadiusMultiplier / PhysicsConstants.PhysicsToPixelsRatio,
+                        body.GetPosition() + System.Numerics.Vector2.One * aura.BaseRadius * aura.RadiusMultiplier / PhysicsConstants.PhysicsToPixelsRatio
+                    );
 
-                if (spell.Type == SpellType.Projectile)
-                {
-                    createProjectile(entity, spell, target, pos, effect);
-                }
-                else if (spell.Type == SpellType.SingleTarget)
-                {
-                    createSingleTarget(entity, spell, target, pos, effect);
+                    physicsWorld.QueryAABB(out Fixture[] touched, aabb);
+
+                    foreach(Fixture fixture in touched )
+                    {
+                        if (fixture != null && fixture.Body.UserData != null)
+                        {
+                            Entity touchedEntity = (Entity)fixture.Body.UserData;
+                            if (touchedEntity.Has<Enemy>()
+                                && Vector2.Distance(touchedEntity.Get<Position>().XY, entity.Get<Position>().XY) <= aura.BaseRadius * aura.RadiusMultiplier)
+                            {
+                                setEnemyHealthAndState(touchedEntity, touchedEntity.Get<EntityStatus>(), spell.Child.Get<Damage>(), spell.Child.Get<Owner>());
+                            }
+                        }
+                    }
                 }
             }
 
             return spell.Cooldown;
         }
 
-        private void createProjectile(Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect)
+        private void setEnemyHealthAndState(Entity entity, EntityStatus entityStatus, Damage damage, Owner owner)
         {
-            var projectile = world.Create<Projectile, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Damage, Owner, Pierce, Body>();
+            if (entityStatus.State == State.Alive)
+            {
+                Health health = entity.Get<Health>();
+                health.Current -= (int)damage.Amount;
+                if (health.Current < 1)
+                {
+                    entityStatus.State = State.ReadyToDie;
+                    entity.Set(entityStatus);
+                    Experience enemyExperience = entity.Get<Experience>();
+                    KillCount killCount = (KillCount)owner.Entity.Get(typeof(KillCount));
+                    Player playerExperience = owner.Entity.Get<Player>();
+                    killCount.AddKill(entity.Get<SpriteSheet>().TextureName);
+                    playerExperience.TotalExperience += enemyExperience.Amount;
+                    playerExperience.ExperienceToNextLevel -= enemyExperience.Amount;
+                    owner.Entity.Set(killCount, playerExperience);
+                }
+                else
+                {
+                    Animation anim = entity.Get<Animation>();
+                    anim.Overlay = Color.Red;
 
-            var body = new BodyDef();
-            var velocityVector = Vector2.Normalize(target.TargetPosition - pos.XY);
-            var position = pos.XY + velocityVector;
-            body.position = new System.Numerics.Vector2(position.X, position.Y) / PhysicsConstants.PhysicsToPixelsRatio;
-            body.fixedRotation = true;
-
-            projectile.Set(
-                new Projectile(),
-                new EntityStatus(),
-                new Position() { XY = new Vector2(position.X, position.Y) },
-                new Velocity() { Vector = velocityVector * spell.CurrentProjectileSpeed },
-                new Speed() { speed = spell.CurrentProjectileSpeed },
-                SpellFactory.GetSpellAliveAnimation(spellContainers[spell.Spell]),
-                SpellFactory.GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition),
-                new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
-                new Owner() { Entity = entity },
-                new Pierce(entity.Has<Pierce>() ? entity.Get<Pierce>().Num : 0),
-                BodyFactory.CreateCircularBody(projectile, 14, physicsWorld, body, .1f)
-            );
-        }
-
-        private void createSingleTarget(Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect)
-        {
-            var singleTarget = world.Create<SingleTarget, EntityStatus, Position, Speed, Animation, SpriteSheet, Damage, Owner, Body>();
-
-            var body = new BodyDef();
-            body.position = new System.Numerics.Vector2(target.TargetPosition.X, target.TargetPosition.Y) / PhysicsConstants.PhysicsToPixelsRatio;
-            body.fixedRotation = true;
-
-            float radiusMultiplier = entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f;
-
-            singleTarget.Set(
-                SpellFactory.CreateSingleTarget(spellContainers[spell.Spell]),
-                new EntityStatus(),
-                new Position() { XY = target.TargetPosition },
-                new Speed() { speed = spell.CurrentProjectileSpeed },
-                SpellFactory.GetSpellAliveAnimation(spellContainers[spell.Spell]),
-                SpellFactory.GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition, radiusMultiplier),
-                new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
-                new Owner() { Entity = entity },
-                BodyFactory.CreateCircularBody(singleTarget, (int)(32 * radiusMultiplier), physicsWorld, body, .1f, false)
-            );
+                    entity.Set(health, anim);
+                    if (damage.SpellEffect != SpellEffects.None)
+                    {
+                        switch (damage.SpellEffect)
+                        {
+                            case SpellEffects.Burn:
+                                if (!entity.Has<Burn>())
+                                {
+                                    entity.Add(new Burn() { TimeLeft = 5f, TickRate = .5f, NextTick = .5f });
+                                }
+                                else
+                                {
+                                    entity.Set(new Burn() { TimeLeft = 5f, TickRate = .5f, NextTick = .5f });
+                                }
+                                break;
+                            case SpellEffects.Slow:
+                                if (!entity.Has<Slow>())
+                                {
+                                    entity.Add(new Slow() { TimeLeft = 5f });
+                                }
+                                else
+                                {
+                                    entity.Set(new Slow() { TimeLeft = 5f });
+                                }
+                                break;
+                            case SpellEffects.Shock:
+                                if (!entity.Has<Shock>())
+                                {
+                                    entity.Add(new Shock() { TimeLeft = 1f });
+                                }
+                                else
+                                {
+                                    entity.Set(new Shock() { TimeLeft = 1f });
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

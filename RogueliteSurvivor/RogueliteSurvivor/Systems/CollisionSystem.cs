@@ -4,6 +4,7 @@ using Box2D.NetStandard.Dynamics.Bodies;
 using Microsoft.Xna.Framework;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
+using System;
 
 namespace RogueliteSurvivor.Systems
 {
@@ -14,6 +15,8 @@ namespace RogueliteSurvivor.Systems
         QueryDescription mainQuery = new QueryDescription().WithAll<Position, Velocity, Body>().WithNone<Slow, Shock>();
         QueryDescription singleTargetQuery = new QueryDescription()
                                                     .WithAll<SingleTarget, Body>();
+        QueryDescription auraQuery = new QueryDescription()
+                                                    .WithAll<Aura, Body>();
         QueryDescription slowQuery = new QueryDescription().WithAll<Slow, Position, Velocity, Body>();
         QueryDescription shockQuery = new QueryDescription().WithAll<Shock, Position, Velocity, Body>();
 
@@ -70,10 +73,43 @@ namespace RogueliteSurvivor.Systems
 
             physicsWorld.Step(1 / 60f, 8, 3);
 
-            world.Query(in query, (ref Position pos, ref Velocity vel, ref Body body) =>
+            world.Query(in query, (in Entity entity, ref Position pos, ref Velocity vel, ref Body body) =>
             {
                 var position = body.GetPosition();
                 pos.XY = new Vector2(position.X, position.Y) * PhysicsConstants.PhysicsToPixelsRatio;
+            
+                if(entity.TryGet(out Spell1 spell1) && spell1.Type == SpellType.Aura)
+                {
+                    var aura = spell1.Child.Get<Position>();
+                    Body auraBody = (Body)spell1.Child.Get(typeof(Body));
+
+                    aura.XY = new Vector2(position.X, position.Y) * PhysicsConstants.PhysicsToPixelsRatio;
+                    auraBody.SetTransform(body.GetPosition(), 0);
+                    auraBody.SetAwake(false);
+                    spell1.Child.Set(aura, auraBody);
+                }
+
+                if (entity.TryGet(out Spell2 spell2) && spell2.Type == SpellType.Aura)
+                {
+                    var aura = spell2.Child.Get<Position>();
+                    Body auraBody = (Body)spell2.Child.Get(typeof(Body));
+
+                    aura.XY = new Vector2(position.X, position.Y) * PhysicsConstants.PhysicsToPixelsRatio;
+                    auraBody.SetTransform(body.GetPosition(), 0);
+                    auraBody.SetAwake(false);
+                    spell2.Child.Set(aura, auraBody);
+                }
+
+                if (entity.TryGet(out Spell3 spell3) && spell3.Type == SpellType.Aura)
+                {
+                    var aura = spell3.Child.Get<Position>();
+                    Body auraBody = (Body)spell3.Child.Get(typeof(Body));
+
+                    aura.XY = new Vector2(position.X, position.Y) * PhysicsConstants.PhysicsToPixelsRatio;
+                    auraBody.SetTransform(body.GetPosition(), 0);
+                    auraBody.SetAwake(false);
+                    spell3.Child.Set(aura, auraBody);
+                }
             });
 
             physicsWorld.ClearForces();

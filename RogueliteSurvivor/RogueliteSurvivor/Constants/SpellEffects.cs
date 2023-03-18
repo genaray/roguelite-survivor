@@ -22,16 +22,12 @@ namespace RogueliteSurvivor.Constants
             {
                 case "None":
                     return SpellEffects.None;
-                    break;
                 case "Burn":
                     return SpellEffects.Burn;
-                    break;
                 case "Shock":
                     return SpellEffects.Shock;
-                    break;
                 case "Slow":
                     return SpellEffects.Slow;
-                    break;
                 default:
                     return SpellEffects.None;
             }

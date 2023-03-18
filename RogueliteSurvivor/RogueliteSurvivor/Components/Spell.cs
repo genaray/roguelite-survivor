@@ -1,4 +1,5 @@
-﻿using RogueliteSurvivor.Constants;
+﻿using Arch.Core;
+using RogueliteSurvivor.Constants;
 
 namespace RogueliteSurvivor.Components
 {
@@ -7,6 +8,7 @@ namespace RogueliteSurvivor.Components
         public Spells Spell { get; set; }
         public SpellEffects Effect { get; set; }
         public SpellType Type { get; set; }
+        public Entity Child { get; set; }
         public float BaseEffectChance { get; set; }
         public float CurrentEffectChance { get; set; }
         public float BaseDamage { get; set; }
@@ -29,6 +31,7 @@ namespace RogueliteSurvivor.Components
         public Spells Spell { get; set; }
         public SpellEffects Effect { get; set; }
         public SpellType Type { get; set; }
+        public Entity Child { get; set; }
         public float BaseEffectChance { get; set; }
         public float CurrentEffectChance { get; set; }
         public float BaseDamage { get; set; }
@@ -51,6 +54,7 @@ namespace RogueliteSurvivor.Components
         public Spells Spell { get; set; }
         public SpellEffects Effect { get; set; }
         public SpellType Type { get; set; }
+        public Entity Child { get; set; }
         public float BaseEffectChance { get; set; }
         public float CurrentEffectChance { get; set; }
         public float BaseDamage { get; set; }
@@ -73,6 +77,7 @@ namespace RogueliteSurvivor.Components
         public Spells Spell { get; set; }
         public SpellEffects Effect { get; set; }
         public SpellType Type { get; set; }
+        public Entity Child { get; set; }
         public float BaseEffectChance { get; set; }
         public float CurrentEffectChance { get; set; }
         public float BaseDamage { get; set; }

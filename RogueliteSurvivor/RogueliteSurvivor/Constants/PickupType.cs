@@ -12,6 +12,7 @@
         AreaOfEffect,
         Fireball,
         FireExplosion,
+        FireAura,
         IceShard,
         IceSpikes,
         LightningBlast,

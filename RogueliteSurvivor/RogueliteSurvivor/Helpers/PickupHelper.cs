@@ -1,11 +1,13 @@
 ﻿using Arch.Core;
 using Arch.Core.Extensions;
-using Box2D.NetStandard.Dynamics.World;
+using Box2D.NetStandard.Dynamics.Bodies;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Physics;
 using RogueliteSurvivor.Utils;
 using System;
 using System.Collections.Generic;
@@ -143,7 +145,30 @@ namespace RogueliteSurvivor.Helpers
             }
         }
 
-        public static bool ProcessPickup(ref Entity player, PickupType pickupType, Dictionary<Spells, SpellContainer> spellContainers)
+        public static bool ProcessPickup(ref Entity player, PickupType pickupType)
+        {
+            bool destroy = true;
+            float pickupAmount = GetPickupAmount(pickupType);
+            switch (pickupType)
+            {
+                case PickupType.Health:
+                    var health = player.Get<Health>();
+                    if (health.Current < health.Max)
+                    {
+                        health.Current = int.Min(health.Max, (int)pickupAmount + health.Current);
+                        player.Set(health);
+                    }
+                    else
+                    {
+                        destroy = false;
+                    }
+                    break;
+            }
+
+            return destroy;
+        }
+
+        public static bool ProcessPickup(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, ref Entity player, PickupType pickupType, Dictionary<Spells, SpellContainer> spellContainers)
         {
             bool destroy = true;
             float pickupAmount = GetPickupAmount(pickupType);
@@ -169,21 +194,7 @@ namespace RogueliteSurvivor.Helpers
                     player.Set(pierce);
                     break;
                 case PickupType.AreaOfEffect:
-                    var areaOfAffect = player.Get<AreaOfEffect>();
-                    areaOfAffect.Radius += pickupAmount;
-                    player.Set(areaOfAffect);
-                    break;
-                case PickupType.Health:
-                    var health = player.Get<Health>();
-                    if (health.Current < health.Max)
-                    {
-                        health.Current = int.Min(health.Max, (int)pickupAmount + health.Current);
-                        player.Set(health);
-                    }
-                    else
-                    {
-                        destroy = false;
-                    }
+                    processAreaOfEffect(world, textures, physicsWorld, spellContainers, player, pickupAmount);
                     break;
                 case PickupType.Fireball:
                 case PickupType.FireExplosion:
@@ -192,17 +203,35 @@ namespace RogueliteSurvivor.Helpers
                 case PickupType.LightningBlast:
                 case PickupType.LightningStrike:
                     var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
+                    ISpell spell = null;
                     if (spells.Count == 1)
                     {
-                        player.Add(SpellFactory.CreateSpell<Spell2>(spellContainers[pickupType.ToString().GetSpellFromString()]));
+                        spell = SpellFactory.CreateSpell<Spell2>(spellContainers[pickupType.ToString().GetSpellFromString()]);
+                        player.Add((Spell2)spell);
                     }
                     else if(spells.Count == 2)
                     {
-                        player.Add(SpellFactory.CreateSpell<Spell3>(spellContainers[pickupType.ToString().GetSpellFromString()]));
+                        spell = SpellFactory.CreateSpell<Spell3>(spellContainers[pickupType.ToString().GetSpellFromString()]);
+                        player.Add((Spell3)spell);
                     }
                     processAttackSpeed(player, 0f);
                     processDamage(player, 0f);
                     processSpellEffectChance(player, 0f);
+                    processAreaOfEffect(world, textures, physicsWorld, spellContainers, player, 0f);
+
+                    if(spell.Type == SpellType.Aura)
+                    {
+                        var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect);
+                        spell.Child = aura;
+                        if (spells.Count == 1)
+                        {
+                            player.Set((Spell2)spell);
+                        }
+                        else if (spells.Count == 2)
+                        {
+                            player.Set((Spell3)spell);
+                        }
+                    }
                     break;
             }
 
@@ -281,6 +310,48 @@ namespace RogueliteSurvivor.Helpers
             }
 
             player.Set(spellEffectChance);
+        }
+
+        private static void processAreaOfEffect(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity player, float pickupAmount)
+        {
+            var areaOfAffect = player.Get<AreaOfEffect>();
+            areaOfAffect.Radius += pickupAmount;
+
+            if (player.TryGet(out Spell1 spell1))
+            {
+                if (spell1.Type == SpellType.Aura)
+                {
+                    physicsWorld.DestroyBody((Body)spell1.Child.Get(typeof(Body)));
+                    world.Destroy(spell1.Child);
+                    var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell1, spell1.Effect);
+                    spell1.Child = aura;
+                    player.Set(spell1);
+                }
+            }
+            if (player.TryGet(out Spell2 spell2))
+            {
+                if (spell2.Type == SpellType.Aura)
+                {
+                    physicsWorld.DestroyBody((Body)spell2.Child.Get(typeof(Body))); 
+                    world.Destroy(spell2.Child);
+                    var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell2, spell2.Effect);
+                    spell2.Child = aura;
+                    player.Set(spell2);
+                }
+            }
+            if (player.TryGet(out Spell3 spell3))
+            {
+                if (spell3.Type == SpellType.Aura)
+                {
+                    physicsWorld.DestroyBody((Body)spell3.Child.Get(typeof(Body))); 
+                    world.Destroy(spell3.Child);
+                    var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell3, spell3.Effect);
+                    spell3.Child = aura;
+                    player.Set(spell3);
+                }
+            }
+
+            player.Set(areaOfAffect);
         }
     }
 }

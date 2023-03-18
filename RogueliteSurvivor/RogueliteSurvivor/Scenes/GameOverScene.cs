@@ -16,7 +16,7 @@ namespace RogueliteSurvivor.Scenes
 {
     public class GameOverScene : Scene
     {
-        private Dictionary<string, Texture2D> textures;
+        //private Dictionary<string, Texture2D> textures;
         private Dictionary<string, SpriteFont> fonts;
 
         private Dictionary<string, MapContainer> mapContainers;

@@ -11,11 +11,11 @@ namespace RogueliteSurvivor.Scenes
 {
     public class LoadingScene : Scene
     {
-        private Dictionary<string, Texture2D> textures;
+        //private Dictionary<string, Texture2D> textures;
         private Dictionary<string, SpriteFont> fonts;
 
         private float counter = 0f;
-        private string[] dots = new string[4] { "", ".", "..", "..." };
+        private readonly string[] dots = new string[4] { "", ".", "..", "..." };
         private int doot = 0;
 
         public LoadingScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, ProgressionContainer progressionContainer, float scaleFactor)

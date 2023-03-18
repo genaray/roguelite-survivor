@@ -13,20 +13,35 @@ namespace RogueliteSurvivor.Systems
     {
         GraphicsDeviceManager graphics;
 
+        QueryDescription auraQuery = new QueryDescription()
+                                .WithAll<Aura, EntityStatus, Position, SpriteSheet, Animation>();
+
         public RenderSpriteSystem(World world, GraphicsDeviceManager graphics)
             : base(world, new QueryDescription()
-                                .WithAll<EntityStatus, Position, SpriteSheet, Animation>())
+                                .WithAll<EntityStatus, Position, SpriteSheet, Animation>()
+                                .WithNone<Aura>())
         {
             this.graphics = graphics;
         }
 
         public void Render(GameTime gameTime, SpriteBatch spriteBatch, Dictionary<string, Texture2D> textures, Entity player, float totalElapsedTime, GameState gameState, int layer, float scaleFactor)
         {
-            if (layer == 4)
-            {
-                Vector2 playerPosition = player.Get<Position>().XY;
-                Vector2 offset = new Vector2(GetWidthOffset(graphics, scaleFactor, 2), GetHeightOffset(graphics, scaleFactor, 2));
+            Vector2 playerPosition = player.Get<Position>().XY;
+            Vector2 offset = new Vector2(GetWidthOffset(graphics, scaleFactor, 2), GetHeightOffset(graphics, scaleFactor, 2));
 
+            if(layer == 3)
+            {
+                world.Query(in auraQuery, (ref EntityStatus entityStatus, ref Position pos, ref Animation anim, ref SpriteSheet sprite) =>
+                {
+                    if (entityStatus.State != State.Dead)
+                    {
+                        Vector2 position = pos.XY - playerPosition;
+                        renderEntity(spriteBatch, textures, sprite, anim, position, offset);
+                    }
+                });
+            }
+            else if (layer == 4)
+            {
                 world.Query(in query, (ref EntityStatus entityStatus, ref Position pos, ref Animation anim, ref SpriteSheet sprite) =>
                 {
                     if (entityStatus.State != State.Dead)
