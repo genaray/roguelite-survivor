@@ -90,7 +90,7 @@ namespace RogueliteSurvivor.Systems
                         createPickup(pickup, position);
                     }
 
-                    world.TryDestroy(entity);
+                    world.Destroy(entity);
                 }
                 else
                 {

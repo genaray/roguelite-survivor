@@ -15,6 +15,7 @@
         FireAura,
         IceShard,
         IceSpikes,
+        IceAura,
         LightningBlast,
         LightningStrike
     }

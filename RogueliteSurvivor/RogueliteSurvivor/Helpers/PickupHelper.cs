@@ -132,10 +132,14 @@ namespace RogueliteSurvivor.Helpers
                     return PickupType.Fireball;
                 case "FireExplosion":
                     return PickupType.FireExplosion;
+                case "FireAura":
+                    return PickupType.FireAura;
                 case "IceShard":
                     return PickupType.IceShard;
                 case "IceSpikes":
                     return PickupType.IceSpikes;
+                case "IceAura":
+                    return PickupType.IceAura;
                 case "LightningBlast":
                     return PickupType.LightningBlast;
                 case "LightningStrike":
@@ -174,6 +178,12 @@ namespace RogueliteSurvivor.Helpers
             float pickupAmount = GetPickupAmount(pickupType);
             switch(pickupType)
             {
+                case PickupType.None:
+                    processAttackSpeed(player, 0f);
+                    processDamage(player, 0f);
+                    processSpellEffectChance(player, 0f);
+                    processAreaOfEffect(world, textures, physicsWorld, spellContainers, player, 0f);
+                    break;
                 case PickupType.AttackSpeed:
                     processAttackSpeed(player, pickupAmount);
                     break;
@@ -198,8 +208,10 @@ namespace RogueliteSurvivor.Helpers
                     break;
                 case PickupType.Fireball:
                 case PickupType.FireExplosion:
+                case PickupType.FireAura:
                 case PickupType.IceShard:
                 case PickupType.IceSpikes:
+                case PickupType.IceAura:
                 case PickupType.LightningBlast:
                 case PickupType.LightningStrike:
                     var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
@@ -214,10 +226,6 @@ namespace RogueliteSurvivor.Helpers
                         spell = SpellFactory.CreateSpell<Spell3>(spellContainers[pickupType.ToString().GetSpellFromString()]);
                         player.Add((Spell3)spell);
                     }
-                    processAttackSpeed(player, 0f);
-                    processDamage(player, 0f);
-                    processSpellEffectChance(player, 0f);
-                    processAreaOfEffect(world, textures, physicsWorld, spellContainers, player, 0f);
 
                     if(spell.Type == SpellType.Aura)
                     {
@@ -232,6 +240,11 @@ namespace RogueliteSurvivor.Helpers
                             player.Set((Spell3)spell);
                         }
                     }
+
+                    processAttackSpeed(player, 0f);
+                    processDamage(player, 0f);
+                    processSpellEffectChance(player, 0f);
+                    processAreaOfEffect(world, textures, physicsWorld, spellContainers, player, 0f);
                     break;
             }
 
@@ -321,8 +334,11 @@ namespace RogueliteSurvivor.Helpers
             {
                 if (spell1.Type == SpellType.Aura)
                 {
-                    physicsWorld.DestroyBody((Body)spell1.Child.Get(typeof(Body)));
-                    world.Destroy(spell1.Child);
+                    if (spell1.Child.Has<Body>())
+                    {
+                        physicsWorld.DestroyBody((Body)spell1.Child.Get(typeof(Body)));
+                        world.Destroy(spell1.Child);
+                    }
                     var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell1, spell1.Effect);
                     spell1.Child = aura;
                     player.Set(spell1);
@@ -332,8 +348,11 @@ namespace RogueliteSurvivor.Helpers
             {
                 if (spell2.Type == SpellType.Aura)
                 {
-                    physicsWorld.DestroyBody((Body)spell2.Child.Get(typeof(Body))); 
-                    world.Destroy(spell2.Child);
+                    if (spell2.Child.Has<Body>())
+                    {
+                        physicsWorld.DestroyBody((Body)spell2.Child.Get(typeof(Body)));
+                        world.Destroy(spell2.Child);
+                    }
                     var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell2, spell2.Effect);
                     spell2.Child = aura;
                     player.Set(spell2);
@@ -343,8 +362,11 @@ namespace RogueliteSurvivor.Helpers
             {
                 if (spell3.Type == SpellType.Aura)
                 {
-                    physicsWorld.DestroyBody((Body)spell3.Child.Get(typeof(Body))); 
-                    world.Destroy(spell3.Child);
+                    if (spell3.Child.Has<Body>())
+                    {
+                        physicsWorld.DestroyBody((Body)spell3.Child.Get(typeof(Body)));
+                        world.Destroy(spell3.Child);
+                    }
                     var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell3, spell3.Effect);
                     spell3.Child = aura;
                     player.Set(spell3);

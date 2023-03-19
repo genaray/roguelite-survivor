@@ -152,7 +152,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 new EntityStatus(),
                 new Position() { XY = position.XY },
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
-                GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], position.XY, position.XY, radiusMultiplier),
+                GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], position.XY, position.XY, 2 * radiusMultiplier),
                 new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
                 new Owner() { Entity = entity },
                 BodyFactory.CreateCircularBody(aura, (int)(32 * radiusMultiplier), physicsWorld, body, .1f, false)

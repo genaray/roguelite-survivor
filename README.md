@@ -19,3 +19,5 @@ A simple Vampire Survivors clone
   - Pixel art editor
 - Tiled [https://www.mapeditor.org/](https://www.mapeditor.org/)
   - Map editor
+- Pixel FX Designer [https://codemanu.itch.io/particle-fx-designer](https://codemanu.itch.io/particle-fx-designer)
+  - Pixel art effect animation

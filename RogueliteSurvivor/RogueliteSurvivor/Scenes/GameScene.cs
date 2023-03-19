@@ -178,7 +178,7 @@ namespace RogueliteSurvivor.Scenes
                 world.GetEntities(new QueryDescription(), entities);
                 foreach (var entity in entities)
                 {
-                    world.TryDestroy(entity);
+                    world.Destroy(entity);
                 }
             }
 
@@ -206,10 +206,10 @@ namespace RogueliteSurvivor.Scenes
                 new AnimationSetSystem(world),
                 new AnimationUpdateSystem(world),
                 new CollisionSystem(world, physicsWorld),
+                new AttackSystem(world, textures, physicsWorld, spellContainers),
                 new SpellEffectSystem(world),
                 new PickupSystem(world),
                 new EnemySpawnSystem(world, textures, physicsWorld, _graphics, enemyContainers, spellContainers, mapContainer),
-                new AttackSystem(world, textures, physicsWorld, spellContainers),
                 new AttackSpellCleanupSystem(world),
                 new DeathSystem(world, textures, physicsWorld, spellContainers),
                 renderHud,
@@ -250,31 +250,34 @@ namespace RogueliteSurvivor.Scenes
 
         private void placePlayer()
         {
-            textures.Add(playerContainers[gameSettings.PlayerName].Texture, Content.Load<Texture2D>(Path.Combine("Player", playerContainers[gameSettings.PlayerName].Texture)));
+            var playerContainer = playerContainers[gameSettings.PlayerName];
+            textures.Add(playerContainer.Texture, Content.Load<Texture2D>(Path.Combine("Player", playerContainers[gameSettings.PlayerName].Texture)));
 
             var body = new BodyDef();
             body.position = new System.Numerics.Vector2(mapContainer.Start.X, mapContainer.Start.Y) / PhysicsConstants.PhysicsToPixelsRatio;
             body.fixedRotation = true;
 
             player = world.Create<Player, EntityStatus, Position, Velocity, Speed, AttackSpeed, SpellDamage, SpellEffectChance, Pierce, AreaOfEffect, Animation, SpriteSheet, Target, Spell1, Health, KillCount, Body>();
-            Spell1 spell = SpellFactory.CreateSpell<Spell1>(spellContainers[playerContainers[gameSettings.PlayerName].StartingSpell]);
+            Spell1 spell = SpellFactory.CreateSpell<Spell1>(spellContainers[playerContainer.StartingSpell]);
 
             player.Set(
                 new Player() { Level = 1, ExperienceToNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), ExperienceRequiredForNextLevel = ExperienceHelper.ExperienceRequiredForLevel(2), TotalExperience = 0 },
                 new EntityStatus(),
                 new Position() { XY = new Vector2(mapContainer.Start.X, mapContainer.Start.Y) },
                 new Velocity() { Vector = Vector2.Zero },
-                new Speed() { speed = playerContainers[gameSettings.PlayerName].Speed },
-                new AttackSpeed(1f),
-                new SpellDamage(1f),
-                new SpellEffectChance(1f),
-                new Pierce(0),
-                new AreaOfEffect(1f),
-                PlayerFactory.GetPlayerAnimation(playerContainers[gameSettings.PlayerName]),
-                PlayerFactory.GetPlayerSpriteSheet(playerContainers[gameSettings.PlayerName], textures),
+                new Speed() { speed = 100 * playerContainer.Speed },
+                new AttackSpeed(1f + playerContainer.AttackSpeed),
+                new SpellDamage(1f + playerContainer.SpellDamage),
+                new SpellEffectChance(1f + playerContainer.SpellEffectChance),
+                new Pierce(0 + playerContainer.Pierce),
+                new AreaOfEffect(1f + playerContainer.AreaOfEffect),
+                PlayerFactory.GetPlayerAnimation(playerContainer),
+                PlayerFactory.GetPlayerSpriteSheet(playerContainer, textures),
                 new Target(),
                 spell,
-                new Health() { Current = playerContainers[gameSettings.PlayerName].Health, Max = playerContainers[gameSettings.PlayerName].Health },
+                new Health() { Current = (int)(100 * playerContainer.Health)
+                                , Max = (int)(100 * playerContainer.Health)
+                },
                 new KillCount(),
                 BodyFactory.CreateCircularBody(player, 14, physicsWorld, body, 99)
             );
@@ -285,6 +288,8 @@ namespace RogueliteSurvivor.Scenes
                 spell.Child = aura;
                 player.Set(spell);
             }
+
+            PickupHelper.ProcessPickup(world, textures, physicsWorld, ref player, PickupType.None, spellContainers);
         }
 
         public override string Update(GameTime gameTime, params object[] values)

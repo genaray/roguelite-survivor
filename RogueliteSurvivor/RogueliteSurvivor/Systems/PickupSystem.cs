@@ -41,7 +41,7 @@ namespace RogueliteSurvivor.Systems
                     {
                         if (PickupHelper.ProcessPickup(ref player, sprite.Type))
                         {
-                            world.TryDestroy(entity);
+                            world.Destroy(entity);
                         }
                     }
                     else

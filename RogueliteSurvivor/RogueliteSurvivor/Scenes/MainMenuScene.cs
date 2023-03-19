@@ -351,7 +351,8 @@ namespace RogueliteSurvivor.Scenes
                 );
 
                 int counter = 0;
-                foreach (var paragraph in playerContainers[selectedPlayer].Description)
+                var playerContainer = playerContainers[selectedPlayer];
+                foreach (var paragraph in playerContainer.Description)
                 {
                     List<string> descriptionLines = new List<string>();
                     if (paragraph.Length < descriptionLength)
@@ -387,12 +388,68 @@ namespace RogueliteSurvivor.Scenes
                 counter += 12;
 
                 _spriteBatch.DrawString(
-                            fonts["FontSmall"],
-                            string.Concat("Primary Spell: ", playerContainers[selectedPlayer].StartingSpell.GetReadableSpellName()),
-                            new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
-                            Color.White
-                        );
-                counter += 12;
+                    fonts["FontSmall"],
+                    "Base Stats: ",
+                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Spell: ", playerContainer.StartingSpell.GetReadableSpellName()),
+                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 12),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Starting Health: ", (int)(playerContainer.Health *  100)),
+                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 24),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Move Speed: ", (int)(playerContainer.Speed * 100)),
+                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 36),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Spell Damage: ", (playerContainer.SpellDamage + 1f).ToString("F"), "x"),
+                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 12),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Spell Effect Chance: ", (playerContainer.SpellEffectChance + 1f).ToString("F"), "x"),
+                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 24),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Attack Speed: ", (playerContainer.AttackSpeed + 1f).ToString("F"), "x"),
+                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 36),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Pierce: ", playerContainer.Pierce),
+                    new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter + 12),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Area of Effect: ", (playerContainer.AreaOfEffect + 1f).ToString("F"), "x"),
+                    new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter + 24),
+                    Color.White
+                );
+
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],

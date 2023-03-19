@@ -357,7 +357,7 @@ namespace RogueliteSurvivor.Systems
                     Color.White
                 );
             }
-            else if(spell.Type == SpellType.SingleTarget)
+            else if(spell.Type == SpellType.SingleTarget || spell.Type == SpellType.Aura)
             {
                 spriteBatch.DrawString(
                     fonts["FontSmall"],
