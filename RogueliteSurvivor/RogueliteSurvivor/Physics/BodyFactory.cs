@@ -24,5 +24,17 @@ namespace RogueliteSurvivor.Physics
 
             return physicsBody;
         }
+
+        public static void UpdateCircularBodySize(Body body, int width)
+        {
+            var fixture = body.GetFixtureList();
+            var bodyShape = new FixtureDef();
+            bodyShape.shape = new CircleShape() { Radius = width / 2f / PhysicsConstants.PhysicsToPixelsRatio };
+            bodyShape.density = fixture.Density;
+            bodyShape.friction = 0.0f;
+            bodyShape.isSensor = fixture.IsSensor();
+            body.DestroyFixture(fixture);
+            body.CreateFixture(bodyShape);
+        }
     }
 }

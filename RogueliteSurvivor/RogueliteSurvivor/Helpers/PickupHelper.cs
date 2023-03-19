@@ -334,42 +334,21 @@ namespace RogueliteSurvivor.Helpers
             {
                 if (spell1.Type == SpellType.Aura)
                 {
-                    if (spell1.Child.Has<Body>())
-                    {
-                        physicsWorld.DestroyBody((Body)spell1.Child.Get(typeof(Body)));
-                        world.Destroy(spell1.Child);
-                    }
-                    var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell1, spell1.Effect);
-                    spell1.Child = aura;
-                    player.Set(spell1);
+                    SpellFactory.UpdateAura(player, spell1, pickupAmount);
                 }
             }
             if (player.TryGet(out Spell2 spell2))
             {
                 if (spell2.Type == SpellType.Aura)
                 {
-                    if (spell2.Child.Has<Body>())
-                    {
-                        physicsWorld.DestroyBody((Body)spell2.Child.Get(typeof(Body)));
-                        world.Destroy(spell2.Child);
-                    }
-                    var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell2, spell2.Effect);
-                    spell2.Child = aura;
-                    player.Set(spell2);
+                    SpellFactory.UpdateAura(player, spell2, pickupAmount);
                 }
             }
             if (player.TryGet(out Spell3 spell3))
             {
                 if (spell3.Type == SpellType.Aura)
                 {
-                    if (spell3.Child.Has<Body>())
-                    {
-                        physicsWorld.DestroyBody((Body)spell3.Child.Get(typeof(Body)));
-                        world.Destroy(spell3.Child);
-                    }
-                    var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell3, spell3.Effect);
-                    spell3.Child = aura;
-                    player.Set(spell3);
+                    SpellFactory.UpdateAura(player, spell3, pickupAmount);
                 }
             }
 

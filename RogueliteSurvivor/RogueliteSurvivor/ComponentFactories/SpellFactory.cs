@@ -139,7 +139,7 @@ namespace RogueliteSurvivor.ComponentFactories
 
         public static Entity CreateAura(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, SpellEffects effect)
         {
-            var aura = world.Create<Aura, EntityStatus, Position, Animation, SpriteSheet, Damage, Owner, Body>();
+            var aura = world.Create<Aura, EntityStatus, Position, Animation, SpriteSheet, Damage, Owner>();
             var position = entity.Get<Position>();
             var body = new BodyDef();
             body.position = new System.Numerics.Vector2(position.XY.X, position.XY.Y) / PhysicsConstants.PhysicsToPixelsRatio;
@@ -154,11 +154,24 @@ namespace RogueliteSurvivor.ComponentFactories
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], position.XY, position.XY, 2 * radiusMultiplier),
                 new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
-                new Owner() { Entity = entity },
-                BodyFactory.CreateCircularBody(aura, (int)(32 * radiusMultiplier), physicsWorld, body, .1f, false)
+                new Owner() { Entity = entity }
             );
 
             return aura;
+        }
+
+        public static void UpdateAura<T>(Entity entity, T spell, float radiusIncrease)
+            where T : ISpell
+        {
+            float radiusMultiplier = (entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f) + radiusIncrease;
+            
+            var aura = spell.Child.Get<Aura>();
+            aura.RadiusMultiplier = radiusMultiplier;
+            var spriteSheet = spell.Child.Get<SpriteSheet>();
+            spriteSheet.Scale = 2 * radiusMultiplier;
+
+            spell.Child.Set(aura, spriteSheet);
+
         }
     }
 }

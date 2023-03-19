@@ -2,5 +2,6 @@
 {
     public struct Enemy
     {
+        public string Name { get; set; }
     }
 }

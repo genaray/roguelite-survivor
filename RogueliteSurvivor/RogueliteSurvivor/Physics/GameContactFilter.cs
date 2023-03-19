@@ -40,19 +40,24 @@ namespace RogueliteSurvivor.Physics
                     retVal = true;
                 }
             }
-            else if (a.Has<Enemy>() && b.Has<Enemy>())
+            else if (a.Has<Enemy>() 
+                    && b.Has<Enemy>()
+                    && a.Get<EntityStatus>().State == State.Alive
+                    && b.Get<EntityStatus>().State == State.Alive)
             {
                 retVal = true;
             }
-            else if ((a.Has<Projectile>() && b.Has<Enemy>()) || (b.Has<Projectile>() && a.Has<Enemy>()))
+            else if (((a.Has<Projectile>() && b.Has<Enemy>()) || (b.Has<Projectile>() && a.Has<Enemy>()))
+                    && a.Get<EntityStatus>().State == State.Alive
+                    && b.Get<EntityStatus>().State == State.Alive)
             {
                 retVal = true;
             }
-            else if ((a.Has<SingleTarget>() && fixtureA.Body.IsAwake() && b.Has<Enemy>()) || (b.Has<SingleTarget>() && fixtureB.Body.IsAwake() && a.Has<Enemy>()))
+            else if ((a.Has<SingleTarget>() && fixtureA.Body.IsAwake() && b.Has<Enemy>() && b.Get<EntityStatus>().State == State.Alive) || (b.Has<SingleTarget>() && fixtureB.Body.IsAwake() && a.Has<Enemy>() && a.Get<EntityStatus>().State == State.Alive))
             {
                 retVal = true;
             }
-            else if ((a.Has<Player>() && b.Has<Enemy>()) || (b.Has<Player>() && a.Has<Enemy>()))
+            else if ((a.Has<Player>() && b.Has<Enemy>() && b.Get<EntityStatus>().State == State.Alive) || (b.Has<Player>() && a.Has<Enemy>() && a.Get<EntityStatus>().State == State.Alive))
             {
                 retVal = true;
             }

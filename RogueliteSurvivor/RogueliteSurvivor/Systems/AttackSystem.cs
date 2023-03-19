@@ -93,11 +93,12 @@ namespace RogueliteSurvivor.Systems
                 }
                 else
                 {
-                    var body = (Body)spell.Child.Get(typeof(Body));
+                    var body = spell.Child.Get<Position>();
+                    System.Numerics.Vector2 position = new System.Numerics.Vector2(body.XY.X, body.XY.Y);
                     var aura = spell.Child.Get<Aura>();
                     AABB aabb = new AABB(
-                        body.GetPosition() - System.Numerics.Vector2.One * aura.BaseRadius * aura.RadiusMultiplier / PhysicsConstants.PhysicsToPixelsRatio,
-                        body.GetPosition() + System.Numerics.Vector2.One * aura.BaseRadius * aura.RadiusMultiplier / PhysicsConstants.PhysicsToPixelsRatio
+                        (position - System.Numerics.Vector2.One * aura.BaseRadius * aura.RadiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio,
+                        (position + System.Numerics.Vector2.One * aura.BaseRadius * aura.RadiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio
                     );
 
                     physicsWorld.QueryAABB(out Fixture[] touched, aabb);
@@ -133,7 +134,7 @@ namespace RogueliteSurvivor.Systems
                     Experience enemyExperience = entity.Get<Experience>();
                     KillCount killCount = (KillCount)owner.Entity.Get(typeof(KillCount));
                     Player playerExperience = owner.Entity.Get<Player>();
-                    killCount.AddKill(entity.Get<SpriteSheet>().TextureName);
+                    killCount.AddKill(entity.Get<Enemy>().Name);
                     playerExperience.TotalExperience += enemyExperience.Amount;
                     playerExperience.ExperienceToNextLevel -= enemyExperience.Amount;
                     owner.Entity.Set(killCount, playerExperience);

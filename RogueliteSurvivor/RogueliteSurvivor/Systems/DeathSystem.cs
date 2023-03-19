@@ -28,7 +28,8 @@ namespace RogueliteSurvivor.Systems
         Dictionary<Spells, SpellContainer> spellContainers;
         Random random;
         public DeathSystem(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers)
-            : base(world, new QueryDescription())
+            : base(world, new QueryDescription()
+                                .WithAll<EntityStatus, Body>())
         {
             this.textures = textures;
             this.physicsWorld = physicsWorld;
@@ -38,13 +39,12 @@ namespace RogueliteSurvivor.Systems
 
         public void Update(GameTime gameTime, float totalElapsedTime, float scaleFactor)
         {
-            world.Query(in projectileQuery, (ref EntityStatus entityStatus, ref SpriteSheet spriteSheet, ref Animation animation, ref Body body) =>
+            world.Query(in projectileQuery, (ref EntityStatus entityStatus, ref SpriteSheet spriteSheet, ref Animation animation) =>
             {
                 if (entityStatus.State == State.ReadyToDie)
                 {
                     entityStatus.State = State.Dying;
-                    physicsWorld.DestroyBody(body);
-
+                    
                     Spells spell = spriteSheet.TextureName.GetSpellFromString();
                     animation = SpellFactory.GetSpellHitAnimation(spellContainers[spell]);
                     spriteSheet = SpellFactory.GetSpellHitSpriteSheet(textures, spellContainers[spell], spriteSheet.Rotation);
@@ -56,12 +56,24 @@ namespace RogueliteSurvivor.Systems
                 }
             });
 
-            world.Query(in enemyQuery, (ref EntityStatus entityStatus, ref SpriteSheet spriteSheet, ref Animation animation, ref Body body) =>
+            world.Query(in enemyQuery, (in Entity entity, ref EntityStatus entityStatus, ref SpriteSheet spriteSheet, ref Animation animation) =>
             {
                 if (entityStatus.State == State.ReadyToDie)
                 {
                     entityStatus.State = State.Dying;
-                    physicsWorld.DestroyBody(body);
+
+                    if (entity.Has<Burn>())
+                    {
+                        entity.Remove<Burn>();
+                    }
+                    if (entity.Has<Slow>())
+                    {
+                        entity.Remove<Slow>();
+                    }
+                    if (entity.Has<Shock>())
+                    {
+                        entity.Remove<Shock>();
+                    }
 
                     if (spriteSheet.Width == 16)
                     {
@@ -83,18 +95,26 @@ namespace RogueliteSurvivor.Systems
                 }
             });
 
-            world.Query(in singleTargetQuery, (ref EntityStatus entityStatus, ref SingleTarget single, ref Animation animation, ref Body body) =>
+            world.Query(in singleTargetQuery, (ref EntityStatus entityStatus, ref SingleTarget single, ref Animation animation) =>
             {
                 if (entityStatus.State == State.Alive && single.DamageEndDelay < 0)
                 {
                     entityStatus.State = State.Dying;
-                    physicsWorld.DestroyBody(body);
                 }
                 else if (entityStatus.State == State.Dying
                             && animation.CurrentFrame == animation.LastFrame)
                 {
                     entityStatus.State = State.Dead;
 
+                }
+            });
+
+            world.Query(in query, (in Entity entity, ref EntityStatus entityStatus, ref Body body) => 
+            { 
+                if(entityStatus.State != State.Alive)
+                {
+                    physicsWorld.DestroyBody(body);
+                    entity.Remove<Body>();
                 }
             });
         }

@@ -179,7 +179,7 @@ namespace RogueliteSurvivor.Systems
                 body.fixedRotation = true;
 
                 entity.Set(
-                            new Enemy(),
+                            new Enemy() { Name = container.Name },
                             new EntityStatus(),
                             new Position() { XY = new Vector2(position.X, position.Y) },
                             new Velocity() { Vector = Vector2.Zero },
