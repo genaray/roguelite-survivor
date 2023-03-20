@@ -93,6 +93,8 @@ namespace RogueliteSurvivor.ComponentFactories
         {
             var projectile = world.Create<Projectile, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Damage, Owner, Pierce, Body>();
 
+            float damageMultiplier = entity.Has<DoubleDamage>() ? 2 : 1;
+
             var body = new BodyDef();
             var velocityVector = Vector2.Normalize(target.TargetPosition - pos.XY);
             var position = pos.XY + velocityVector;
@@ -107,7 +109,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 new Speed() { speed = spell.CurrentProjectileSpeed },
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition),
-                new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
+                new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
                 new Owner() { Entity = entity },
                 new Pierce(entity.Has<Pierce>() ? entity.Get<Pierce>().Num : 0),
                 BodyFactory.CreateCircularBody(projectile, 14, physicsWorld, body, .1f)
@@ -117,6 +119,8 @@ namespace RogueliteSurvivor.ComponentFactories
         public static void CreateSingleTarget(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect)
         {
             var singleTarget = world.Create<SingleTarget, EntityStatus, Position, Speed, Animation, SpriteSheet, Damage, Owner, Body>();
+
+            float damageMultiplier = entity.Has<DoubleDamage>() ? 2 : 1;
 
             var body = new BodyDef();
             body.position = new System.Numerics.Vector2(target.TargetPosition.X, target.TargetPosition.Y) / PhysicsConstants.PhysicsToPixelsRatio;
@@ -131,7 +135,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 new Speed() { speed = spell.CurrentProjectileSpeed },
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition, radiusMultiplier),
-                new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
+                new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
                 new Owner() { Entity = entity },
                 BodyFactory.CreateCircularBody(singleTarget, (int)(32 * radiusMultiplier), physicsWorld, body, .1f, false)
             );

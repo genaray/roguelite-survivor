@@ -22,7 +22,7 @@
       "enemyWaves": [
         {
           "repeat": true,
-          "start": 5,
+          "start": 2,
           "maxEnemies": 10,
           "enemies": [
             {
@@ -505,7 +505,7 @@
       "enemyWaves": [
         {
           "repeat": true,
-          "start": 5,
+          "start": 2,
           "maxEnemies": 50,
           "enemies": [
             {

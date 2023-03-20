@@ -116,8 +116,16 @@ namespace RogueliteSurvivor.Physics
                     KillCount killCount = (KillCount)owner.Entity.Get(typeof(KillCount));
                     Player playerExperience = owner.Entity.Get<Player>();
                     killCount.AddKill(entity.Get<Enemy>().Name);
-                    playerExperience.TotalExperience += enemyExperience.Amount;
-                    playerExperience.ExperienceToNextLevel -= enemyExperience.Amount;
+                    if (entity.Has<DoubleExperience>())
+                    {
+                        playerExperience.TotalExperience += enemyExperience.Amount * 2;
+                        playerExperience.ExperienceToNextLevel -= enemyExperience.Amount * 2;
+                    }
+                    else
+                    {
+                        playerExperience.TotalExperience += enemyExperience.Amount;
+                        playerExperience.ExperienceToNextLevel -= enemyExperience.Amount;
+                    }
                     owner.Entity.Set(killCount, playerExperience);
                 }
                 else
@@ -207,23 +215,26 @@ namespace RogueliteSurvivor.Physics
             if (attackSpeed.Cooldown > attackSpeed.CurrentAttackSpeed)
             {
                 attackSpeed.Cooldown -= attackSpeed.CurrentAttackSpeed;
-                Health health = entity.Get<Health>();
-                Damage damage = other.Get<Damage>();
-                health.Current -= (int)damage.Amount;
-                Animation anim = entity.Get<Animation>();
-                anim.Overlay = Microsoft.Xna.Framework.Color.Red;
-
-                if (health.Current < 1)
+                if (!entity.Has<Invincibility>())
                 {
-                    KillCount killCount = (KillCount)entity.Get(typeof(KillCount));
+                    Health health = entity.Get<Health>();
+                    Damage damage = other.Get<Damage>();
+                    health.Current -= (int)damage.Amount;
+                    Animation anim = entity.Get<Animation>();
+                    anim.Overlay = Microsoft.Xna.Framework.Color.Red;
 
-                    killCount.KillerName = other.Get<SpriteSheet>().TextureName;
-                    entity.Set(killCount);
+                    if (health.Current < 1)
+                    {
+                        KillCount killCount = (KillCount)entity.Get(typeof(KillCount));
 
-                    entityStatus.State = State.Dead;
+                        killCount.KillerName = other.Get<SpriteSheet>().TextureName;
+                        entity.Set(killCount);
+
+                        entityStatus.State = State.Dead;
+                    }
+
+                    entity.Set(health, anim, entityStatus);
                 }
-
-                entity.Set(health, anim, entityStatus);
                 other.Set(attackSpeed);
             }
         }

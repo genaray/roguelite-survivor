@@ -5,6 +5,7 @@ using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Helpers;
+using System;
 
 namespace RogueliteSurvivor.Systems
 {
@@ -13,6 +14,11 @@ namespace RogueliteSurvivor.Systems
         QueryDescription playerQuery = new QueryDescription()
                                             .WithAll<Player>();
 
+        QueryDescription invincibleQuery = new QueryDescription().WithAll<Invincibility>();
+        QueryDescription doubleExperienceQuery = new QueryDescription().WithAll<DoubleExperience>();
+        QueryDescription doubleDamageQuery = new QueryDescription().WithAll<DoubleDamage>();
+        QueryDescription doubleAttackSpeedQuery = new QueryDescription().WithAll<DoubleAttackSpeed>();
+
         public PickupSystem(World world)
             : base(world, new QueryDescription()
                                 .WithAll<PickupSprite, Position>())
@@ -20,6 +26,42 @@ namespace RogueliteSurvivor.Systems
 
         public void Update(GameTime gameTime, float totalElapsedTime, float scaleFactor)
         {
+            world.Query(in invincibleQuery, (in Entity entity, ref Invincibility invincibility) =>
+            {
+                invincibility.TimeRemaining -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+                if(invincibility.TimeRemaining <= 0)
+                {
+                    entity.Remove<Invincibility>();
+                }
+            });
+
+            world.Query(in doubleExperienceQuery, (in Entity entity, ref DoubleExperience doubleExperience) =>
+            {
+                doubleExperience.TimeRemaining -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+                if (doubleExperience.TimeRemaining <= 0)
+                {
+                    entity.Remove<DoubleExperience>();
+                }
+            });
+
+            world.Query(in doubleDamageQuery, (in Entity entity, ref DoubleDamage doubleDamage) =>
+            {
+                doubleDamage.TimeRemaining -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+                if (doubleDamage.TimeRemaining <= 0)
+                {
+                    entity.Remove<DoubleDamage>();
+                }
+            });
+
+            world.Query(in doubleAttackSpeedQuery, (in Entity entity, ref DoubleAttackSpeed doubleAttackSpeed) =>
+            {
+                doubleAttackSpeed.TimeRemaining -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+                if (doubleAttackSpeed.TimeRemaining <= 0)
+                {
+                    entity.Remove<DoubleAttackSpeed>();
+                }
+            });
+
             Entity player = new Entity();
             Position? playerPos = null;
             float radiusMultiplier = 0;

@@ -47,8 +47,8 @@ namespace RogueliteSurvivor.Scenes
         private MapContainer mapContainer;
         
         private Random random;
-        private List<PickupType> levelUpChoices = new List<PickupType>();
-        private PickupType selectedLevelUpChoice;
+        private List<LevelUpType> levelUpChoices = new List<LevelUpType>();
+        private LevelUpType selectedLevelUpChoice;
 
         public GameScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
             : base(spriteBatch, contentManager, graphics, world, physicsWorld, progressionContainer, scaleFactor)
@@ -289,7 +289,7 @@ namespace RogueliteSurvivor.Scenes
                 player.Set(spell);
             }
 
-            PickupHelper.ProcessPickup(world, textures, physicsWorld, ref player, PickupType.None, spellContainers);
+            LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, LevelUpType.None, spellContainers);
         }
 
         public override string Update(GameTime gameTime, params object[] values)
@@ -306,7 +306,7 @@ namespace RogueliteSurvivor.Scenes
                     if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
                         gameState = GameState.Running;
-                        PickupHelper.ProcessPickup(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers);
+                        LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers);
                         stateChangeTime = 0f;
                     }
                     else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
@@ -392,7 +392,7 @@ namespace RogueliteSurvivor.Scenes
 
                         gameState = GameState.LevelUp;
 
-                        RandomTable<PickupType> pickupTable = new RandomTable<PickupType>();
+                        RandomTable<LevelUpType> pickupTable = new RandomTable<LevelUpType>();
                         var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
 
                         if (playerInfo.Level % 5 == 0 && spells.Count < 3)
@@ -408,12 +408,12 @@ namespace RogueliteSurvivor.Scenes
                         else
                         {
                             pickupTable
-                                .Add(PickupType.AttackSpeed, 10)
-                                .Add(PickupType.Damage, 10)
-                                .Add(PickupType.MoveSpeed, 3)
-                                .Add(PickupType.SpellEffectChance, 1)
-                                .Add(PickupType.Pierce, 1)
-                                .Add(PickupType.AreaOfEffect, 1);
+                                .Add(LevelUpType.AttackSpeed, 10)
+                                .Add(LevelUpType.Damage, 10)
+                                .Add(LevelUpType.MoveSpeed, 3)
+                                .Add(LevelUpType.SpellEffectChance, 1)
+                                .Add(LevelUpType.Pierce, 1)
+                                .Add(LevelUpType.AreaOfEffect, 1);
                         }
                         
                             
@@ -422,7 +422,7 @@ namespace RogueliteSurvivor.Scenes
                         int max = Math.Min(4, pickupTable.NumberOfEntries);
                         for(int i = 0; i < max; i++)
                         {
-                            PickupType choice;
+                            LevelUpType choice;
                             do
                             {
                                 choice = pickupTable.Roll(random);
@@ -483,8 +483,8 @@ namespace RogueliteSurvivor.Scenes
 
                 _spriteBatch.DrawString(
                     fonts["Font"],
-                    PickupHelper.GetPickupDisplayTextForLevelUpChoice(selectedLevelUpChoice),
-                    new Vector2(GetWidthOffset(2) - PickupHelper.GetPickupDisplayTextForLevelUpChoice(selectedLevelUpChoice).Length * 4.5f, GetHeightOffset(2) + 96),
+                    LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(selectedLevelUpChoice),
+                    new Vector2(GetWidthOffset(2) - LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(selectedLevelUpChoice).Length * 4.5f, GetHeightOffset(2) + 96),
                     Color.White
                 );
 

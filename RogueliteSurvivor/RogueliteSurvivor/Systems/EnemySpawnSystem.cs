@@ -155,8 +155,12 @@ namespace RogueliteSurvivor.Systems
             }
 
             pickupTable = new RandomTable<PickupType>()
-                .Add(PickupType.None, 40 - difficulty)
-                .Add(PickupType.Health, 2);
+                .Add(PickupType.None, 100)
+                .Add(PickupType.Health, 1 + difficulty)
+                .Add(PickupType.Invincibility, 1)
+                .Add(PickupType.DoubleExperience, 1)
+                .Add(PickupType.DoubleDamage, 1)
+                .Add(PickupType.DoubleAttackSpeed, 1);
         }
 
         private void createEnemy(Position? player, Vector2 offset, MapInfo map)

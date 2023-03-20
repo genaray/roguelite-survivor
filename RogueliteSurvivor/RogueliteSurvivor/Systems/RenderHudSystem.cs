@@ -86,7 +86,7 @@ namespace RogueliteSurvivor.Systems
                 {
                     spriteBatch.Draw(
                         textures["StatsBackground"],
-                        new Rectangle((int)HudLocation.X, (int)HudLocation.Y, 146, getStatBackgroundHeight()),
+                        new Rectangle((int)HudLocation.X, (int)HudLocation.Y, 146, getStatBackgroundHeight(entity)),
                         new Rectangle(0, 0, 64, 64),
                         OffsetColor
                     );
@@ -156,32 +156,27 @@ namespace RogueliteSurvivor.Systems
                     switch (statPage)
                     {
                         case StatPage.Main:
-                            spriteBatch.DrawString(
-                                fonts["FontSmall"],
-                                string.Concat("Enemies Killed: ", killCount.Count),
-                                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 40 + Vector2.UnitX * 5,
-                                Color.White
-                            );
+                            renderMainStats(spriteBatch, counter, entity, killCount);
                             break;
                         case StatPage.Spells:
-                            renderMainStats(spriteBatch, counter, attackSpeed, speed, spellDamage, spellEffectChance, pierce, areaOfEffect);
+                            renderMainSpellStats(spriteBatch, counter, entity, attackSpeed, speed, spellDamage, spellEffectChance, pierce, areaOfEffect);
                             break;
                         case StatPage.Spell1:
                             if(entity.TryGet(out Spell1 spell1))
                             {
-                                renderSpellStats(spriteBatch, counter, spell1, pierce, areaOfEffect);
+                                renderSpellStats(spriteBatch, counter, entity, spell1, pierce, areaOfEffect);
                             }
                             break;
                         case StatPage.Spell2:
                             if (entity.TryGet(out Spell2 spell2))
                             {
-                                renderSpellStats(spriteBatch, counter, spell2, pierce, areaOfEffect);
+                                renderSpellStats(spriteBatch, counter, entity, spell2, pierce, areaOfEffect);
                             }
                             break;
                         case StatPage.Spell3:
                             if (entity.TryGet(out Spell3 spell3))
                             {
-                                renderSpellStats(spriteBatch, counter, spell3, pierce, areaOfEffect);
+                                renderSpellStats(spriteBatch, counter, entity, spell3, pierce, areaOfEffect);
                             }
                             break;
                     }
@@ -253,12 +248,29 @@ namespace RogueliteSurvivor.Systems
             }
         }
 
-        private int getStatBackgroundHeight()
+        private int getStatBackgroundHeight(Entity player)
         {
             switch (statPage)
             {
                 case StatPage.Main:
-                    return 62;
+                    int height = 62;
+                    if (player.Has<Invincibility>())
+                    {
+                        height += 12;
+                    }
+                    if (player.Has<DoubleExperience>())
+                    {
+                        height += 12;
+                    }
+                    if (player.Has<DoubleDamage>())
+                    {
+                        height += 12;
+                    }
+                    if (player.Has<DoubleAttackSpeed>())
+                    {
+                        height += 12;
+                    }
+                    return height;
                 case StatPage.Spells:
                     return 136;
                 default:
@@ -266,7 +278,58 @@ namespace RogueliteSurvivor.Systems
             }
         }
 
-        private void renderMainStats(SpriteBatch spriteBatch, int counter, AttackSpeed attackSpeed, Speed speed, SpellDamage spellDamage, SpellEffectChance spellEffectChance, Pierce pierce, AreaOfEffect areaOfEffect)
+        private void renderMainStats(SpriteBatch spriteBatch, int counter, Entity player, KillCount killCount)
+        {
+            int offset = 12;
+            spriteBatch.DrawString(
+                fonts["FontSmall"],
+                string.Concat("Enemies Killed: ", killCount.Count),
+                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 40 + Vector2.UnitX * 5,
+                Color.White
+            );
+            if (player.TryGet(out Invincibility invincibility))
+            {
+                spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Invincibility: ", invincibility.TimeRemaining.ToString("F")),
+                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * (40 + offset) + Vector2.UnitX * 5,
+                    Color.White
+                );
+                offset += 12;
+            }
+            if (player.TryGet(out DoubleExperience doubleExperience))
+            {
+                spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Double Experience: ", doubleExperience.TimeRemaining.ToString("F")),
+                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * (40 + offset) + Vector2.UnitX * 5,
+                    Color.White
+                );
+                offset += 12;
+            }
+            if (player.TryGet(out DoubleDamage doubleDamage))
+            {
+                spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Double Damage: ", doubleDamage.TimeRemaining.ToString("F")),
+                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * (40 + offset) + Vector2.UnitX * 5,
+                    Color.White
+                );
+                offset += 12;
+            }
+            if (player.TryGet(out DoubleAttackSpeed doubleAttackSpeed))
+            {
+                spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    string.Concat("Double Attack Speed: ", doubleAttackSpeed.TimeRemaining.ToString("F")),
+                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * (40 + offset) + Vector2.UnitX * 5,
+                    Color.White
+                );
+                offset += 12;
+            }
+        }
+
+        private void renderMainSpellStats(SpriteBatch spriteBatch, int counter, Entity player, AttackSpeed attackSpeed, Speed speed, SpellDamage spellDamage, SpellEffectChance spellEffectChance, Pierce pierce, AreaOfEffect areaOfEffect)
         {
             spriteBatch.DrawString(
                 fonts["FontSmall"],
@@ -277,16 +340,16 @@ namespace RogueliteSurvivor.Systems
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
-                string.Concat("Attack Speed: ", attackSpeed.CurrentAttackSpeed.ToString("F"), "x"),
+                string.Concat("Attack Speed: ", (player.Has<DoubleAttackSpeed>() ? 2 * attackSpeed.CurrentAttackSpeed : attackSpeed.CurrentAttackSpeed).ToString("F"), "x"),
                 HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 52 + Vector2.UnitX * 5,
-                Color.White
+                player.Has<DoubleAttackSpeed>() ? Color.Aqua : Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
-                string.Concat("Spell Damage: ", spellDamage.CurrentSpellDamage.ToString("F"), "x"),
+                string.Concat("Spell Damage: ", (player.Has<DoubleDamage>() ? 2 * spellDamage.CurrentSpellDamage : spellDamage.CurrentSpellDamage).ToString("F"), "x"),
                 HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 64 + Vector2.UnitX * 5,
-                Color.White
+                player.Has<DoubleDamage>() ? Color.Aqua : Color.White
             );
 
             spriteBatch.DrawString(
@@ -318,7 +381,7 @@ namespace RogueliteSurvivor.Systems
             );
         }
     
-        private void renderSpellStats(SpriteBatch spriteBatch, int counter, ISpell spell, Pierce pierce, AreaOfEffect areaOfEffect)
+        private void renderSpellStats(SpriteBatch spriteBatch, int counter, Entity player, ISpell spell, Pierce pierce, AreaOfEffect areaOfEffect)
         {
             spriteBatch.DrawString(
                 fonts["FontSmall"],
@@ -329,16 +392,16 @@ namespace RogueliteSurvivor.Systems
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
-                string.Concat("Attack Speed: ", spell.CurrentAttacksPerSecond.ToString("F"), "/s"),
+                string.Concat("Attack Speed: ", (player.Has<DoubleAttackSpeed>() ? 2 * spell.CurrentAttacksPerSecond : spell.CurrentAttacksPerSecond).ToString("F"), "/s"),
                 HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 52 + Vector2.UnitX * 5,
-                Color.White
+                player.Has<DoubleAttackSpeed>() ? Color.Aqua : Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
-                string.Concat("Spell Damage: ", spell.CurrentDamage.ToString("F")),
+                string.Concat("Spell Damage: ", (player.Has<DoubleDamage>() ? 2 * spell.CurrentDamage : spell.CurrentDamage).ToString("F")),
                 HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 64 + Vector2.UnitX * 5,
-                Color.White
+                player.Has<DoubleDamage>() ? Color.Aqua : Color.White
             );
 
             spriteBatch.DrawString(

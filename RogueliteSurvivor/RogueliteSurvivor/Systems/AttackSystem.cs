@@ -64,6 +64,10 @@ namespace RogueliteSurvivor.Systems
         private float processSpell(GameTime gameTime, Entity entity, Position pos, ISpell spell)
         {
             spell.Cooldown += (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+            if (entity.Has<DoubleAttackSpeed>())
+            {
+                spell.Cooldown += (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+            }
 
             if (spell.Type != SpellType.None
                     && spell.Cooldown > spell.CurrentAttackSpeed)
@@ -127,6 +131,11 @@ namespace RogueliteSurvivor.Systems
             {
                 Health health = entity.Get<Health>();
                 health.Current -= (int)damage.Amount;
+                if (entity.Has<DoubleDamage>())
+                {
+                    health.Current -= (int)damage.Amount;
+                }
+
                 if (health.Current < 1)
                 {
                     entityStatus.State = State.ReadyToDie;
@@ -135,8 +144,16 @@ namespace RogueliteSurvivor.Systems
                     KillCount killCount = (KillCount)owner.Entity.Get(typeof(KillCount));
                     Player playerExperience = owner.Entity.Get<Player>();
                     killCount.AddKill(entity.Get<Enemy>().Name);
-                    playerExperience.TotalExperience += enemyExperience.Amount;
-                    playerExperience.ExperienceToNextLevel -= enemyExperience.Amount;
+                    if (entity.Has<DoubleExperience>())
+                    {
+                        playerExperience.TotalExperience += enemyExperience.Amount * 2;
+                        playerExperience.ExperienceToNextLevel -= enemyExperience.Amount * 2;
+                    }
+                    else
+                    {
+                        playerExperience.TotalExperience += enemyExperience.Amount;
+                        playerExperience.ExperienceToNextLevel -= enemyExperience.Amount;
+                    }
                     owner.Entity.Set(killCount, playerExperience);
                 }
                 else
