@@ -227,7 +227,7 @@ namespace RogueliteSurvivor.Physics
                     {
                         KillCount killCount = (KillCount)entity.Get(typeof(KillCount));
 
-                        killCount.KillerName = other.Get<SpriteSheet>().TextureName;
+                        killCount.KillerName = other.Get<Enemy>().Name;
                         entity.Set(killCount);
 
                         entityStatus.State = State.Dead;

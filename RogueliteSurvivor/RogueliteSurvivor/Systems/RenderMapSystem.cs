@@ -15,11 +15,13 @@ namespace RogueliteSurvivor.Systems
     public class RenderMapSystem : ArchSystem, IRenderSystem
     {
         GraphicsDeviceManager graphics;
+        Dictionary<TiledTileset, Dictionary<int, Rectangle>> usedRects;
         public RenderMapSystem(World world, GraphicsDeviceManager graphics)
             : base(world, new QueryDescription()
                                 .WithAll<MapInfo>())
         {
             this.graphics = graphics;
+            usedRects = new Dictionary<TiledTileset, Dictionary<int, Rectangle>>();
         }
 
         public void Render(GameTime gameTime, SpriteBatch spriteBatch, Dictionary<string, Texture2D> textures, Entity player, float totalElapsedTime, GameState gameState, int layer, float scaleFactor)
@@ -56,14 +58,21 @@ namespace RogueliteSurvivor.Systems
                             var mapTileset = map.Map.GetTiledMapTileset(gid);
 
                             var tileset = map.Tilesets[mapTileset.firstgid];
+                            if (!usedRects.ContainsKey(tileset))
+                            {
+                                usedRects.Add(tileset, new Dictionary<int, Rectangle>());
+                            }
                             string path = tileset.Image.source.Replace(".png", "").ToLower();
 
-                            var rect = map.Map.GetSourceRect(mapTileset, tileset, gid);
-
-                            var source = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+                            if (!usedRects[tileset].ContainsKey(gid))
+                            {
+                                var rect = map.Map.GetSourceRect(mapTileset, tileset, gid);
+                                usedRects[tileset].Add(gid, new Rectangle(rect.x, rect.y, rect.width, rect.height));
+                            }
+                            
                             var destination = new Rectangle(tileX, tileY, map.Map.TileWidth, map.Map.TileHeight);
 
-                            spriteBatch.Draw(textures[path], new Vector2(tileX + offset.X, tileY + offset.Y), source, Color.White, 0f, playerPosition, 1f, SpriteEffects.None, .05f * layer);
+                            spriteBatch.Draw(textures[path], new Vector2(tileX + offset.X, tileY + offset.Y), usedRects[tileset][gid], Color.White, 0f, playerPosition, 1f, SpriteEffects.None, .05f * layer);
                         }
                     }
                 }

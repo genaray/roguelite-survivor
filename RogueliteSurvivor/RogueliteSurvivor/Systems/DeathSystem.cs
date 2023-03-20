@@ -87,7 +87,6 @@ namespace RogueliteSurvivor.Systems
                         spriteSheet = new SpriteSheet(textures["Blood" + bloodToUse], "Blood" + bloodToUse, 30, 1, 0, .5f);
                         animation = new Animation(0, 29, 1 / 60f, 1, false);
                     }
-                    
                 }
                 else if (entityStatus.State == State.Dying && animation.CurrentFrame == animation.LastFrame)
                 {
