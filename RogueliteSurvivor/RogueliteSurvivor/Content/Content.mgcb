@@ -594,6 +594,36 @@
 /processorParam:TextureFormat=Color
 /build:Hud/StatsBackground.png
 
+#begin Maps/The Beginning/CaveTops.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/The Beginning/CaveTops.png
+
+#begin Maps/The Beginning/CaveTops.tsx
+/copy:Maps/The Beginning/CaveTops.tsx
+
+#begin Maps/The Beginning/CaveWater.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/The Beginning/CaveWater.png
+
+#begin Maps/The Beginning/CaveWater.tsx
+/copy:Maps/The Beginning/CaveWater.tsx
+
 #begin Maps/The Beginning/The Beginning.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -623,6 +653,21 @@
 
 #begin Maps/The Beginning/The Church.tmx
 /copy:Maps/The Beginning/The Church.tmx
+
+#begin Maps/The Beginning/The Underground.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/The Beginning/The Underground.png
+
+#begin Maps/The Beginning/The Underground.tmx
+/copy:Maps/The Beginning/The Underground.tmx
 
 #begin Maps/The Beginning/Tileset.png
 /importer:TextureImporter

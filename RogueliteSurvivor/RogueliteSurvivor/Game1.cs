@@ -151,6 +151,18 @@ namespace RogueliteSurvivor
             {
                 JObject progression = JObject.Parse(File.ReadAllText(Path.Combine("Saves", "savegame.json")));
                 progressionContainer = ProgressionContainer.ToProgressionContainer(progression);
+
+                foreach(var map in mapContainers)
+                {
+                    if(!progressionContainer.LevelProgressions.Exists(a => a.Name == map.Key))
+                    {
+                        progressionContainer.LevelProgressions.Add(new LevelProgressionContainer()
+                        {
+                            Name = map.Key,
+                            BestTime = 0
+                        });
+                    }
+                }
             }
         }
 

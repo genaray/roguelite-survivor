@@ -2,6 +2,7 @@
 using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
 using RogueliteSurvivor.Components;
+using System;
 
 namespace RogueliteSurvivor.Systems
 {
@@ -29,18 +30,15 @@ namespace RogueliteSurvivor.Systems
             {
                 vel.Vector = Vector2.Normalize(target.TargetPosition - pos.XY);
 
-                if(!map.IsTileWalkable((int)(pos.XY.X + vel.Vector.X), (int)(pos.XY.Y + vel.Vector.Y)))
+                if (!map.IsTileWalkable((int)(pos.XY.X + vel.Vector.X), (int)(pos.XY.Y + vel.Vector.Y)))
                 {
-                    Vector2 clockwise = new Vector2(vel.Vector.Y, -vel.Vector.X);
-                    Vector2 counterClockwise = new Vector2(-vel.Vector.Y, vel.Vector.X);
-
-                    if(Vector2.Distance(pos.XY + clockwise, target.TargetPosition) > Vector2.Distance(pos.XY + counterClockwise, target.TargetPosition))
+                    if(map.IsTileWalkable((int)(pos.XY.X + vel.Vector.X), (int)(pos.XY.Y)))
                     {
-                        vel.Vector = counterClockwise;
+                        vel.Vector = Vector2.Normalize(vel.Vector * Vector2.UnitX);
                     }
-                    else
+                    else if (map.IsTileWalkable((int)(pos.XY.X), (int)(pos.XY.Y + vel.Vector.Y)))
                     {
-                        vel.Vector = clockwise;
+                        vel.Vector = Vector2.Normalize(vel.Vector * Vector2.UnitY);
                     }
                 }
 

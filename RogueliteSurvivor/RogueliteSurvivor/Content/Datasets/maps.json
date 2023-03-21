@@ -981,6 +981,791 @@
           ]
         }
       ]
+    },
+    {
+      "name": "The Underground",
+      "folder": "The Beginning",
+      "mapFilename": "The Underground.tmx",
+      "description": "Of course there's a hidden ladder behind the pulpit. At this rate you won't be making it back for happy hour...",
+      "tilesetImages": [ "Tileset", "CaveTops", "CaveWater" ],
+      "startingX": 80,
+      "startingY": 80,
+      "mapUnlockRequirement": {
+        "mapUnlockType": "MapBestTime",
+        "requirementText": "The Church",
+        "requirementAmount": 300
+      },
+      "spawnableAreas": [
+        {
+          "spawnMinX": 32,
+          "spawnMaxX": 768,
+          "spawnMinY": 32,
+          "spawnMaxY": 768
+        }
+      ],
+      "enemyWaves": [
+        {
+          "repeat": true,
+          "start": 2,
+          "maxEnemies": 50,
+          "enemies": [
+            {
+              "type": "SkitteringHand",
+              "weight": 4
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 2
+            },
+            {
+              "type": "VampireBat",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 30,
+          "maxEnemies": 10,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 4
+            },
+            {
+              "type": "VampireBat",
+              "weight": 2
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 60,
+          "maxEnemies": 30,
+          "enemies": [
+            {
+              "type": "SandGhoul",
+              "weight": 5
+            },
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 4
+            },
+            {
+              "type": "VampireBat",
+              "weight": 2
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 90,
+          "maxEnemies": 30,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 2
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 120,
+          "maxEnemies": 50,
+          "enemies": [
+            {
+              "type": "SandGhoul",
+              "weight": 1
+            },
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "MutilatedStumbler",
+              "weight": 1
+            },
+            {
+              "type": "CorpseWalker",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 2
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 149,
+          "maxEnemies": 50,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": false,
+          "start": 150,
+          "maxEnemies": 4,
+          "enemies": [
+            {
+              "type": "GraveRevenant",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 180,
+          "maxEnemies": 100,
+          "enemies": [
+            {
+              "type": "SandGhoul",
+              "weight": 1
+            },
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "MutilatedStumbler",
+              "weight": 1
+            },
+            {
+              "type": "CorpseWalker",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 4
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 2
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 210,
+          "maxEnemies": 30,
+          "enemies": [
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 4
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 2
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 240,
+          "maxEnemies": 30,
+          "enemies": [
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "UnwrappedLurcher",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 10
+            },
+            {
+              "type": "GraveRevenant",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 270,
+          "maxEnemies": 50,
+          "enemies": [
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "UnwrappedLurcher",
+              "weight": 1
+            },
+            {
+              "type": "RottingArcher",
+              "weight": 1
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 1
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 299,
+          "maxEnemies": 50,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 1
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": false,
+          "start": 300,
+          "maxEnemies": 2,
+          "enemies": [
+            {
+              "type": "TimewornPharoah",
+              "weight": 1
+            },
+            {
+              "type": "BloodLich",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 360,
+          "maxEnemies": 100,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "UnwrappedLurcher",
+              "weight": 1
+            },
+            {
+              "type": "RottingArcher",
+              "weight": 1
+            },
+            {
+              "type": "SandGhoul",
+              "weight": 1
+            },
+            {
+              "type": "MutilatedStumbler",
+              "weight": 1
+            },
+            {
+              "type": "CorpseWalker",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 1
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 1
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            },
+            {
+              "type": "VampireBat",
+              "weight": 1
+            },
+            {
+              "type": "GraveRevenant",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 390,
+          "maxEnemies": 150,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "UnwrappedLurcher",
+              "weight": 1
+            },
+            {
+              "type": "RottingArcher",
+              "weight": 1
+            },
+            {
+              "type": "SandGhoul",
+              "weight": 1
+            },
+            {
+              "type": "MutilatedStumbler",
+              "weight": 1
+            },
+            {
+              "type": "CorpseWalker",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 1
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 1
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            },
+            {
+              "type": "VampireBat",
+              "weight": 1
+            },
+            {
+              "type": "GraveRevenant",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 420,
+          "maxEnemies": 200,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "UnwrappedLurcher",
+              "weight": 1
+            },
+            {
+              "type": "RottingArcher",
+              "weight": 1
+            },
+            {
+              "type": "SandGhoul",
+              "weight": 1
+            },
+            {
+              "type": "MutilatedStumbler",
+              "weight": 1
+            },
+            {
+              "type": "CorpseWalker",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 1
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 1
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            },
+            {
+              "type": "VampireBat",
+              "weight": 1
+            },
+            {
+              "type": "GraveRevenant",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 450,
+          "maxEnemies": 250,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "UnwrappedLurcher",
+              "weight": 1
+            },
+            {
+              "type": "RottingArcher",
+              "weight": 1
+            },
+            {
+              "type": "SandGhoul",
+              "weight": 1
+            },
+            {
+              "type": "MutilatedStumbler",
+              "weight": 1
+            },
+            {
+              "type": "CorpseWalker",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 1
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 1
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            },
+            {
+              "type": "VampireBat",
+              "weight": 1
+            },
+            {
+              "type": "GraveRevenant",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 480,
+          "maxEnemies": 300,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "UnwrappedLurcher",
+              "weight": 1
+            },
+            {
+              "type": "RottingArcher",
+              "weight": 1
+            },
+            {
+              "type": "SandGhoul",
+              "weight": 1
+            },
+            {
+              "type": "MutilatedStumbler",
+              "weight": 1
+            },
+            {
+              "type": "CorpseWalker",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 1
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 1
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            },
+            {
+              "type": "VampireBat",
+              "weight": 1
+            },
+            {
+              "type": "GraveRevenant",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "repeat": true,
+          "start": 510,
+          "maxEnemies": 350,
+          "enemies": [
+            {
+              "type": "ToxicHound",
+              "weight": 1
+            },
+            {
+              "type": "CarcassFeeder",
+              "weight": 1
+            },
+            {
+              "type": "BoundCadaver",
+              "weight": 1
+            },
+            {
+              "type": "DustyShambler",
+              "weight": 1
+            },
+            {
+              "type": "UnwrappedLurcher",
+              "weight": 1
+            },
+            {
+              "type": "RottingArcher",
+              "weight": 1
+            },
+            {
+              "type": "SandGhoul",
+              "weight": 1
+            },
+            {
+              "type": "MutilatedStumbler",
+              "weight": 1
+            },
+            {
+              "type": "CorpseWalker",
+              "weight": 1
+            },
+            {
+              "type": "GhastlyBeholder",
+              "weight": 1
+            },
+            {
+              "type": "DecrepitBones",
+              "weight": 1
+            },
+            {
+              "type": "BonySoldier",
+              "weight": 1
+            },
+            {
+              "type": "AncientFighter",
+              "weight": 1
+            },
+            {
+              "type": "VampireBat",
+              "weight": 1
+            },
+            {
+              "type": "GraveRevenant",
+              "weight": 1
+            },
+            {
+              "type": "RoyalScarab",
+              "weight": 1
+            }
+          ]
+        }
+      ]
     }
   ]
 }
