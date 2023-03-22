@@ -188,13 +188,13 @@
       "damageEndDelay": 0,
       "aliveAnimation": {
         "firstFrame": 0,
-        "lastFrame": 59,
+        "lastFrame": 29,
         "playbackSpeed": 0.05,
         "numDirections": 1,
         "repeatable": true
       },
       "aliveSpriteSheet": {
-        "framesPerRow": 60,
+        "framesPerRow": 30,
         "framesPerColumn": 1,
         "rotation": "none",
         "scale": 1

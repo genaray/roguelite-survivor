@@ -38,74 +38,75 @@ namespace RogueliteSurvivor.Systems
 
             world.Query(in query, (ref MapInfo map) =>
             {
-                var tileLayer = map.Map.Layers.Where(x => x.type == TiledLayerType.TileLayer && x.@class == layer.ToString()).FirstOrDefault();
-
-                if (tileLayer != null)
+                foreach (var tileLayer in map.Map.Layers.Where(x => x.type == TiledLayerType.TileLayer && x.@class == layer.ToString()))
                 {
-                    int minY, maxY, minX, maxX;
-                    minY = (int)MathF.Max((playerPosition.Y - graphics.PreferredBackBufferHeight / 2) / 16f, 0);
-                    maxY = (int)MathF.Min((playerPosition.Y + graphics.PreferredBackBufferHeight / 2) / 16f, tileLayer.height);
-                    minX = (int)MathF.Max((playerPosition.X - graphics.PreferredBackBufferWidth / 2) / 16f, 0);
-                    maxX = (int)MathF.Min((playerPosition.X + graphics.PreferredBackBufferWidth / 2) / 16f, tileLayer.width);
-
-                    for (var y = minY; y < maxY; y++)
+                    if (tileLayer != null)
                     {
-                        for (var x = minX; x < maxX; x++)
+                        int minY, maxY, minX, maxX;
+                        minY = (int)MathF.Max((playerPosition.Y - graphics.PreferredBackBufferHeight / 2) / 16f, 0);
+                        maxY = (int)MathF.Min((playerPosition.Y + graphics.PreferredBackBufferHeight / 2) / 16f, tileLayer.height);
+                        minX = (int)MathF.Max((playerPosition.X - graphics.PreferredBackBufferWidth / 2) / 16f, 0);
+                        maxX = (int)MathF.Min((playerPosition.X + graphics.PreferredBackBufferWidth / 2) / 16f, tileLayer.width);
+
+                        for (var y = minY; y < maxY; y++)
                         {
-                            var index = (y * tileLayer.width) + x;
-                            var gid = tileLayer.data[index];
-                            var tileX = x * map.Map.TileWidth;
-                            var tileY = y * map.Map.TileHeight;
-
-                            if (gid == 0)
+                            for (var x = minX; x < maxX; x++)
                             {
-                                continue;
-                            }
+                                var index = (y * tileLayer.width) + x;
+                                var gid = tileLayer.data[index];
+                                var tileX = x * map.Map.TileWidth;
+                                var tileY = y * map.Map.TileHeight;
 
-                            var mapTileset = map.Map.GetTiledMapTileset(gid);
-
-                            var tileset = map.Tilesets[mapTileset.firstgid];
-                            
-                            if (!usedRects.ContainsKey(tileset))
-                            {
-                                usedRects.Add(tileset, new Dictionary<int, Rectangle>());
-                            }
-                            string path = tileset.Image.source.Replace(".png", "").ToLower();
-
-                            var tile = map.Map.GetTiledTile(mapTileset, tileset, gid);
-                            if (tile.animation != null && tile.animation.Length > 0)
-                            {
-                                Point xy = new Point(x, y);
-                                if (!animationTimers.ContainsKey(tileset))
+                                if (gid == 0)
                                 {
-                                    animationTimers.Add(tileset, new Dictionary<Point, TiledAnimation>());
-                                    animationTimers[tileset].Add(xy, new TiledAnimation() { Timer = tile.animation[0].duration / 1000f, CurrentAnimationId = 0 });
+                                    continue;
                                 }
-                                else if (!animationTimers[tileset].ContainsKey(xy))
+
+                                var mapTileset = map.Map.GetTiledMapTileset(gid);
+
+                                var tileset = map.Tilesets[mapTileset.firstgid];
+
+                                if (!usedRects.ContainsKey(tileset))
                                 {
-                                    animationTimers[tileset].Add(xy, new TiledAnimation() { Timer = tile.animation[0].duration / 1000f, CurrentAnimationId = 0 });
+                                    usedRects.Add(tileset, new Dictionary<int, Rectangle>());
                                 }
-                                else
+                                string path = tileset.Image.source.Replace(".png", "").ToLower();
+
+                                var tile = map.Map.GetTiledTile(mapTileset, tileset, gid);
+                                if (tile.animation != null && tile.animation.Length > 0)
                                 {
-                                    animationTimers[tileset][xy].Timer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-                                    if (animationTimers[tileset][xy].Timer <= 0)
+                                    Point xy = new Point(x, y);
+                                    if (!animationTimers.ContainsKey(tileset))
                                     {
-                                        animationTimers[tileset][xy].CurrentAnimationId = (animationTimers[tileset][xy].CurrentAnimationId + 1) % tile.animation.Length;
-                                        animationTimers[tileset][xy].Timer += tile.animation[animationTimers[tileset][xy].CurrentAnimationId].duration / 1000f;
+                                        animationTimers.Add(tileset, new Dictionary<Point, TiledAnimation>());
+                                        animationTimers[tileset].Add(xy, new TiledAnimation() { Timer = tile.animation[0].duration / 1000f, CurrentAnimationId = 0 });
                                     }
-                                    gid = tile.animation[animationTimers[tileset][xy].CurrentAnimationId].tileid + mapTileset.firstgid;
+                                    else if (!animationTimers[tileset].ContainsKey(xy))
+                                    {
+                                        animationTimers[tileset].Add(xy, new TiledAnimation() { Timer = tile.animation[0].duration / 1000f, CurrentAnimationId = 0 });
+                                    }
+                                    else
+                                    {
+                                        animationTimers[tileset][xy].Timer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                                        if (animationTimers[tileset][xy].Timer <= 0)
+                                        {
+                                            animationTimers[tileset][xy].CurrentAnimationId = (animationTimers[tileset][xy].CurrentAnimationId + 1) % tile.animation.Length;
+                                            animationTimers[tileset][xy].Timer += tile.animation[animationTimers[tileset][xy].CurrentAnimationId].duration / 1000f;
+                                        }
+                                        gid = tile.animation[animationTimers[tileset][xy].CurrentAnimationId].tileid + mapTileset.firstgid;
+                                    }
                                 }
-                            }
 
-                            if (!usedRects[tileset].ContainsKey(gid))
-                            {
-                                var rect = map.Map.GetSourceRect(mapTileset, tileset, gid);
-                                usedRects[tileset].Add(gid, new Rectangle(rect.x, rect.y, rect.width, rect.height));
-                            }
-                            
-                            var destination = new Rectangle(tileX, tileY, map.Map.TileWidth, map.Map.TileHeight);
+                                if (!usedRects[tileset].ContainsKey(gid))
+                                {
+                                    var rect = map.Map.GetSourceRect(mapTileset, tileset, gid);
+                                    usedRects[tileset].Add(gid, new Rectangle(rect.x, rect.y, rect.width, rect.height));
+                                }
 
-                            spriteBatch.Draw(textures[path], new Vector2(tileX + offset.X, tileY + offset.Y), usedRects[tileset][gid], Color.White, 0f, playerPosition, 1f, SpriteEffects.None, .05f * layer);
+                                var destination = new Rectangle(tileX, tileY, map.Map.TileWidth, map.Map.TileHeight);
+
+                                spriteBatch.Draw(textures[path], new Vector2(tileX + offset.X, tileY + offset.Y), usedRects[tileset][gid], Color.White, 0f, playerPosition, 1f, SpriteEffects.None, .05f * layer);
+                            }
                         }
                     }
                 }
