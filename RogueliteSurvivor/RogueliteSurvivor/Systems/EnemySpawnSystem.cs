@@ -13,6 +13,7 @@ using RogueliteSurvivor.Physics;
 using RogueliteSurvivor.Utils;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 
 namespace RogueliteSurvivor.Systems
@@ -117,7 +118,7 @@ namespace RogueliteSurvivor.Systems
                 y = random.Next(int.Max(0, (int)(playerPosition.Y - (2 * offset.Y))), int.Min(map.Map.Height * map.Map.TileHeight, (int)(playerPosition.Y + (2 * offset.Y))));
             } while (((x > (playerPosition.X - offset.X) && x < (playerPosition.X + offset.X)) 
                         && (y > (playerPosition.Y - offset.Y) && y < (playerPosition.Y + offset.Y)))
-                        || !map.IsTileWalkable(x, y));
+                        || !map.IsTilePassable(x, y));
 
             return new System.Numerics.Vector2(x, y);
         }
@@ -198,6 +199,8 @@ namespace RogueliteSurvivor.Systems
                             createPickupForEnemy(),
                             new Experience(container.Experience)
                         );
+
+                TraitsHelper.AddTraitsToEntity(entity, container.Traits);
             }
         }
 

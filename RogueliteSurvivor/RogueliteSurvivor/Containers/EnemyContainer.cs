@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.Constants;
+using RogueliteSurvivor.Helpers;
+using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Containers
 {
@@ -14,6 +16,7 @@ namespace RogueliteSurvivor.Containers
         public Spells Spell { get; set; }
         public int Width { get; set; }
         public int Experience { get; set; }
+        public List<string> Traits { get; set; }
         public SpriteSheetContainer SpriteSheet { get; set; }
         public AnimationContainer Animation { get; set; }
 
@@ -35,6 +38,7 @@ namespace RogueliteSurvivor.Containers
                 Spell = ((string)enemy["spell"]).GetSpellFromString(),
                 Width = (int)enemy["width"],
                 Experience = (int)enemy["experience"],
+                Traits = TraitsHelper.GetTraits(enemy["traits"]),
                 Animation = AnimationContainer.ToAnimationContainer(enemy["animation"]),
                 SpriteSheet = SpriteSheetContainer.ToSpriteSheetContainer(enemy["spriteSheet"])
             };

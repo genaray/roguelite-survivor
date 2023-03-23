@@ -107,7 +107,7 @@ namespace RogueliteSurvivor.Systems
 
                     physicsWorld.QueryAABB(out Fixture[] touched, aabb);
 
-                    foreach(Fixture fixture in touched )
+                    foreach(Fixture fixture in touched)
                     {
                         if (fixture != null && fixture.Body.UserData != null)
                         {

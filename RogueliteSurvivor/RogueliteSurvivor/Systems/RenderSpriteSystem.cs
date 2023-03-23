@@ -15,11 +15,15 @@ namespace RogueliteSurvivor.Systems
 
         QueryDescription auraQuery = new QueryDescription()
                                 .WithAll<Aura, EntityStatus, Position, SpriteSheet, Animation>();
+        QueryDescription groundSpritesQuery = new QueryDescription()
+                                .WithAll<EntityStatus, Position, SpriteSheet, Animation>()
+                                .WithNone<Aura, CanFly>();
+        QueryDescription flyingSpritesQuery = new QueryDescription()
+                                .WithAll<EntityStatus, Position, SpriteSheet, Animation, CanFly>()
+                                .WithNone<Aura>();
 
         public RenderSpriteSystem(World world, GraphicsDeviceManager graphics)
-            : base(world, new QueryDescription()
-                                .WithAll<EntityStatus, Position, SpriteSheet, Animation>()
-                                .WithNone<Aura>())
+            : base(world, new QueryDescription())
         {
             this.graphics = graphics;
         }
@@ -42,7 +46,16 @@ namespace RogueliteSurvivor.Systems
             }
             else if (layer == 4)
             {
-                world.Query(in query, (ref EntityStatus entityStatus, ref Position pos, ref Animation anim, ref SpriteSheet sprite) =>
+                world.Query(in groundSpritesQuery, (ref EntityStatus entityStatus, ref Position pos, ref Animation anim, ref SpriteSheet sprite) =>
+                {
+                    if (entityStatus.State != State.Dead)
+                    {
+                        Vector2 position = pos.XY - playerPosition;
+                        renderEntity(spriteBatch, textures, sprite, anim, position, offset);
+                    }
+                });
+
+                world.Query(in flyingSpritesQuery, (ref EntityStatus entityStatus, ref Position pos, ref Animation anim, ref SpriteSheet sprite) =>
                 {
                     if (entityStatus.State != State.Dead)
                     {

@@ -723,6 +723,18 @@
 /processorParam:TextureFormat=Color
 /build:Player/FireWizard.png
 
+#begin Player/FlyingWizard.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Player/FlyingWizard.png
+
 #begin Player/IceWizard.png
 /importer:TextureImporter
 /processor:TextureProcessor

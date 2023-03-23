@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Helpers;
 using RogueliteSurvivor.Utils;
 using System.Collections.Generic;
 using System.IO;
@@ -56,6 +57,7 @@ namespace RogueliteSurvivor.Scenes
                     { "FireWizard", Content.Load<Texture2D>(Path.Combine("Player", "FireWizard")) },
                     { "IceWizard", Content.Load<Texture2D>(Path.Combine("Player", "IceWizard")) },
                     { "LightningWizard", Content.Load<Texture2D>(Path.Combine("Player", "LightningWizard")) },
+                    { "FlyingWizard", Content.Load<Texture2D>(Path.Combine("Player", "FlyingWizard")) },
                 };
 
                 foreach(var map in mapContainers)
@@ -80,7 +82,7 @@ namespace RogueliteSurvivor.Scenes
             }
 
             state = MainMenuState.MainMenu;
-            selectedPlayer = "Fire";
+            selectedPlayer = playerContainers.First().Key;
             selectedMap = mapContainers.First().Name;
             Loaded = true;
         }
@@ -152,7 +154,7 @@ namespace RogueliteSurvivor.Scenes
                     }
                     else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
                     {
-                        selectedButton = int.Min(selectedButton + 1, 3);
+                        selectedButton = int.Min(selectedButton + 1, playerContainers.Count);
                         setSelectedPlayer();
                         readyForInput = false;
                     }
@@ -350,6 +352,18 @@ namespace RogueliteSurvivor.Scenes
                     0f
                 );
 
+                _spriteBatch.Draw(
+                    textures["FlyingWizard"],
+                    new Vector2(GetWidthOffset(10.66f) + 72, GetHeightOffset(2)),
+                    new Rectangle(16, 0, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
                 int counter = 0;
                 var playerContainer = playerContainers[selectedPlayer];
                 foreach (var paragraph in playerContainer.Description)
@@ -418,37 +432,68 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Spell Damage: ", (playerContainer.SpellDamage + 1f).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 12),
+                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 48),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Spell Effect Chance: ", (playerContainer.SpellEffectChance + 1f).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 24),
+                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 12),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Attack Speed: ", (playerContainer.AttackSpeed + 1f).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 36),
+                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 24),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Pierce: ", playerContainer.Pierce),
-                    new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter + 12),
+                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 36),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Area of Effect: ", (playerContainer.AreaOfEffect + 1f).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter + 24),
+                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 48),
                     Color.White
                 );
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    "Special Traits: ",
+                    new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter),
+                    Color.White
+                );
+
+                if (playerContainer.Traits.Any())
+                {
+                    int offsetY = 12;
+                    foreach(var trait in playerContainer.Traits)
+                    {
+                        _spriteBatch.DrawString(
+                            fonts["FontSmall"],
+                            trait.ReadableTraitName(),
+                            new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter + offsetY),
+                            Color.White
+                        );
+                        offsetY += 12;
+                    }
+                }
+                else
+                {
+                    _spriteBatch.DrawString(
+                        fonts["FontSmall"],
+                        "None",
+                        new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter + 12),
+                        Color.White
+                    );
+                }
 
 
                 _spriteBatch.DrawString(
@@ -721,18 +766,7 @@ namespace RogueliteSurvivor.Scenes
 
         private void setSelectedPlayer()
         {
-            switch (selectedButton)
-            {
-                case 1:
-                    selectedPlayer = "Fire";
-                    break;
-                case 2:
-                    selectedPlayer = "Ice";
-                    break;
-                case 3:
-                    selectedPlayer = "Lightning";
-                    break;
-            }
+            selectedPlayer = playerContainers.ToList()[selectedButton - 1].Key;
         }
 
         private void setUnlockedMaps()

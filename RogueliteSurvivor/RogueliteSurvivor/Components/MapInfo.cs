@@ -71,7 +71,7 @@ namespace RogueliteSurvivor.Components
             }
         }
 
-        public bool IsTileWalkable(int x, int y)
+        public bool IsTilePassable(int x, int y)
         {
             var tileLayers = Map.Layers.Where(x => x.type == TiledLayerType.TileLayer);
             bool passable = spawnableAreas.Exists(a => a.SpawnMinX <= x && a.SpawnMaxX >= x && a.SpawnMinY <= y && a.SpawnMaxY >= y);

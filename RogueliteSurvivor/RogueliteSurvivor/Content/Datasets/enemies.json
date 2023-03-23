@@ -147,6 +147,9 @@
       "spell": "EnemyMelee",
       "width": 14,
       "experience": 1,
+      "traits": [
+        "CanFly"
+      ],
       "animation": {
         "firstFrame": 0,
         "lastFrame": 3,
@@ -170,6 +173,9 @@
       "spell": "EnemyMelee",
       "width": 14,
       "experience": 4,
+      "traits": [
+        "CanFly"
+      ],
       "animation": {
         "firstFrame": 0,
         "lastFrame": 3,
@@ -193,6 +199,9 @@
       "spell": "EnemyMelee",
       "width": 14,
       "experience": 30,
+      "traits": [
+        "CanFly"
+      ],
       "animation": {
         "firstFrame": 0,
         "lastFrame": 3,

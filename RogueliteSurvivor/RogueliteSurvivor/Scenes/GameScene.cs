@@ -17,6 +17,7 @@ using RogueliteSurvivor.Systems;
 using RogueliteSurvivor.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
@@ -288,6 +289,8 @@ namespace RogueliteSurvivor.Scenes
                 spell.Child = aura;
                 player.Set(spell);
             }
+            
+            TraitsHelper.AddTraitsToEntity(player, playerContainer.Traits);
 
             LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, LevelUpType.None, spellContainers);
         }

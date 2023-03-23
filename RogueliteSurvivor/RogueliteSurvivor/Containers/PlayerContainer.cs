@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.Constants;
+using RogueliteSurvivor.Helpers;
 using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Containers
@@ -19,6 +20,7 @@ namespace RogueliteSurvivor.Containers
         public float SpellEffectChance { get; set; }
         public float AreaOfEffect { get; set; }
         public int Pierce { get; set; }
+        public List<string> Traits { get; set; }
         public AnimationContainer Animation { get; set; }
         public SpriteSheetContainer SpriteSheet { get; set; }
         public static string GetPlayerContainerName(JToken player)
@@ -41,6 +43,7 @@ namespace RogueliteSurvivor.Containers
                 SpellEffectChance = (float)player["spellEffectChance"],
                 AreaOfEffect = (float)player["areaOfEffect"],
                 Pierce = (int)player["pierce"],
+                Traits = TraitsHelper.GetTraits(player["traits"]),
                 Animation = AnimationContainer.ToAnimationContainer(player["animation"]),
                 SpriteSheet = SpriteSheetContainer.ToSpriteSheetContainer(player["spriteSheet"])
             };

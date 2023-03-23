@@ -18,7 +18,7 @@ namespace RogueliteSurvivor.Physics
 
             if (a.Has<Map>() || b.Has<Map>())
             {
-                if (a.Has<Projectile>() || b.Has<Projectile>())
+                if (a.Has<Projectile>() || b.Has<Projectile>() || a.Has<CanFly>() || b.Has<CanFly>())
                 {
                     Vector2 position;
                     MapInfo map;
@@ -43,7 +43,8 @@ namespace RogueliteSurvivor.Physics
             else if (a.Has<Enemy>() 
                     && b.Has<Enemy>()
                     && a.Get<EntityStatus>().State == State.Alive
-                    && b.Get<EntityStatus>().State == State.Alive)
+                    && b.Get<EntityStatus>().State == State.Alive
+                    &&((a.Has<CanFly>() && b.Has<CanFly>()) || (!a.Has<CanFly>() && !b.Has<CanFly>())) )
             {
                 retVal = true;
             }

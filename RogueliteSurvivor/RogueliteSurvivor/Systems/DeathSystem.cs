@@ -56,24 +56,11 @@ namespace RogueliteSurvivor.Systems
                 }
             });
 
-            world.Query(in enemyQuery, (in Entity entity, ref EntityStatus entityStatus, ref SpriteSheet spriteSheet, ref Animation animation) =>
+            world.Query(in enemyQuery, (ref EntityStatus entityStatus, ref SpriteSheet spriteSheet, ref Animation animation) =>
             {
                 if (entityStatus.State == State.ReadyToDie)
                 {
                     entityStatus.State = State.Dying;
-
-                    if (entity.Has<Burn>())
-                    {
-                        entity.Remove<Burn>();
-                    }
-                    if (entity.Has<Slow>())
-                    {
-                        entity.Remove<Slow>();
-                    }
-                    if (entity.Has<Shock>())
-                    {
-                        entity.Remove<Shock>();
-                    }
 
                     if (spriteSheet.Width == 16)
                     {
@@ -113,7 +100,7 @@ namespace RogueliteSurvivor.Systems
                 if(entityStatus.State != State.Alive)
                 {
                     physicsWorld.DestroyBody(body);
-                    entity.Remove<Body>();
+                    entity.Remove<Body, Burn, Slow, Shock>();
                 }
             });
         }
