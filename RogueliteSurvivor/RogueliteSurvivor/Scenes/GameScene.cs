@@ -120,6 +120,8 @@ namespace RogueliteSurvivor.Scenes
                 { "LightningStrike", Content.Load<Texture2D>(Path.Combine("Spells", "lightning-strike")) },
                 { "FireAura", Content.Load<Texture2D>(Path.Combine("Spells", "fire-aura")) },
                 { "IceAura", Content.Load<Texture2D>(Path.Combine("Spells", "ice-aura")) },
+                { "LightningAura", Content.Load<Texture2D>(Path.Combine("Spells", "lightning-aura")) },
+                { "MagicShot", Content.Load<Texture2D>(Path.Combine("Spells", "magic-shot")) },
 
                 { "StatBar", Content.Load<Texture2D>(Path.Combine("Hud", "StatBar")) },
                 { "HealthBar", Content.Load<Texture2D>(Path.Combine("Hud", "HealthBar")) },
@@ -148,6 +150,7 @@ namespace RogueliteSurvivor.Scenes
                 { "IceShardHit", Content.Load<Texture2D>(Path.Combine("Effects", "ice-shard-hit")) },
                 { "LightningBlastHit", Content.Load<Texture2D>(Path.Combine("Effects", "lightning-blast-hit")) },
                 { "FireballHit", Content.Load<Texture2D>(Path.Combine("Effects", "fireball-hit")) },
+                { "MagicShotHit", Content.Load<Texture2D>(Path.Combine("Effects", "magic-shot-hit")) },
             };
 
             fonts = new Dictionary<string, SpriteFont>()

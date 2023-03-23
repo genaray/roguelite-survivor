@@ -115,7 +115,7 @@ namespace RogueliteSurvivor.Systems
                             if (touchedEntity.Has<Enemy>()
                                 && Vector2.Distance(touchedEntity.Get<Position>().XY, entity.Get<Position>().XY) <= aura.BaseRadius * aura.RadiusMultiplier)
                             {
-                                setEnemyHealthAndState(touchedEntity, touchedEntity.Get<EntityStatus>(), spell.Child.Get<Damage>(), spell.Child.Get<Owner>());
+                                setEnemyHealthAndState(touchedEntity, touchedEntity.Get<EntityStatus>(), spell.Child.Get<Damage>(), spell.Child.Get<Owner>(), spell.CurrentEffectChance);
                             }
                         }
                     }
@@ -125,7 +125,7 @@ namespace RogueliteSurvivor.Systems
             return spell.Cooldown;
         }
 
-        private void setEnemyHealthAndState(Entity entity, EntityStatus entityStatus, Damage damage, Owner owner)
+        private void setEnemyHealthAndState(Entity entity, EntityStatus entityStatus, Damage damage, Owner owner, float spellEffectChance)
         {
             if (entityStatus.State == State.Alive)
             {
@@ -162,9 +162,16 @@ namespace RogueliteSurvivor.Systems
                     anim.Overlay = Color.Red;
 
                     entity.Set(health, anim);
-                    if (damage.SpellEffect != SpellEffects.None)
+                    if (damage.SpellEffect != SpellEffects.None && spellEffectChance > 0)
                     {
-                        switch (damage.SpellEffect)
+                        SpellEffects effect = SpellEffects.None;
+                        
+                        if (random.Next(1000) < (spellEffectChance * 1000))
+                        {
+                            effect = damage.SpellEffect;
+                        }
+                        
+                        switch (effect)
                         {
                             case SpellEffects.Burn:
                                 if (!entity.Has<Burn>())

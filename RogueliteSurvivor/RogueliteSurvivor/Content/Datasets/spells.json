@@ -75,8 +75,8 @@
       "spell": "FireAura",
       "effect": "Burn",
       "type": "Aura",
-      "baseEffectChance": 0.1,
-      "currentEffectChance": 0.1,
+      "baseEffectChance": 0.2,
+      "currentEffectChance": 0.2,
       "baseDamage": 3,
       "currentDamage": 3,
       "baseProjectileSpeed": 0,
@@ -176,8 +176,8 @@
       "spell": "IceAura",
       "effect": "Slow",
       "type": "Aura",
-      "baseEffectChance": 0.1,
-      "currentEffectChance": 0.1,
+      "baseEffectChance": 0.2,
+      "currentEffectChance": 0.2,
       "baseDamage": 1,
       "currentDamage": 1,
       "baseProjectileSpeed": 0,
@@ -272,6 +272,77 @@
       },
       "hitAnimation": null,
       "hitSpriteSheet": null
+    },
+    {
+      "spell": "LightningAura",
+      "effect": "Shock",
+      "type": "Aura",
+      "baseEffectChance": 0.2,
+      "currentEffectChance": 0.2,
+      "baseDamage": 1,
+      "currentDamage": 1,
+      "baseProjectileSpeed": 0,
+      "currentProjectileSpeed": 0,
+      "baseAttacksPerSecond": 12,
+      "currentAttacksPerSecond": 12,
+      "damageStartDelay": 0,
+      "damageEndDelay": 0,
+      "aliveAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 59,
+        "playbackSpeed": 0.05,
+        "numDirections": 1,
+        "repeatable": true
+      },
+      "aliveSpriteSheet": {
+        "framesPerRow": 60,
+        "framesPerColumn": 1,
+        "rotation": "none",
+        "scale": 1
+      },
+      "hitAnimation": null,
+      "hitSpriteSheet": null
+    },
+    {
+      "spell": "MagicShot",
+      "effect": "None",
+      "type": "Projectile",
+      "baseEffectChance": 0,
+      "currentEffectChance": 0,
+      "baseDamage": 8,
+      "currentDamage": 8,
+      "baseProjectileSpeed": 300,
+      "currentProjectileSpeed": 300,
+      "baseAttacksPerSecond": 2.5,
+      "currentAttacksPerSecond": 2.5,
+      "damageStartDelay": 0,
+      "damageEndDelay": 0,
+      "aliveAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 59,
+        "playbackSpeed": 0.1,
+        "numDirections": 1,
+        "repeatable": true
+      },
+      "aliveSpriteSheet": {
+        "framesPerRow": 60,
+        "framesPerColumn": 1,
+        "rotation": "target",
+        "scale": 1
+      },
+      "hitAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 19,
+        "playbackSpeed": 0.01,
+        "numDirections": 1,
+        "repeatable": false
+      },
+      "hitSpriteSheet": {
+        "framesPerRow": 20,
+        "framesPerColumn": 1,
+        "rotation": "equal",
+        "scale": 0.5
+      }
     },
     {
       "spell": "EnemyMelee",

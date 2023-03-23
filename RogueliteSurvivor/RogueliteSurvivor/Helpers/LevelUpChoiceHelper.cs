@@ -50,6 +50,10 @@ namespace RogueliteSurvivor.Helpers
                     return new Rectangle(128 + xOffset, 256, 64, 64);
                 case LevelUpType.LightningStrike:
                     return new Rectangle(128 + xOffset, 320, 64, 64);
+                case LevelUpType.LightningAura:
+                    return new Rectangle(128 + xOffset, 512, 64, 64);
+                case LevelUpType.MagicShot:
+                    return new Rectangle(xOffset, 512, 64, 64);
                 default:
                     return new Rectangle();
             }
@@ -132,6 +136,10 @@ namespace RogueliteSurvivor.Helpers
                     return LevelUpType.LightningBlast;
                 case "LightningStrike":
                     return LevelUpType.LightningStrike;
+                case "LightningAura":
+                    return LevelUpType.LightningAura;
+                case "MagicShot":
+                    return LevelUpType.MagicShot;
                 default:
                     return LevelUpType.None;
             }
@@ -179,6 +187,8 @@ namespace RogueliteSurvivor.Helpers
                 case LevelUpType.IceAura:
                 case LevelUpType.LightningBlast:
                 case LevelUpType.LightningStrike:
+                case LevelUpType.LightningAura:
+                case LevelUpType.MagicShot:
                     var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
                     ISpell spell = null;
                     if (spells.Count == 1)
@@ -273,17 +283,17 @@ namespace RogueliteSurvivor.Helpers
 
             if (player.TryGet(out Spell1 spell1))
             {
-                spell1.CurrentEffectChance = spellEffectChance.CurrentSpellEffectChance * spell1.BaseEffectChance;
+                spell1.CurrentEffectChance = MathF.Min(1f, spellEffectChance.CurrentSpellEffectChance * spell1.BaseEffectChance);
                 player.Set(spell1);
             }
             if (player.TryGet(out Spell2 spell2))
             {
-                spell2.CurrentEffectChance = spellEffectChance.CurrentSpellEffectChance * spell2.BaseEffectChance;
+                spell2.CurrentEffectChance = MathF.Min(1f, spellEffectChance.CurrentSpellEffectChance * spell2.BaseEffectChance);
                 player.Set(spell2);
             }
             if (player.TryGet(out Spell3 spell3))
             {
-                spell3.CurrentEffectChance = spellEffectChance.CurrentSpellEffectChance * spell3.BaseEffectChance;
+                spell3.CurrentEffectChance = MathF.Min(1f, spellEffectChance.CurrentSpellEffectChance * spell3.BaseEffectChance);
                 player.Set(spell3);
             }
 

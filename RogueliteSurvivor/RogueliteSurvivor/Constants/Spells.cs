@@ -17,6 +17,8 @@ namespace RogueliteSurvivor.Constants
         IceAura,
         LightningBlast,
         LightningStrike,
+        LightningAura,
+        MagicShot,
         EnemyMelee,
     }
 
@@ -34,6 +36,8 @@ namespace RogueliteSurvivor.Constants
                 Spells.IceAura,
                 Spells.LightningBlast,
                 Spells.LightningStrike,
+                Spells.LightningAura, 
+                Spells.MagicShot,
             };
         }
 
@@ -59,6 +63,10 @@ namespace RogueliteSurvivor.Constants
                     return Spells.LightningBlast;
                 case "LightningStrike":
                     return Spells.LightningStrike;
+                case "LightningAura":
+                    return Spells.LightningAura;
+                case "MagicShot":
+                    return Spells.MagicShot;
                 case "EnemyMelee":
                     return Spells.EnemyMelee;
                 default:
@@ -86,6 +94,10 @@ namespace RogueliteSurvivor.Constants
                     return "Lightning Blast";
                 case Spells.LightningStrike:
                     return "Lightning Strike";
+                case Spells.LightningAura:
+                    return "Lightning Aura";
+                case Spells.MagicShot:
+                    return "Magic Shot";
                 default:
                     return "None";
             }

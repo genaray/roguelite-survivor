@@ -124,6 +124,18 @@
 /processorParam:TextureFormat=Color
 /build:Effects/lightning-blast-hit.png
 
+#begin Effects/magic-shot-hit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Effects/magic-shot-hit.png
+
 #begin Effects/mini-blood-1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -831,6 +843,18 @@
 /processorParam:TextureFormat=Color
 /build:Spells/ice-spikes.png
 
+#begin Spells/lightning-aura.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/lightning-aura.png
+
 #begin Spells/lightning-blast.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -854,6 +878,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Spells/lightning-strike.png
+
+#begin Spells/magic-shot.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/magic-shot.png
 
 #begin UI/level-up-buttons.png
 /importer:TextureImporter
