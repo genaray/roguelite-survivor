@@ -4,6 +4,9 @@ using Box2D.NetStandard.Dynamics.Bodies;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
 using RogueliteSurvivor.Extensions;
+using Roy_T.AStar.Grids;
+using Roy_T.AStar.Paths;
+using Roy_T.AStar.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +15,19 @@ using TiledCS;
 
 namespace RogueliteSurvivor.Components
 {
+    public enum MovementType
+    {
+        Ground,
+        Air,
+    }
     public class MapInfo
     {
         public TiledMap Map { get; set; }
         public Dictionary<int, TiledTileset> Tilesets { get; set; }
         private List<SpawnableAreaContainer> spawnableAreas;
+
+        private Dictionary<MovementType, Grid> grids;
+        private PathFinder pathFinder;
 
         public MapInfo(string mapPath, string tilesetPath, Box2D.NetStandard.Dynamics.World.World physicsWorld, Entity mapEntity, List<SpawnableAreaContainer> spawnableAreas)
         {
@@ -26,13 +37,25 @@ namespace RogueliteSurvivor.Components
 
             var tileLayers = Map.Layers.Where(x => x.type == TiledLayerType.TileLayer);
 
-            
+            var gridSize = new GridSize(Map.Width, Map.Height);
+            var cellSize = new Size(Distance.FromMeters(1), Distance.FromMeters(1));
+            var traversalVelocity = Roy_T.AStar.Primitives.Velocity.FromKilometersPerHour(4.5f);
+
+            grids = new Dictionary<MovementType, Grid>
+            {
+                { MovementType.Ground, Grid.CreateGridWithLateralAndDiagonalConnections(gridSize, cellSize, traversalVelocity) },
+                { MovementType.Air, Grid.CreateGridWithLateralAndDiagonalConnections(gridSize, cellSize, traversalVelocity) }
+            };
+
+            pathFinder = new PathFinder();
+
             for (int y = 0; y < Map.Width; y++)
             {
                 for (int x = 0; x < Map.Width; x++)
                 {
                     bool passable = true;
                     string collisionShape = "SQ";
+                    bool fullHeight = false;
                     foreach (var layer in tileLayers)
                     {
                         if (layer.properties[0].value == "true")
@@ -43,12 +66,21 @@ namespace RogueliteSurvivor.Components
                             {
                                 passable = !(tile.properties.Where(a => a.name == "Passable").First().value == "false");
                                 collisionShape = tile.properties.Where(a => a.name == "Collision Shape").First().value;
+                                fullHeight = (tile.properties.Where(a => a.name == "Passable").First().value == "true");
                             }
                         }
                     }
 
                     if(!passable)
                     {
+                        grids[MovementType.Ground].DisconnectNode(new GridPosition(x, y));
+                        grids[MovementType.Ground].RemoveDiagonalConnectionsIntersectingWithNode(new GridPosition(x, y));
+                        if (fullHeight)
+                        {
+                            grids[MovementType.Air].DisconnectNode(new GridPosition(x, y));
+                            grids[MovementType.Air].RemoveDiagonalConnectionsIntersectingWithNode(new GridPosition(x, y));
+                        }
+
                         int tileX = x * Map.TileWidth + Map.TileWidth / 2;
                         int tileY = y * Map.TileHeight + Map.TileHeight / 2;
 
@@ -113,6 +145,25 @@ namespace RogueliteSurvivor.Components
                     }
                 }
             return fullHeight;
+        }
+
+        public Microsoft.Xna.Framework.Vector2 GetNextPathStep(Microsoft.Xna.Framework.Vector2 start, Microsoft.Xna.Framework.Vector2 destination, MovementType movementType = MovementType.Ground)
+        {
+            var path = pathFinder.FindPath(
+                new GridPosition((int)(start.X / Map.TileWidth), (int)(start.Y / Map.TileHeight))
+                , new GridPosition((int)(destination.X / Map.TileWidth), (int)(destination.Y / Map.TileHeight))
+                , grids[movementType]
+                );
+
+            if (path != null && path.Edges.Count > 0) 
+            {
+                var point = path.Edges.First().End;
+                return new Microsoft.Xna.Framework.Vector2(point.Position.X * Map.TileWidth + (Map.TileWidth / 2), point.Position.Y * Map.TileHeight + (Map.TileHeight / 2));
+            }
+            else
+            {
+                return destination;
+            }
         }
 
         private TiledTile getTile(TiledLayer layer, int x, int y)

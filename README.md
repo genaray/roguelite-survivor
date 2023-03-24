@@ -12,6 +12,8 @@ A simple Vampire Survivors clone
   - Library for interfacing with maps built in Tiled
 - Box2D.NetStandard [https://github.com/codingben/box2d-netstandard](https://github.com/codingben/box2d-netstandard)
   - Physics library
+- Roy-T.AStar [https://github.com/roy-t/AStar](https://github.com/roy-t/AStar)
+  - A\* pathfinding library
 
 ## Tools
 

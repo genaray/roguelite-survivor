@@ -24,14 +24,6 @@ namespace RogueliteSurvivor.Systems
                     target.TargetPosition = findTarget(enemyQuery, pos.XY);
                 }
             });
-
-            world.Query(in enemyQuery, (ref EntityStatus status, ref Position pos, ref Target target) =>
-            {
-                if (status.State == Constants.State.Alive)
-                {
-                    target.TargetPosition = findTarget(playerQuery, pos.XY);
-                }
-            });
         }
 
         private Vector2 findTarget(QueryDescription targetQuery, Vector2 sourcePosition)

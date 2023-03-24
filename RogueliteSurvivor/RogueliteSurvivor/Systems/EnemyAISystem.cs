@@ -10,10 +10,16 @@ namespace RogueliteSurvivor.Systems
     {
         QueryDescription mapQuery = new QueryDescription()
                                             .WithAll<MapInfo>();
+        QueryDescription playerQuery = new QueryDescription()
+                                            .WithAll<Player>();
+
         public EnemyAISystem(World world)
             : base(world, new QueryDescription()
                                 .WithAll<Enemy, Position, Velocity, Speed, Target>())
         { }
+
+        int modulus = 0;
+        int maxModulus = 30;
 
         public void Update(GameTime gameTime, float totalElapsedTime, float scaleFactor)
         {
@@ -26,43 +32,36 @@ namespace RogueliteSurvivor.Systems
                 }
             });
 
-            world.Query(in query, (in Entity entity, ref Position pos, ref Velocity vel, ref Speed sp, ref Target target) =>
+            world.Query(in query, (in Entity entity, ref EntityStatus status, ref Position pos, ref Velocity vel, ref Speed sp, ref Target target) =>
             {
-                vel.Vector = Vector2.Normalize(target.TargetPosition - pos.XY);
-
-                if (!map.IsTilePassable((int)(pos.XY.X + vel.Vector.X), (int)(pos.XY.Y + vel.Vector.Y)))
+                if ( ((entity.Id % maxModulus) - modulus) == 0 
+                    && status.State == Constants.State.Alive)
                 {
-                    if (entity.Has<CanFly>())
+                    target.TargetPosition = findTarget(playerQuery, pos.XY);
+
+                    Vector2 destination = map.GetNextPathStep(pos.XY, target.TargetPosition, entity.Has<CanFly>() ? MovementType.Air : MovementType.Ground);
+                    vel.Vector = Vector2.Normalize(destination - pos.XY);
+                    vel.Vector *= sp.speed;
+                }
+            });
+            modulus = (modulus + 1) % maxModulus;
+        }
+
+        private Vector2 findTarget(QueryDescription targetQuery, Vector2 sourcePosition)
+        {
+            Vector2 targetPos = new Vector2(9999, 9999);
+            world.Query(in targetQuery, (ref EntityStatus status, ref Position otherPos) =>
+            {
+                if (status.State == Constants.State.Alive)
+                {
+                    if (Vector2.Distance(sourcePosition, otherPos.XY) < Vector2.Distance(sourcePosition, targetPos))
                     {
-                        if (map.IsTileFullHeight((int)(pos.XY.X + vel.Vector.X), (int)(pos.XY.Y + vel.Vector.Y)))
-                        {
-                            if (map.IsTilePassable((int)(pos.XY.X + vel.Vector.X), (int)(pos.XY.Y))
-                                || !map.IsTileFullHeight((int)(pos.XY.X + vel.Vector.X), (int)(pos.XY.Y)))
-                            {
-                                vel.Vector = Vector2.Normalize(vel.Vector * Vector2.UnitX);
-                            }
-                            else if (map.IsTilePassable((int)(pos.XY.X), (int)(pos.XY.Y + vel.Vector.Y))
-                                || !map.IsTileFullHeight((int)(pos.XY.X), (int)(pos.XY.Y + vel.Vector.Y)))
-                            {
-                                vel.Vector = Vector2.Normalize(vel.Vector * Vector2.UnitY);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (map.IsTilePassable((int)(pos.XY.X + vel.Vector.X), (int)(pos.XY.Y)))
-                        {
-                            vel.Vector = Vector2.Normalize(vel.Vector * Vector2.UnitX);
-                        }
-                        else if (map.IsTilePassable((int)(pos.XY.X), (int)(pos.XY.Y + vel.Vector.Y)))
-                        {
-                            vel.Vector = Vector2.Normalize(vel.Vector * Vector2.UnitY);
-                        }
+                        targetPos = otherPos.XY;
                     }
                 }
-
-                vel.Vector *= sp.speed;
             });
+
+            return targetPos;
         }
     }
 }
