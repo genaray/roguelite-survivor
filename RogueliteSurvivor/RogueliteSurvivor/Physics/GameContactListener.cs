@@ -29,7 +29,7 @@ namespace RogueliteSurvivor.Physics
                 Entity b = (Entity)contact.GetFixtureB().Body.UserData;
 
                 
-                if ((a.Has<Player>() && b.Has<Enemy>()) || (b.Has<Player>() && a.Has<Enemy>()))
+                if ((a.Has<Player>() && (b.Has<Enemy>() || b.Has<EnemyProjectile>())) || (b.Has<Player>() && (a.Has<Enemy>() || a.Has<EnemyProjectile>())))
                 {
                     damagePlayer(a, b);
                 }
@@ -201,41 +201,62 @@ namespace RogueliteSurvivor.Physics
         {
             if (a.Has<Player>())
             {
-                setPlayerHealthAndState(a, b, a.Get<EntityStatus>());
+                if (b.Has<Enemy>())
+                {
+                    setPlayerHealthAndStateFromMelee(a, b, a.Get<EntityStatus>());
+                }
+                else
+                {
+                    setPlayerHealthAndState(a, b, a.Get<EntityStatus>());
+                    setEntityDead(b, b.Get<EntityStatus>());
+                }
             }
             else
             {
-                setPlayerHealthAndState(b, a, b.Get<EntityStatus>());
+                if (a.Has<Enemy>())
+                {
+                    setPlayerHealthAndStateFromMelee(b, a, b.Get<EntityStatus>());
+                }
+                else
+                {
+                    setPlayerHealthAndState(b, a, b.Get<EntityStatus>());
+                    setEntityDead(a, a.Get<EntityStatus>());
+                }
             }
         }
 
-        private void setPlayerHealthAndState(Entity entity, Entity other, EntityStatus entityStatus)
+        private void setPlayerHealthAndStateFromMelee(Entity entity, Entity other, EntityStatus entityStatus)
         {
             var attackSpeed = other.Get<Spell1>();
             if (attackSpeed.Cooldown > attackSpeed.CurrentAttackSpeed)
             {
                 attackSpeed.Cooldown -= attackSpeed.CurrentAttackSpeed;
-                if (!entity.Has<Invincibility>())
-                {
-                    Health health = entity.Get<Health>();
-                    Damage damage = other.Get<Damage>();
-                    health.Current -= (int)damage.Amount;
-                    Animation anim = entity.Get<Animation>();
-                    anim.Overlay = Microsoft.Xna.Framework.Color.Red;
-
-                    if (health.Current < 1)
-                    {
-                        KillCount killCount = (KillCount)entity.Get(typeof(KillCount));
-
-                        killCount.KillerName = other.Get<Enemy>().Name;
-                        entity.Set(killCount);
-
-                        entityStatus.State = State.Dead;
-                    }
-
-                    entity.Set(health, anim, entityStatus);
-                }
+                setPlayerHealthAndState(entity, other, entityStatus);
                 other.Set(attackSpeed);
+            }
+        }
+
+        private void setPlayerHealthAndState(Entity entity, Entity other, EntityStatus entityStatus)
+        {
+            if (!entity.Has<Invincibility>())
+            {
+                Health health = entity.Get<Health>();
+                Damage damage = other.Get<Damage>();
+                health.Current -= (int)damage.Amount;
+                Animation anim = entity.Get<Animation>();
+                anim.Overlay = Microsoft.Xna.Framework.Color.Red;
+
+                if (health.Current < 1)
+                {
+                    KillCount killCount = (KillCount)entity.Get(typeof(KillCount));
+
+                    killCount.KillerName = other.Get<Enemy>().Name;
+                    entity.Set(killCount);
+
+                    entityStatus.State = State.Dead;
+                }
+
+                entity.Set(health, anim, entityStatus);
             }
         }
 

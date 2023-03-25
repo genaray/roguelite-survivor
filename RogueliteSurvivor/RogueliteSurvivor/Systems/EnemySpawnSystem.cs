@@ -200,6 +200,11 @@ namespace RogueliteSurvivor.Systems
                             new Experience(container.Experience)
                         );
 
+                if(container.Spell2 != Spells.None)
+                {
+                    entity.Add(SpellFactory.CreateSpell<Spell2>(spellContainers[container.Spell2]));
+                }
+
                 TraitsHelper.AddTraitsToEntity(entity, container.Traits);
             }
         }

@@ -18,7 +18,7 @@ namespace RogueliteSurvivor.Systems
                                             .WithAll<SingleTarget>();
 
         QueryDescription projectileQuery = new QueryDescription()
-                                            .WithAll<Projectile>();
+                                            .WithAny<Projectile, EnemyProjectile>();
 
         QueryDescription enemyQuery = new QueryDescription()
                                             .WithAll<Enemy>();

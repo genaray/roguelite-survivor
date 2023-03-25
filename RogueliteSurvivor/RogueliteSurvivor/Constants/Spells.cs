@@ -20,6 +20,7 @@ namespace RogueliteSurvivor.Constants
         LightningAura,
         MagicShot,
         EnemyMelee,
+        EnemyEnergyBlast
     }
 
     public static class SpellsExtensions
@@ -69,6 +70,8 @@ namespace RogueliteSurvivor.Constants
                     return Spells.MagicShot;
                 case "EnemyMelee":
                     return Spells.EnemyMelee;
+                case "EnemyEnergyBlast":
+                    return Spells.EnemyEnergyBlast;
                 default:
                     return Spells.None;
             }
@@ -98,6 +101,8 @@ namespace RogueliteSurvivor.Constants
                     return "Lightning Aura";
                 case Spells.MagicShot:
                     return "Magic Shot";
+                case Spells.EnemyEnergyBlast:
+                    return "Enemy Energy Blast";
                 default:
                     return "None";
             }

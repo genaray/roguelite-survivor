@@ -14,6 +14,7 @@ namespace RogueliteSurvivor.Containers
         public int Damage { get; set; }
         public float Speed { get; set; }
         public Spells Spell { get; set; }
+        public Spells Spell2 { get; set; }
         public int Width { get; set; }
         public int Experience { get; set; }
         public List<string> Traits { get; set; }
@@ -36,6 +37,7 @@ namespace RogueliteSurvivor.Containers
                 Damage = (int)enemy["damage"],
                 Speed = (float)enemy["speed"],
                 Spell = ((string)enemy["spell"]).GetSpellFromString(),
+                Spell2 = enemy["spell2"] != null ? ((string)enemy["spell2"]).GetSpellFromString() : Spells.None,
                 Width = (int)enemy["width"],
                 Experience = (int)enemy["experience"],
                 Traits = TraitsHelper.GetTraits(enemy["traits"]),

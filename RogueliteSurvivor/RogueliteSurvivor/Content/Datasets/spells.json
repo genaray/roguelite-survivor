@@ -362,6 +362,47 @@
       "aliveSpriteSheet": null,
       "hitAnimation": null,
       "hitSpriteSheet": null
+    },
+    {
+      "spell": "EnemyEnergyBlast",
+      "effect": "None",
+      "type": "EnemyProjectile",
+      "baseEffectChance": 0,
+      "currentEffectChance": 0,
+      "baseDamage": 5,
+      "currentDamage": 5,
+      "baseProjectileSpeed": 150,
+      "currentProjectileSpeed": 150,
+      "baseAttacksPerSecond": 0.25,
+      "currentAttacksPerSecond": 0.25,
+      "damageStartDelay": 0,
+      "damageEndDelay": 0,
+      "aliveAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 29,
+        "playbackSpeed": 0.1,
+        "numDirections": 1,
+        "repeatable": true
+      },
+      "aliveSpriteSheet": {
+        "framesPerRow": 30,
+        "framesPerColumn": 1,
+        "rotation": "target",
+        "scale": 0.5
+      },
+      "hitAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 14,
+        "playbackSpeed": 0.01,
+        "numDirections": 1,
+        "repeatable": false
+      },
+      "hitSpriteSheet": {
+        "framesPerRow": 15,
+        "framesPerColumn": 1,
+        "rotation": "equal",
+        "scale": 1
+      }
     }
   ]
 }

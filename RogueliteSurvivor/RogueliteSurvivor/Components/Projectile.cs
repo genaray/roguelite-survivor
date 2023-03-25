@@ -3,4 +3,8 @@
     public struct Projectile
     {
     }
+
+    public struct EnemyProjectile
+    {
+    }
 }

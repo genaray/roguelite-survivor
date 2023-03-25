@@ -116,6 +116,33 @@ namespace RogueliteSurvivor.ComponentFactories
             );
         }
 
+        public static void CreateEnemyProjectile(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect)
+        {
+            var projectile = world.Create<EnemyProjectile, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Damage, Owner, Pierce, Body>();
+
+            float damageMultiplier = entity.Has<DoubleDamage>() ? 2 : 1;
+
+            var body = new BodyDef();
+            var velocityVector = Vector2.Normalize(target.TargetPosition - pos.XY);
+            var position = pos.XY + velocityVector;
+            body.position = new System.Numerics.Vector2(position.X, position.Y) / PhysicsConstants.PhysicsToPixelsRatio;
+            body.fixedRotation = true;
+
+            projectile.Set(
+                new EnemyProjectile(),
+                new EntityStatus(),
+                new Position() { XY = new Vector2(position.X, position.Y) },
+                new Velocity() { Vector = velocityVector * spell.CurrentProjectileSpeed },
+                new Speed() { speed = spell.CurrentProjectileSpeed },
+                GetSpellAliveAnimation(spellContainers[spell.Spell]),
+                GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition),
+                new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
+                new Owner() { Entity = entity },
+                new Pierce(entity.Has<Pierce>() ? entity.Get<Pierce>().Num : 0),
+                BodyFactory.CreateCircularBody(projectile, 14, physicsWorld, body, .1f)
+            );
+        }
+
         public static void CreateSingleTarget(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect)
         {
             var singleTarget = world.Create<SingleTarget, EntityStatus, Position, Speed, Animation, SpriteSheet, Damage, Owner, Body>();

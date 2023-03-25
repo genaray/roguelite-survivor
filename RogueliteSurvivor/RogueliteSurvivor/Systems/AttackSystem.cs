@@ -94,6 +94,10 @@ namespace RogueliteSurvivor.Systems
                     {
                         SpellFactory.CreateSingleTarget(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect);
                     }
+                    else if(spell.Type == SpellType.EnemyProjectile)
+                    {
+                        SpellFactory.CreateEnemyProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect);
+                    }
                 }
                 else
                 {

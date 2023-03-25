@@ -11,7 +11,8 @@ namespace RogueliteSurvivor.Constants
         None,
         Projectile,
         SingleTarget,
-        Aura
+        Aura,
+        EnemyProjectile,
     }
 
     public static class SpellTypeExtensions
@@ -28,6 +29,8 @@ namespace RogueliteSurvivor.Constants
                     return SpellType.SingleTarget;
                 case "Aura":
                     return SpellType.Aura;
+                case "EnemyProjectile":
+                    return SpellType.EnemyProjectile;
                 default:
                     return SpellType.None;
             }

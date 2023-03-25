@@ -34,11 +34,10 @@ namespace RogueliteSurvivor.Systems
 
             world.Query(in query, (in Entity entity, ref EntityStatus status, ref Position pos, ref Velocity vel, ref Speed sp, ref Target target) =>
             {
+                target.TargetPosition = findTarget(playerQuery, pos.XY);
                 if ( ((entity.Id % maxModulus) - modulus) == 0 
                     && status.State == Constants.State.Alive)
                 {
-                    target.TargetPosition = findTarget(playerQuery, pos.XY);
-
                     Vector2 destination = map.GetNextPathStep(pos.XY, target.TargetPosition, entity.Has<CanFly>() ? MovementType.Air : MovementType.Ground);
                     vel.Vector = Vector2.Normalize(destination - pos.XY);
                     vel.Vector *= sp.speed;
