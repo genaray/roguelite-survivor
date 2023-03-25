@@ -78,10 +78,12 @@ namespace RogueliteSurvivor.Scenes
             if (!string.IsNullOrEmpty(killerName))
             {
                 stats.Killer = enemyContainers[killerName].ReadableName;
+                stats.KillerMethod = killCount.KillerMethod;
             }
             else
             {
                 stats.Killer = "Nobody";
+                stats.KillerMethod = "pummeled";
             }
             stats.PlayTime = totalGameTime;
             stats.Kills = new Dictionary<string, int>();
@@ -283,6 +285,7 @@ namespace RogueliteSurvivor.Scenes
                 spell,
                 new Health() { Current = (int)(100 * playerContainer.Health)
                                 , Max = (int)(100 * playerContainer.Health)
+                                , BaseMax = (int)(100 * playerContainer.Health)
                 },
                 new KillCount(),
                 BodyFactory.CreateCircularBody(player, 14, physicsWorld, body, 99)
@@ -393,7 +396,7 @@ namespace RogueliteSurvivor.Scenes
                         playerInfo.ExperienceRequiredForNextLevel = ExperienceHelper.ExperienceRequiredForLevel(playerInfo.Level + 1);
                         playerInfo.ExperienceToNextLevel += playerInfo.ExperienceRequiredForNextLevel;
                         var playerHealth = player.Get<Health>();
-                        playerHealth.Max += 5;
+                        playerHealth.Max += (int)(0.05f * playerHealth.BaseMax);
                         playerHealth.Current = playerHealth.Max;
                         
                         player.Set(playerInfo, playerHealth);

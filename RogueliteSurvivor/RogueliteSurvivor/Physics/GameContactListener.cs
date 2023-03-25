@@ -75,9 +75,9 @@ namespace RogueliteSurvivor.Physics
 
                     damageEnemy(a, b, damage, owner);
                 }
-                else if ((a.Has<Projectile>() && b.Has<Map>()) || (b.Has<Projectile>() && a.Has<Map>()))
+                else if (((a.Has<Projectile>() || a.Has<EnemyProjectile>()) && b.Has<Map>()) || ((b.Has<Projectile>() || b.Has<EnemyProjectile>()) && a.Has<Map>()))
                 {
-                    if (a.Has<Projectile>())
+                    if (a.Has<Projectile>() || a.Has<EnemyProjectile>())
                     {
                         setEntityDead(a, a.Get<EntityStatus>());
                     }
@@ -250,7 +250,17 @@ namespace RogueliteSurvivor.Physics
                 {
                     KillCount killCount = (KillCount)entity.Get(typeof(KillCount));
 
-                    killCount.KillerName = other.Get<Enemy>().Name;
+                    if (other.Has<Enemy>())
+                    {
+                        killCount.KillerName = other.Get<Enemy>().Name;
+                        killCount.KillerMethod = "pummeled";
+                    }
+                    else
+                    {
+                        killCount.KillerName = other.Get<Owner>().Entity.Get<Enemy>().Name;
+                        killCount.KillerMethod = "blasted";
+                    }
+
                     entity.Set(killCount);
 
                     entityStatus.State = State.Dead;

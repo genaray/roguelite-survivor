@@ -131,7 +131,7 @@ namespace RogueliteSurvivor.Scenes
             {
                 _spriteBatch.DrawString(
                     fonts["Font"],
-                   string.Concat(getProperArticle(gameStats.Killer), gameStats.Killer, " pummeled you into oblivion..."),
+                   string.Concat(getProperArticle(gameStats.Killer), gameStats.Killer, " ", gameStats.KillerMethod," you into oblivion..."),
                     new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 64),
                     Color.White
                 );

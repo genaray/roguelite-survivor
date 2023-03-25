@@ -12,6 +12,7 @@ namespace RogueliteSurvivor.Components
 
         public int Count { get; private set; }
         public string KillerName { get; set; }
+        public string KillerMethod { get; set; }
         public Dictionary<string, int> Kills { get; set; }
 
         public void AddKill(string killerName)
