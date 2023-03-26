@@ -825,17 +825,41 @@
 /processorParam:TextureFormat=Color
 /build:Player/LightningWizard.png
 
+#begin Sound Effects/001_Hover_01.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/001_Hover_01.ogg
+
+#begin Sound Effects/013_Confirm_03.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/013_Confirm_03.ogg
+
 #begin Sound Effects/02_Heal_02.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sound Effects/02_Heal_02.ogg
 
+#begin Sound Effects/029_Decline_09.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/029_Decline_09.ogg
+
 #begin Sound Effects/03_Claw_03.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sound Effects/03_Claw_03.ogg
+
+#begin Sound Effects/033_Denied_03.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/033_Denied_03.ogg
 
 #begin Sound Effects/04_Fire_explosion_04_medium.ogg
 /importer:OggImporter

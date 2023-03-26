@@ -10,6 +10,7 @@ using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
 using RogueliteSurvivor.Helpers;
+using RogueliteSurvivor.Physics;
 using RogueliteSurvivor.Utils;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace RogueliteSurvivor.Scenes
         private Dictionary<string, Texture2D> textures = null;
         private Dictionary<string, SpriteFont> fonts = null;
         private Dictionary<string, Song> songs = null;
+        private Dictionary<string, SoundEffect> soundEffects = null;
 
         private bool readyForInput = false;
         private float counter = 0f;
@@ -65,7 +67,7 @@ namespace RogueliteSurvivor.Scenes
                     { "FlyingWizard", Content.Load<Texture2D>(Path.Combine("Player", "FlyingWizard")) },
                 };
 
-                foreach(var map in mapContainers)
+                foreach (var map in mapContainers)
                 {
                     textures.Add(map.Name, Content.Load<Texture2D>(Path.Combine("Maps", map.Folder, map.Name)));
                 }
@@ -80,14 +82,26 @@ namespace RogueliteSurvivor.Scenes
                 };
             }
 
-            if(songs == null)
+            if (songs == null)
             {
                 songs = new Dictionary<string, Song> {
                     { "MenuTheme", Content.Load<Song>(Path.Combine("Music", "Night Ambient 2 (Loop)")) }
                 };
             }
 
-            if(creditsContainer == null)
+
+            if (soundEffects == null)
+            {
+                soundEffects = new Dictionary<string, SoundEffect>()
+                {
+                    { "Hover", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "001_Hover_01")) },
+                    { "Confirm", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "013_Confirm_03")) },
+                    { "Pickup", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "029_Decline_09")) },
+                    { "Denied", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "033_Denied_03")) },
+                };
+            }
+        
+            if (creditsContainer == null)
             {
                 JObject credits = JObject.Parse(File.ReadAllText(Path.Combine(Content.RootDirectory, "Datasets", "credits.json")));
                 creditsContainer = CreditsContainer.ToCreditsContainer(credits["data"]);
@@ -147,18 +161,27 @@ namespace RogueliteSurvivor.Scenes
                                 retVal = "exit";
                                 break;
                         }
+                        soundEffects["Confirm"].Play();
                         selectedButton = 1;
                         readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
                     {
-                        selectedButton = int.Max(selectedButton - 1, 1);
-                        readyForInput = false;
+                        if(selectedButton > 1)
+                        {
+                            selectedButton--;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }
                     }
                     else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
                     {
-                        selectedButton = int.Min(selectedButton + 1, 5);
-                        readyForInput = false;
+                        if(selectedButton < 5)
+                        {
+                            selectedButton++;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }                        
                     }
                 }
                 else if (state == MainMenuState.CharacterSelection)
@@ -166,20 +189,29 @@ namespace RogueliteSurvivor.Scenes
                     if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
                         state = MainMenuState.MapSelection;
+                        soundEffects["Confirm"].Play();
                         setUnlockedMaps();
                         readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
                     {
-                        selectedButton = int.Max(selectedButton - 1, 1);
-                        setSelectedPlayer();
-                        readyForInput = false;
+                        if (selectedButton > 1)
+                        {
+                            selectedButton--;
+                            setSelectedPlayer();
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }
                     }
                     else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
                     {
-                        selectedButton = int.Min(selectedButton + 1, playerContainers.Count);
-                        setSelectedPlayer();
-                        readyForInput = false;
+                        if (selectedButton < playerContainers.Count)
+                        {
+                            selectedButton++;
+                            setSelectedPlayer();
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }
                     }
                     else if (gState.Buttons.B == ButtonState.Pressed || kState.IsKeyDown(Keys.Escape))
                     {
@@ -190,13 +222,20 @@ namespace RogueliteSurvivor.Scenes
                 }
                 else if(state == MainMenuState.MapSelection)
                 {
-                    if ((kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
-                        && unlockedMaps.Exists(a => a.Name == selectedMap))
+                    if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
-                        state = MainMenuState.MainMenu;
-                        retVal = "loading";
-                        readyForInput = false;
-                        selectedButton = 1;
+                        if (unlockedMaps.Exists(a => a.Name == selectedMap))
+                        {
+                            state = MainMenuState.MainMenu;
+                            retVal = "loading";
+                            readyForInput = false;
+                            selectedButton = 1;
+                            soundEffects["Confirm"].Play();
+                        }
+                        else
+                        {
+                            soundEffects["Denied"].Play();
+                        }
                     }
                     else if (gState.Buttons.B == ButtonState.Pressed || kState.IsKeyDown(Keys.Escape))
                     {
@@ -209,8 +248,9 @@ namespace RogueliteSurvivor.Scenes
                         {
                             int index = mapContainers.IndexOf(mapContainers.Where(a => a.Name == selectedMap).First()) - 1;
                             selectedMap = mapContainers[index].Name;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
                         }
-                        readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
                     {
@@ -218,8 +258,9 @@ namespace RogueliteSurvivor.Scenes
                         {
                             int index = mapContainers.IndexOf(mapContainers.Where(a => a.Name == selectedMap).First()) + 1;
                             selectedMap = mapContainers[index].Name;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
                         }
-                        readyForInput = false;
                     }
                     
                 }
@@ -266,32 +307,36 @@ namespace RogueliteSurvivor.Scenes
                         if(selectedButton - 2 > 0)
                         {
                             selectedButton -= 2;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
                         }
-                        readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
                     {
                         if (selectedButton + 2 < 9)
                         {
                             selectedButton += 2;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
                         }
-                        readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
                     {
                         if(selectedButton % 2 == 0)
                         {
                             selectedButton--;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
                         }
-                        readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
                     {
                         if (selectedButton % 2 == 1)
                         {
                             selectedButton++;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
                         }
-                        readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
@@ -300,10 +345,12 @@ namespace RogueliteSurvivor.Scenes
                             case 1:
                                 settingsContainer.MasterVolume = MathF.Max(0f, settingsContainer.MasterVolume - 0.05f);
                                 MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
+                                SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
                                 break;
                             case 2:
                                 settingsContainer.MasterVolume = MathF.Min(1f, settingsContainer.MasterVolume + 0.05f);
                                 MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
+                                SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
                                 break;
                             case 3:
                                 settingsContainer.MenuMusicVolume = MathF.Max(0f, settingsContainer.MenuMusicVolume - 0.05f);
@@ -328,6 +375,30 @@ namespace RogueliteSurvivor.Scenes
                                 SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
                                 break;
                         }
+
+                        if(selectedButton > 2 && selectedButton < 7)
+                        {
+                            SoundEffectInstance instance = soundEffects["Confirm"].CreateInstance();
+                            
+                            switch (selectedButton)
+                            {
+                                case 3:
+                                case 4:
+                                    instance.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
+                                    break;
+                                case 5:
+                                case 6:
+                                    instance.Volume = settingsContainer.MasterVolume * settingsContainer.GameMusicVolume;
+                                    break;
+                            }
+
+                            instance.Play();
+                        }
+                        else
+                        {
+                            soundEffects["Confirm"].Play();
+                        }
+
                         readyForInput = false;
                     }
                 }

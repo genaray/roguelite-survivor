@@ -200,6 +200,10 @@ namespace RogueliteSurvivor.Scenes
                     { "IceShardHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "45_Charge_05")) },
                     { "EnemyDeath1", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "69_Enemy_death_01")) },
                     { "EnemyDeath2", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "77_flesh_02")) },
+                    { "Hover", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "001_Hover_01")) },
+                    { "Confirm", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "013_Confirm_03")) },
+                    { "Pickup", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "029_Decline_09")) },
+                    { "Denied", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "033_Denied_03")) },
                 };
 
                 gameContactListener.SetSoundEffects(soundEffects);
@@ -258,7 +262,7 @@ namespace RogueliteSurvivor.Scenes
                 new CollisionSystem(world, physicsWorld, soundEffects),
                 new AttackSystem(world, textures, physicsWorld, spellContainers, soundEffects),
                 new SpellEffectSystem(world),
-                new PickupSystem(world),
+                new PickupSystem(world, soundEffects),
                 new EnemySpawnSystem(world, textures, physicsWorld, _graphics, enemyContainers, spellContainers, mapContainer),
                 new AttackSpellCleanupSystem(world),
                 new DeathSystem(world, textures, physicsWorld, spellContainers, soundEffects),
@@ -369,6 +373,7 @@ namespace RogueliteSurvivor.Scenes
                     {
                         gameState = GameState.Running;
                         LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers);
+                        soundEffects["Confirm"].Play();
                         stateChangeTime = 0f;
                     }
                     else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
@@ -377,8 +382,10 @@ namespace RogueliteSurvivor.Scenes
                         {
                             int index = levelUpChoices.IndexOf(levelUpChoices.Where(a => a == selectedLevelUpChoice).First()) - 1;
                             selectedLevelUpChoice = levelUpChoices[index];
+                            soundEffects["Hover"].Play();
+                            stateChangeTime = 0f;
                         }
-                        stateChangeTime = 0f;
+                        
                     }
                     else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
                     {
@@ -386,8 +393,10 @@ namespace RogueliteSurvivor.Scenes
                         {
                             int index = levelUpChoices.IndexOf(levelUpChoices.Where(a => a == selectedLevelUpChoice).First()) + 1;
                             selectedLevelUpChoice = levelUpChoices[index];
+                            soundEffects["Hover"].Play();
+                            stateChangeTime = 0f;
                         }
-                        stateChangeTime = 0f;
+                        
                     }
                 }
             }

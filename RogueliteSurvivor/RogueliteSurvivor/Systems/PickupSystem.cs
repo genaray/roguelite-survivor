@@ -1,16 +1,19 @@
 ﻿using Arch.Core;
 using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Helpers;
 using System;
+using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Systems
 {
     public class PickupSystem : ArchSystem, IUpdateSystem
     {
+        Dictionary<string, SoundEffect> soundEffects;
         QueryDescription playerQuery = new QueryDescription()
                                             .WithAll<Player>();
 
@@ -19,10 +22,12 @@ namespace RogueliteSurvivor.Systems
         QueryDescription doubleDamageQuery = new QueryDescription().WithAll<DoubleDamage>();
         QueryDescription doubleAttackSpeedQuery = new QueryDescription().WithAll<DoubleAttackSpeed>();
 
-        public PickupSystem(World world)
+        public PickupSystem(World world, Dictionary<string, SoundEffect> soundEffects)
             : base(world, new QueryDescription()
                                 .WithAll<PickupSprite, Position>())
-        { }
+        {
+            this.soundEffects = soundEffects;
+        }
 
         public void Update(GameTime gameTime, float totalElapsedTime, float scaleFactor)
         {
@@ -83,6 +88,7 @@ namespace RogueliteSurvivor.Systems
                     {
                         if (PickupHelper.ProcessPickup(ref player, sprite.Type))
                         {
+                            soundEffects["Pickup"].Play();
                             world.Destroy(entity);
                         }
                     }
