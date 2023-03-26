@@ -18,8 +18,8 @@ namespace RogueliteSurvivor.Scenes
         private readonly string[] dots = new string[4] { "", ".", "..", "..." };
         private int doot = 0;
 
-        public LoadingScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, float scaleFactor)
-            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor)
+        public LoadingScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, float scaleFactor, SettingsContainer settingsContainer)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor, settingsContainer)
         {
         }
 

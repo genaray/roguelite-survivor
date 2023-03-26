@@ -61,8 +61,8 @@ namespace RogueliteSurvivor.Scenes
 
         private GameContactListener gameContactListener;
 
-        public GameScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
-            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor)
+        public GameScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor, SettingsContainer settingsContainer)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor, settingsContainer)
         {
             this.playerContainers = playerContainers;
             this.mapContainers = mapContainers;
@@ -351,6 +351,7 @@ namespace RogueliteSurvivor.Scenes
         {
             MediaPlayer.Play(songs["GameMusic"]);
             MediaPlayer.IsRepeating = true;
+            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.GameMusicVolume;
         }
 
         public override string Update(GameTime gameTime, params object[] values)

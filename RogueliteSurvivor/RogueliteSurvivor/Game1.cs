@@ -1,6 +1,8 @@
 ﻿using Arch.Core;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.Containers;
 using RogueliteSurvivor.Physics;
@@ -25,6 +27,7 @@ namespace RogueliteSurvivor
         Dictionary<string, MapContainer> mapContainers = new Dictionary<string, MapContainer>();
         Dictionary<string, EnemyContainer> enemyContainers = new Dictionary<string, EnemyContainer>();
         ProgressionContainer progressionContainer = null;
+        SettingsContainer settingsContainer = null;
         string currentScene = "main-menu";
         string nextScene = string.Empty;
 
@@ -58,21 +61,22 @@ namespace RogueliteSurvivor
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            loadSettings();
             loadPlayerCharacters();
             loadPlayableMaps();
             loadProgression();
             loadEnemies();
 
-            GameScene gameScene = new GameScene(_spriteBatch, Content, _graphics, playerCharacters, mapContainers, progressionContainer, enemyContainers, scaleFactor);
+            GameScene gameScene = new GameScene(_spriteBatch, Content, _graphics, playerCharacters, mapContainers, progressionContainer, enemyContainers, scaleFactor, settingsContainer);
 
-            MainMenuScene mainMenu = new MainMenuScene(_spriteBatch, Content, _graphics, playerCharacters, mapContainers, progressionContainer, enemyContainers, scaleFactor);
+            MainMenuScene mainMenu = new MainMenuScene(_spriteBatch, Content, _graphics, playerCharacters, mapContainers, progressionContainer, enemyContainers, scaleFactor, settingsContainer);
             mainMenu.LoadContent();
             mainMenu.SetActive();
 
-            LoadingScene loadingScene = new LoadingScene(_spriteBatch, Content, _graphics, progressionContainer, scaleFactor);
+            LoadingScene loadingScene = new LoadingScene(_spriteBatch, Content, _graphics, progressionContainer, scaleFactor, settingsContainer);
             loadingScene.LoadContent();
 
-            GameOverScene gameOverScene = new GameOverScene(_spriteBatch, Content, _graphics, progressionContainer, mapContainers, scaleFactor);
+            GameOverScene gameOverScene = new GameOverScene(_spriteBatch, Content, _graphics, progressionContainer, mapContainers, scaleFactor, settingsContainer);
             gameOverScene.LoadContent();
 
             scenes.Add("game", gameScene);
@@ -157,6 +161,22 @@ namespace RogueliteSurvivor
                     }
                 }
             }
+        }
+
+        private void loadSettings()
+        {
+            settingsContainer = new SettingsContainer();
+            if (!File.Exists("settings.json"))
+            {
+                settingsContainer.Save();
+            }
+            else
+            {
+                JObject settings = JObject.Parse(File.ReadAllText("settings.json"));
+                settingsContainer = SettingsContainer.ToSettingsContainer(settings);
+            }
+
+            SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
         }
 
         protected override void Update(GameTime gameTime)

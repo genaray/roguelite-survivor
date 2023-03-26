@@ -31,8 +31,8 @@ namespace RogueliteSurvivor.Scenes
         private GameOverState state = GameOverState.Main;
         private float stateChangeTime = .11f;
 
-        public GameOverScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, Dictionary<string, MapContainer> mapContainers, float scaleFactor)
-            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor)
+        public GameOverScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, Dictionary<string, MapContainer> mapContainers, float scaleFactor, SettingsContainer settingsContainer)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor, settingsContainer)
         {
             this.mapContainers = mapContainers;
         }
@@ -61,7 +61,8 @@ namespace RogueliteSurvivor.Scenes
         public override void SetActive()
         {
             MediaPlayer.Play(songs["GameOver"]);
-            MediaPlayer.IsRepeating = false;
+            MediaPlayer.IsRepeating = false; 
+            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
         }
 
         public void SetGameSettings(GameSettings gameSettings)

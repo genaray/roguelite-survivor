@@ -7,5 +7,6 @@
         MapSelection,
         Credits,
         PlayStats,
+        Options,
     }
 }

@@ -13,12 +13,13 @@ namespace RogueliteSurvivor.Scenes
         protected GraphicsDeviceManager _graphics;
 
         protected ProgressionContainer progressionContainer;
+        protected SettingsContainer settingsContainer;
 
         protected float scaleFactor;
 
         public bool Loaded { get; protected set; }
 
-        public Scene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, float scaleFactor)
+        public Scene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, float scaleFactor, SettingsContainer settingsContainer)
         {
             _spriteBatch = spriteBatch;
             Content = contentManager;
@@ -27,6 +28,7 @@ namespace RogueliteSurvivor.Scenes
 
             Loaded = false;
             this.scaleFactor = scaleFactor;
+            this.settingsContainer = settingsContainer;
         }
 
         public abstract void Draw(GameTime gameTime, Matrix transform, params object[] values);

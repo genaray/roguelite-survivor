@@ -8,6 +8,6 @@ namespace RogueliteSurvivor.Constants
 {
     public class InputConstants
     {
-        public const float ResponseTime = .25f;
+        public const float ResponseTime = .175f;
     }
 }

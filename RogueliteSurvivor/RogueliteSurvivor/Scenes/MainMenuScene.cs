@@ -1,5 +1,6 @@
 ﻿using Arch.Core;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,6 +11,7 @@ using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
 using RogueliteSurvivor.Helpers;
 using RogueliteSurvivor.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,8 +42,8 @@ namespace RogueliteSurvivor.Scenes
         private int descriptionLength = 80;
 
 
-        public MainMenuScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
-            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor)
+        public MainMenuScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor, SettingsContainer settingsContainer)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor, settingsContainer)
         {
             this.playerContainers = playerContainers;
             this.mapContainers = mapContainers.Values.ToList();
@@ -55,6 +57,7 @@ namespace RogueliteSurvivor.Scenes
                 textures = new Dictionary<string, Texture2D>
                 {
                     { "MainMenuButtons", Content.Load<Texture2D>(Path.Combine("UI", "main-menu-buttons")) },
+                    { "VolumeButtons", Content.Load<Texture2D>(Path.Combine("UI", "volume-buttons")) },
                     { "PlayerSelectOutline", Content.Load<Texture2D>(Path.Combine("UI", "player-select-outline")) },
                     { "FireWizard", Content.Load<Texture2D>(Path.Combine("Player", "FireWizard")) },
                     { "IceWizard", Content.Load<Texture2D>(Path.Combine("Player", "IceWizard")) },
@@ -101,6 +104,7 @@ namespace RogueliteSurvivor.Scenes
         {
             MediaPlayer.Play(songs["MenuTheme"]);
             MediaPlayer.IsRepeating = true;
+            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
         }
 
         public override string Update(GameTime gameTime, params object[] values)
@@ -134,13 +138,16 @@ namespace RogueliteSurvivor.Scenes
                                 state = MainMenuState.PlayStats;
                                 break;
                             case 3:
-                                state = MainMenuState.Credits;
+                                state = MainMenuState.Options;
                                 break;
                             case 4:
+                                state = MainMenuState.Credits;
+                                break;
+                            case 5:
                                 retVal = "exit";
                                 break;
                         }
-
+                        selectedButton = 1;
                         readyForInput = false;
                     }
                     else if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
@@ -150,7 +157,7 @@ namespace RogueliteSurvivor.Scenes
                     }
                     else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
                     {
-                        selectedButton = int.Min(selectedButton + 1, 4);
+                        selectedButton = int.Min(selectedButton + 1, 5);
                         readyForInput = false;
                     }
                 }
@@ -245,6 +252,85 @@ namespace RogueliteSurvivor.Scenes
                         readyForInput = false;
                     }
                 }
+                else if (state == MainMenuState.Options)
+                {
+                    if (gState.Buttons.B == ButtonState.Pressed || kState.IsKeyDown(Keys.Escape))
+                    {
+                        state = MainMenuState.MainMenu;
+                        settingsContainer.Save();
+                        selectedButton = 1;
+                        readyForInput = false;
+                    }
+                    else if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
+                    {
+                        if(selectedButton - 2 > 0)
+                        {
+                            selectedButton -= 2;
+                        }
+                        readyForInput = false;
+                    }
+                    else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
+                    {
+                        if (selectedButton + 2 < 9)
+                        {
+                            selectedButton += 2;
+                        }
+                        readyForInput = false;
+                    }
+                    else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
+                    {
+                        if(selectedButton % 2 == 0)
+                        {
+                            selectedButton--;
+                        }
+                        readyForInput = false;
+                    }
+                    else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
+                    {
+                        if (selectedButton % 2 == 1)
+                        {
+                            selectedButton++;
+                        }
+                        readyForInput = false;
+                    }
+                    else if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
+                    {
+                        switch (selectedButton)
+                        {
+                            case 1:
+                                settingsContainer.MasterVolume = MathF.Max(0f, settingsContainer.MasterVolume - 0.05f);
+                                MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
+                                break;
+                            case 2:
+                                settingsContainer.MasterVolume = MathF.Min(1f, settingsContainer.MasterVolume + 0.05f);
+                                MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
+                                break;
+                            case 3:
+                                settingsContainer.MenuMusicVolume = MathF.Max(0f, settingsContainer.MenuMusicVolume - 0.05f);
+                                MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
+                                break;
+                            case 4:
+                                settingsContainer.MenuMusicVolume = MathF.Min(1f, settingsContainer.MenuMusicVolume + 0.05f);
+                                MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
+                                break;
+                            case 5:
+                                settingsContainer.GameMusicVolume = MathF.Max(0f, settingsContainer.GameMusicVolume - 0.05f);
+                                break;
+                            case 6:
+                                settingsContainer.GameMusicVolume = MathF.Min(1f, settingsContainer.GameMusicVolume + 0.05f);
+                                break;
+                            case 7:
+                                settingsContainer.SoundEffectsVolume = MathF.Max(0f, settingsContainer.SoundEffectsVolume - 0.05f);
+                                SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
+                                break;
+                            case 8:
+                                settingsContainer.SoundEffectsVolume = MathF.Min(1f, settingsContainer.SoundEffectsVolume + 0.05f);
+                                SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
+                                break;
+                        }
+                        readyForInput = false;
+                    }
+                }
             }
 
             return retVal;
@@ -265,7 +351,7 @@ namespace RogueliteSurvivor.Scenes
             {
                 _spriteBatch.Draw(
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2)),
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 48),
                     new Rectangle(0 + selectedButton == 1 ? 128 : 0, 32, 128, 32),
                     Color.White,
                     0f,
@@ -277,7 +363,7 @@ namespace RogueliteSurvivor.Scenes
 
                 _spriteBatch.Draw(
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 48),
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2)),
                     new Rectangle(0 + selectedButton == 2 ? 128 : 0, 64, 128, 32),
                     Color.White,
                     0f,
@@ -289,8 +375,20 @@ namespace RogueliteSurvivor.Scenes
 
                 _spriteBatch.Draw(
                     textures["MainMenuButtons"],
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 48),
+                    new Rectangle(0 + selectedButton == 3 ? 128 : 0, 160, 128, 32),
+                    Color.White,
+                    0f,
+                    new Vector2(64, 16),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                _spriteBatch.Draw(
+                    textures["MainMenuButtons"],
                     new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 96),
-                    new Rectangle(0 + selectedButton == 3 ? 128 : 0, 128, 128, 32),
+                    new Rectangle(0 + selectedButton == 4 ? 128 : 0, 128, 128, 32),
                     Color.White,
                     0f,
                     new Vector2(64, 16),
@@ -302,7 +400,7 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.Draw(
                     textures["MainMenuButtons"],
                     new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
-                    new Rectangle(0 + selectedButton == 4 ? 128 : 0, 96, 128, 32),
+                    new Rectangle(0 + selectedButton == 5 ? 128 : 0, 96, 128, 32),
                     Color.White,
                     0f,
                     new Vector2(64, 16),
@@ -762,6 +860,141 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     "Press Esc on the keyboard or B on the controller to return to the main menu",
+                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 128),
+                    Color.White
+                );
+            }
+            else if(state == MainMenuState.Options)
+            {
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Master Volume: ", settingsContainer.MasterVolume.ToString("P0")),
+                    new Vector2(GetWidthOffset(2) - 125, GetHeightOffset(2) - 96),
+                    Color.White
+                );
+
+                _spriteBatch.Draw(
+                    textures["VolumeButtons"],
+                    new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 88),
+                    new Rectangle(0 + selectedButton == 1 ? 16 : 0, 0, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                _spriteBatch.Draw(
+                    textures["VolumeButtons"],
+                    new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 88),
+                    new Rectangle(0 + selectedButton == 2 ? 16 : 0, 16, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Menu Music Volume: ", settingsContainer.MenuMusicVolume.ToString("P0")),
+                    new Vector2(GetWidthOffset(2) - 125, GetHeightOffset(2) - 64),
+                    Color.White
+                );
+
+                _spriteBatch.Draw(
+                    textures["VolumeButtons"],
+                    new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 56),
+                    new Rectangle(0 + selectedButton == 3 ? 16 : 0, 0, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                _spriteBatch.Draw(
+                    textures["VolumeButtons"],
+                    new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 56),
+                    new Rectangle(0 + selectedButton == 4 ? 16 : 0, 16, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Game Music Volume: ", settingsContainer.GameMusicVolume.ToString("P0")),
+                    new Vector2(GetWidthOffset(2) - 125, GetHeightOffset(2) - 32),
+                    Color.White
+                );
+
+                _spriteBatch.Draw(
+                    textures["VolumeButtons"],
+                    new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 24),
+                    new Rectangle(0 + selectedButton == 5 ? 16 : 0, 0, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                _spriteBatch.Draw(
+                    textures["VolumeButtons"],
+                    new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 24),
+                    new Rectangle(0 + selectedButton == 6 ? 16 : 0, 16, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Sound Effect Volume: ", settingsContainer.SoundEffectsVolume.ToString("P0")),
+                    new Vector2(GetWidthOffset(2) - 125, GetHeightOffset(2)),
+                    Color.White
+                );
+
+                _spriteBatch.Draw(
+                    textures["VolumeButtons"],
+                    new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) + 8),
+                    new Rectangle(0 + selectedButton == 7 ? 16 : 0, 0, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+                _spriteBatch.Draw(
+                    textures["VolumeButtons"],
+                    new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) + 8),
+                    new Rectangle(0 + selectedButton == 8 ? 16 : 0, 16, 16, 16),
+                    Color.White,
+                    0f,
+                    new Vector2(8, 8),
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+
+
+
+                _spriteBatch.DrawString(
+                    fonts["FontSmall"],
+                    "Press Esc on the keyboard or B on the controller to return to the Main Menu",
                     new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 128),
                     Color.White
                 );
