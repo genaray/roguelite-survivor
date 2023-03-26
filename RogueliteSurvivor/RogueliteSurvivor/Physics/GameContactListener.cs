@@ -4,13 +4,22 @@ using Box2D.NetStandard.Collision;
 using Box2D.NetStandard.Dynamics.Contacts;
 using Box2D.NetStandard.Dynamics.World;
 using Box2D.NetStandard.Dynamics.World.Callbacks;
+using Microsoft.Xna.Framework.Audio;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
+using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Physics
 {
     public class GameContactListener : ContactListener
     {
+        Dictionary<string, SoundEffect> soundEffects;
+
+        public void SetSoundEffects(Dictionary<string, SoundEffect> soundEffects)
+        {
+            this.soundEffects = soundEffects;
+        }
+
         public override void BeginContact(in Contact contact)
         {
             checkContact(contact);
@@ -181,6 +190,7 @@ namespace RogueliteSurvivor.Physics
             {
                 pierce.Num--;
                 entity.Set(pierce);
+                soundEffects[entity.Get<HitSound>().SoundEffect].Play();
             }
             else
             {
@@ -230,6 +240,7 @@ namespace RogueliteSurvivor.Physics
             var attackSpeed = other.Get<Spell1>();
             if (attackSpeed.Cooldown > attackSpeed.CurrentAttackSpeed)
             {
+                soundEffects[other.Get<HitSound>().SoundEffect].Play();
                 attackSpeed.Cooldown -= attackSpeed.CurrentAttackSpeed;
                 setPlayerHealthAndState(entity, other, entityStatus);
                 other.Set(attackSpeed);

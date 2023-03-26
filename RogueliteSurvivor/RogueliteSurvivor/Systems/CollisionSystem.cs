@@ -2,15 +2,18 @@
 using Arch.Core.Extensions;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using System;
+using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Systems
 {
     public class CollisionSystem : ArchSystem, IUpdateSystem
     {
         Box2D.NetStandard.Dynamics.World.World physicsWorld;
+        Dictionary<string, SoundEffect> soundEffects;
 
         QueryDescription mainQuery = new QueryDescription().WithAll<Position, Velocity, Body>().WithNone<Slow, Shock>();
         QueryDescription singleTargetQuery = new QueryDescription()
@@ -18,10 +21,11 @@ namespace RogueliteSurvivor.Systems
         QueryDescription slowQuery = new QueryDescription().WithAll<Slow, Position, Velocity, Body>();
         QueryDescription shockQuery = new QueryDescription().WithAll<Shock, Position, Velocity, Body>();
 
-        public CollisionSystem(World world, Box2D.NetStandard.Dynamics.World.World physicsWorld)
+        public CollisionSystem(World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<string, SoundEffect> soundEffects)
             : base(world, new QueryDescription().WithAll<Position, Velocity, Body>())
         {
             this.physicsWorld = physicsWorld;
+            this.soundEffects = soundEffects;
         }
 
         public void Update(GameTime gameTime, float totalElapsedTime, float scaleFactor)
@@ -54,7 +58,7 @@ namespace RogueliteSurvivor.Systems
                 body.SetLinearVelocity(vel.VectorPhysics / PhysicsConstants.PhysicsToPixelsRatio);
             });
 
-            world.Query(in singleTargetQuery, (ref SingleTarget single, ref Body body) =>
+            world.Query(in singleTargetQuery, (ref SingleTarget single, ref CreateSound createSound, ref Body body) =>
             {
                 single.DamageStartDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
                 single.DamageEndDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -62,6 +66,7 @@ namespace RogueliteSurvivor.Systems
                 if (single.DamageStartDelay < 0 && !body.IsAwake())
                 {
                     body.SetAwake(true);
+                    soundEffects[createSound.SoundEffect].Play();
                 }
                 else if (single.DamageEndDelay < 0 && body.IsAwake())
                 {

@@ -2,6 +2,7 @@
 using Arch.Core.Extensions;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
@@ -89,9 +90,9 @@ namespace RogueliteSurvivor.ComponentFactories
             };
         }
 
-        public static void CreateProjectile(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers,Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect)
+        public static void CreateProjectile(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers,Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect, Dictionary<string, SoundEffect> soundEffects)
         {
-            var projectile = world.Create<Projectile, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Damage, Owner, Pierce, Body>();
+            var projectile = world.Create<Projectile, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Damage, Owner, Pierce, HitSound, Body>();
 
             float damageMultiplier = entity.Has<DoubleDamage>() ? 2 : 1;
 
@@ -112,13 +113,16 @@ namespace RogueliteSurvivor.ComponentFactories
                 new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
                 new Owner() { Entity = entity },
                 new Pierce(entity.Has<Pierce>() ? entity.Get<Pierce>().Num : 0),
+                new HitSound() { SoundEffect = spellContainers[spell.Spell].HitSound },
                 BodyFactory.CreateCircularBody(projectile, 14, physicsWorld, body, .1f)
             );
+
+            soundEffects[spellContainers[spell.Spell].CreateSound].Play();
         }
 
-        public static void CreateEnemyProjectile(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect)
+        public static void CreateEnemyProjectile(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect, Dictionary<string, SoundEffect> soundEffects)
         {
-            var projectile = world.Create<EnemyProjectile, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Damage, Owner, Pierce, Body>();
+            var projectile = world.Create<EnemyProjectile, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Damage, Owner, Pierce, HitSound, Body>();
 
             float damageMultiplier = entity.Has<DoubleDamage>() ? 2 : 1;
 
@@ -139,13 +143,16 @@ namespace RogueliteSurvivor.ComponentFactories
                 new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
                 new Owner() { Entity = entity },
                 new Pierce(entity.Has<Pierce>() ? entity.Get<Pierce>().Num : 0),
+                new HitSound() { SoundEffect = spellContainers[spell.Spell].HitSound },
                 BodyFactory.CreateCircularBody(projectile, 14, physicsWorld, body, .1f)
             );
+
+            soundEffects[spellContainers[spell.Spell].CreateSound].Play();
         }
 
-        public static void CreateSingleTarget(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect)
+        public static void CreateSingleTarget(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect, Dictionary<string, SoundEffect> soundEffects)
         {
-            var singleTarget = world.Create<SingleTarget, EntityStatus, Position, Speed, Animation, SpriteSheet, Damage, Owner, Body>();
+            var singleTarget = world.Create<SingleTarget, EntityStatus, Position, Speed, Animation, SpriteSheet, Damage, Owner, CreateSound, Body>();
 
             float damageMultiplier = entity.Has<DoubleDamage>() ? 2 : 1;
 
@@ -164,6 +171,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition, radiusMultiplier),
                 new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
                 new Owner() { Entity = entity },
+                new CreateSound() { SoundEffect = spellContainers[spell.Spell].CreateSound },
                 BodyFactory.CreateCircularBody(singleTarget, (int)(32 * radiusMultiplier), physicsWorld, body, .1f, false)
             );
         }

@@ -4,6 +4,7 @@ using Box2D.NetStandard.Collision;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.Fixtures;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
@@ -22,6 +23,7 @@ namespace RogueliteSurvivor.Systems
         Box2D.NetStandard.Dynamics.World.World physicsWorld;
         Random random;
         Dictionary<Spells, SpellContainer> spellContainers;
+        Dictionary<string, SoundEffect> soundEffects;
 
         QueryDescription spell1Query = new QueryDescription()
                                 .WithAll<Spell1>();
@@ -34,12 +36,13 @@ namespace RogueliteSurvivor.Systems
 
 
 
-        public AttackSystem(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers)
+        public AttackSystem(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Dictionary<string, SoundEffect> soundEffects)
             : base(world, new QueryDescription())
         {
             this.textures = textures;
             this.physicsWorld = physicsWorld;
             this.spellContainers = spellContainers;
+            this.soundEffects = soundEffects;
             random = new Random();
         }
 
@@ -88,15 +91,15 @@ namespace RogueliteSurvivor.Systems
 
                     if (spell.Type == SpellType.Projectile)
                     {
-                        SpellFactory.CreateProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect);
+                        SpellFactory.CreateProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect, soundEffects);
                     }
                     else if (spell.Type == SpellType.SingleTarget)
                     {
-                        SpellFactory.CreateSingleTarget(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect);
+                        SpellFactory.CreateSingleTarget(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect, soundEffects);
                     }
                     else if(spell.Type == SpellType.EnemyProjectile)
                     {
-                        SpellFactory.CreateEnemyProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect);
+                        SpellFactory.CreateEnemyProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect, soundEffects);
                     }
                 }
                 else

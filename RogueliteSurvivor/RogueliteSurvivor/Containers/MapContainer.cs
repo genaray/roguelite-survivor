@@ -14,6 +14,7 @@ namespace RogueliteSurvivor.Containers
         public string Description { get; set; }
         public string[] TilesetImages { get; set; }
         public Vector2 Start { get; set; }
+        public string Music { get; set; }
         public MapUnlockRequirementContainer UnlockRequirement { get; set; }
         public List<SpawnableAreaContainer> Spawnables { get; set; }
         public List<EnemyWavesContainer> EnemyWaves { get; set; }
@@ -34,6 +35,7 @@ namespace RogueliteSurvivor.Containers
                 Description = (string)map["description"],
                 TilesetImages = getTilesetImages(map),
                 Start = new Vector2((int)map["startingX"], (int)map["startingY"]),
+                Music = (string)map["music"],
                 UnlockRequirement = MapUnlockRequirementContainer.ToMapUnlockRequirementContainer(map["mapUnlockRequirement"]),
                 Spawnables = SpawnableAreaContainer.ToSpawnableAreaContainer(map["spawnableAreas"]),
                 EnemyWaves = EnemyWavesContainer.ToEnemyWavesContainers(map["enemyWaves"])

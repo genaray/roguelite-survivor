@@ -2,6 +2,7 @@
 using Arch.Core.Extensions;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
@@ -26,20 +27,23 @@ namespace RogueliteSurvivor.Systems
         Dictionary<string, Texture2D> textures;
         Box2D.NetStandard.Dynamics.World.World physicsWorld;
         Dictionary<Spells, SpellContainer> spellContainers;
+        Dictionary<string, SoundEffect> soundEffects;
         Random random;
-        public DeathSystem(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers)
+
+        public DeathSystem(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Dictionary<string, SoundEffect> soundEffects)
             : base(world, new QueryDescription()
                                 .WithAll<EntityStatus, Body>())
         {
             this.textures = textures;
             this.physicsWorld = physicsWorld;
             this.spellContainers = spellContainers;
+            this.soundEffects = soundEffects;
             random = new Random();
         }
 
         public void Update(GameTime gameTime, float totalElapsedTime, float scaleFactor)
         {
-            world.Query(in projectileQuery, (ref EntityStatus entityStatus, ref SpriteSheet spriteSheet, ref Animation animation) =>
+            world.Query(in projectileQuery, (ref EntityStatus entityStatus, ref SpriteSheet spriteSheet, ref Animation animation, ref HitSound hitSound) =>
             {
                 if (entityStatus.State == State.ReadyToDie)
                 {
@@ -48,7 +52,7 @@ namespace RogueliteSurvivor.Systems
                     Spells spell = spriteSheet.TextureName.GetSpellFromString();
                     animation = SpellFactory.GetSpellHitAnimation(spellContainers[spell]);
                     spriteSheet = SpellFactory.GetSpellHitSpriteSheet(textures, spellContainers[spell], spriteSheet.Rotation);
-                    
+                    soundEffects[hitSound.SoundEffect].Play();
                 }
                 else if (entityStatus.State == State.Dying && animation.CurrentFrame == animation.LastFrame)
                 {
@@ -67,12 +71,14 @@ namespace RogueliteSurvivor.Systems
                         int bloodToUse = random.Next(1, 9);
                         spriteSheet = new SpriteSheet(textures["MiniBlood" + bloodToUse], "MiniBlood" + bloodToUse, getMiniBloodNumFrames(bloodToUse), 1, 0, .5f);
                         animation = new Animation(0, getMiniBloodNumFrames(bloodToUse) - 1, 1 / 60f, 1, false);
+                        soundEffects["EnemyDeath2"].Play();
                     }
                     else
                     {
                         int bloodToUse = random.Next(1, 5);
                         spriteSheet = new SpriteSheet(textures["Blood" + bloodToUse], "Blood" + bloodToUse, 30, 1, 0, .5f);
                         animation = new Animation(0, 29, 1 / 60f, 1, false);
+                        soundEffects["EnemyDeath1"].Play();
                     }
                 }
                 else if (entityStatus.State == State.Dying && animation.CurrentFrame == animation.LastFrame)

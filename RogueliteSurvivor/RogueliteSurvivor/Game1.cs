@@ -20,10 +20,6 @@ namespace RogueliteSurvivor
         float scaleFactor;
         private Matrix transformMatrix;
 
-        private World world = null;
-        Box2D.NetStandard.Dynamics.World.World physicsWorld = null;
-        System.Numerics.Vector2 gravity = System.Numerics.Vector2.Zero;
-
         Dictionary<string, Scene> scenes = new Dictionary<string, Scene>();
         Dictionary<string, PlayerContainer> playerCharacters = new Dictionary<string, PlayerContainer>();
         Dictionary<string, MapContainer> mapContainers = new Dictionary<string, MapContainer>();
@@ -61,25 +57,22 @@ namespace RogueliteSurvivor
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            world = World.Create();
-            physicsWorld = new Box2D.NetStandard.Dynamics.World.World(gravity);
-            physicsWorld.SetContactListener(new GameContactListener());
-            physicsWorld.SetContactFilter(new GameContactFilter());
 
             loadPlayerCharacters();
             loadPlayableMaps();
             loadProgression();
             loadEnemies();
 
-            GameScene gameScene = new GameScene(_spriteBatch, Content, _graphics, world, physicsWorld, playerCharacters, mapContainers, progressionContainer, enemyContainers, scaleFactor);
+            GameScene gameScene = new GameScene(_spriteBatch, Content, _graphics, playerCharacters, mapContainers, progressionContainer, enemyContainers, scaleFactor);
 
-            MainMenuScene mainMenu = new MainMenuScene(_spriteBatch, Content, _graphics, world, physicsWorld, playerCharacters, mapContainers, progressionContainer, enemyContainers, scaleFactor);
+            MainMenuScene mainMenu = new MainMenuScene(_spriteBatch, Content, _graphics, playerCharacters, mapContainers, progressionContainer, enemyContainers, scaleFactor);
             mainMenu.LoadContent();
+            mainMenu.SetActive();
 
-            LoadingScene loadingScene = new LoadingScene(_spriteBatch, Content, _graphics, world, physicsWorld, progressionContainer, scaleFactor);
+            LoadingScene loadingScene = new LoadingScene(_spriteBatch, Content, _graphics, progressionContainer, scaleFactor);
             loadingScene.LoadContent();
 
-            GameOverScene gameOverScene = new GameOverScene(_spriteBatch, Content, _graphics, world, physicsWorld, progressionContainer, mapContainers, scaleFactor);
+            GameOverScene gameOverScene = new GameOverScene(_spriteBatch, Content, _graphics, progressionContainer, mapContainers, scaleFactor);
             gameOverScene.LoadContent();
 
             scenes.Add("game", gameScene);
@@ -205,6 +198,7 @@ namespace RogueliteSurvivor
                 }
 
                 currentScene = nextScene;
+                scenes[currentScene].SetActive();
             }
 
             base.Update(gameTime);

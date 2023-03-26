@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
@@ -17,9 +18,10 @@ namespace RogueliteSurvivor.Scenes
     public class GameOverScene : Scene
     {
         //private Dictionary<string, Texture2D> textures;
-        private Dictionary<string, SpriteFont> fonts;
+        private Dictionary<string, SpriteFont> fonts = null;
 
         private Dictionary<string, MapContainer> mapContainers;
+        private Dictionary<string, Song> songs = null;
 
         private GameSettings gameSettings;
         private GameStats gameStats;
@@ -29,21 +31,37 @@ namespace RogueliteSurvivor.Scenes
         private GameOverState state = GameOverState.Main;
         private float stateChangeTime = .11f;
 
-        public GameOverScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, ProgressionContainer progressionContainer, Dictionary<string, MapContainer> mapContainers, float scaleFactor)
-            : base(spriteBatch, contentManager, graphics, world, physicsWorld, progressionContainer, scaleFactor)
+        public GameOverScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, Dictionary<string, MapContainer> mapContainers, float scaleFactor)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor)
         {
             this.mapContainers = mapContainers;
         }
 
         public override void LoadContent()
         {
-            fonts = new Dictionary<string, SpriteFont>()
+            if (fonts == null)
+            {
+                fonts = new Dictionary<string, SpriteFont>()
             {
                 { "Font", Content.Load<SpriteFont>(Path.Combine("Fonts", "Font")) },
                 { "FontSmall", Content.Load<SpriteFont>(Path.Combine("Fonts", "FontSmall")) },
             };
+            }
+
+            if (songs == null)
+            {
+                songs = new Dictionary<string, Song> {
+                    { "GameOver", Content.Load<Song>(Path.Combine("Music", "Fx 3")) }
+                };
+            }
 
             Loaded = true;
+        }
+
+        public override void SetActive()
+        {
+            MediaPlayer.Play(songs["GameOver"]);
+            MediaPlayer.IsRepeating = false;
         }
 
         public void SetGameSettings(GameSettings gameSettings)

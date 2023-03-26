@@ -2,9 +2,11 @@
 using Arch.Core.Extensions;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
@@ -31,8 +33,14 @@ namespace RogueliteSurvivor.Scenes
         private List<IRenderSystem> renderSystems;
         private Entity player;
 
+        private World world;
+        private Box2D.NetStandard.Dynamics.World.World physicsWorld;
+        private System.Numerics.Vector2 gravity = System.Numerics.Vector2.Zero;
+
         private Dictionary<string, Texture2D> textures;
         private Dictionary<string, SpriteFont> fonts;
+        private Dictionary<string, Song> songs = null;
+        private Dictionary<string, SoundEffect> soundEffects = null;
 
         private float totalGameTime = 0f;
 
@@ -51,12 +59,20 @@ namespace RogueliteSurvivor.Scenes
         private List<LevelUpType> levelUpChoices = new List<LevelUpType>();
         private LevelUpType selectedLevelUpChoice;
 
-        public GameScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
-            : base(spriteBatch, contentManager, graphics, world, physicsWorld, progressionContainer, scaleFactor)
+        private GameContactListener gameContactListener;
+
+        public GameScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor)
         {
             this.playerContainers = playerContainers;
             this.mapContainers = mapContainers;
             this.enemyContainers = enemyContainers;
+
+            world = World.Create();
+            physicsWorld = new Box2D.NetStandard.Dynamics.World.World(gravity);
+            gameContactListener = new GameContactListener();
+            physicsWorld.SetContactListener(gameContactListener);
+            physicsWorld.SetContactFilter(new GameContactFilter());
 
             random = new Random();
         }
@@ -98,6 +114,7 @@ namespace RogueliteSurvivor.Scenes
         {
             resetWorld();
             loadTexturesAndFonts();
+            loadSoundEffects();
 
             loadMap();
             loadSpells();
@@ -164,6 +181,31 @@ namespace RogueliteSurvivor.Scenes
             };
         }
 
+        private void loadSoundEffects()
+        {
+            if(soundEffects == null)
+            {
+                soundEffects = new Dictionary<string, SoundEffect>()
+                {
+                    { "LevelUp", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "02_Heal_02")) },
+                    { "EnemyMelee1", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "03_Claw_03")) },
+                    { "FireballHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "04_Fire_explosion_04_medium")) },
+                    { "EnemyMelee2", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "08_Bite_04")) },
+                    { "IceSpikeHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "13_Ice_explosion_01")) },
+                    { "LightningStrikeHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "18_Thunder_02")) },
+                    { "ProjectileCast1", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "22_Slash_04")) },
+                    { "MagicShotHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "22_Water_02")) },
+                    { "LightningBlastHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "25_Wind_01")) },
+                    { "ProjectileCast2", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "35_Miss_Evade_02")) },
+                    { "IceShardHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "45_Charge_05")) },
+                    { "EnemyDeath1", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "69_Enemy_death_01")) },
+                    { "EnemyDeath2", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "77_flesh_02")) },
+                };
+
+                gameContactListener.SetSoundEffects(soundEffects);
+            }
+        }
+
         private void loadSpells()
         {
             JObject spells = JObject.Parse(File.ReadAllText(Path.Combine(Content.RootDirectory, "Datasets", "spells.json")));
@@ -213,13 +255,13 @@ namespace RogueliteSurvivor.Scenes
                 new EnemyAISystem(world),
                 new AnimationSetSystem(world),
                 new AnimationUpdateSystem(world),
-                new CollisionSystem(world, physicsWorld),
-                new AttackSystem(world, textures, physicsWorld, spellContainers),
+                new CollisionSystem(world, physicsWorld, soundEffects),
+                new AttackSystem(world, textures, physicsWorld, spellContainers, soundEffects),
                 new SpellEffectSystem(world),
                 new PickupSystem(world),
                 new EnemySpawnSystem(world, textures, physicsWorld, _graphics, enemyContainers, spellContainers, mapContainer),
                 new AttackSpellCleanupSystem(world),
-                new DeathSystem(world, textures, physicsWorld, spellContainers),
+                new DeathSystem(world, textures, physicsWorld, spellContainers, soundEffects),
                 renderHud,
             };
 
@@ -254,6 +296,8 @@ namespace RogueliteSurvivor.Scenes
                     }
                 }
             }
+
+            songs = new Dictionary<string, Song> { {"GameMusic", Content.Load<Song>(Path.Combine("Music", mapContainer.Music)) } };
         }
 
         private void placePlayer()
@@ -301,6 +345,12 @@ namespace RogueliteSurvivor.Scenes
             TraitsHelper.AddTraitsToEntity(player, playerContainer.Traits);
 
             LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, LevelUpType.None, spellContainers);
+        }
+
+        public override void SetActive()
+        {
+            MediaPlayer.Play(songs["GameMusic"]);
+            MediaPlayer.IsRepeating = true;
         }
 
         public override string Update(GameTime gameTime, params object[] values)
@@ -391,6 +441,7 @@ namespace RogueliteSurvivor.Scenes
                     Player playerInfo = player.Get<Player>();
                     if (playerInfo.ExperienceToNextLevel <= 0)
                     {
+                        soundEffects["LevelUp"].Play();
                         stateChangeTime = 0f;
                         playerInfo.Level++;
                         playerInfo.ExperienceRequiredForNextLevel = ExperienceHelper.ExperienceRequiredForLevel(playerInfo.Level + 1);

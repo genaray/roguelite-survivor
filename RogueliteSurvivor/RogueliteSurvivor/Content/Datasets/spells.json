@@ -14,6 +14,8 @@
       "currentAttacksPerSecond": 2,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "ProjectileCast1",
+      "hitSound": "FireballHit",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 3,
@@ -55,6 +57,8 @@
       "currentAttacksPerSecond": 0.5,
       "damageStartDelay": 0.2,
       "damageEndDelay": 0.7,
+      "createSound": "FireballHit",
+      "hitSound": "",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 11,
@@ -85,6 +89,8 @@
       "currentAttacksPerSecond": 10,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "",
+      "hitSound": "",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 14,
@@ -115,6 +121,8 @@
       "currentAttacksPerSecond": 3,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "ProjectileCast1",
+      "hitSound": "IceShardHit",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 9,
@@ -156,6 +164,8 @@
       "currentAttacksPerSecond": 0.4,
       "damageStartDelay": 0.1,
       "damageEndDelay": 0.5,
+      "createSound": "IceSpikeHit",
+      "hitSound": "",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 25,
@@ -186,6 +196,8 @@
       "currentAttacksPerSecond": 10,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "",
+      "hitSound": "",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 29,
@@ -216,6 +228,8 @@
       "currentAttacksPerSecond": 5,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "ProjectileCast1",
+      "hitSound": "LightningBlastHit",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 4,
@@ -257,6 +271,8 @@
       "currentAttacksPerSecond": 0.33,
       "damageStartDelay": 0.25,
       "damageEndDelay": 0.4,
+      "createSound": "LightningStrikeHit",
+      "hitSound": "",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 12,
@@ -287,6 +303,8 @@
       "currentAttacksPerSecond": 12,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "",
+      "hitSound": "",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 59,
@@ -317,6 +335,8 @@
       "currentAttacksPerSecond": 2.5,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "ProjectileCast1",
+      "hitSound": "MagicShotHit",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 59,
@@ -358,6 +378,8 @@
       "currentAttacksPerSecond": 0.5,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "",
+      "hitSound": "EnemyMelee1",
       "aliveAnimation": null,
       "aliveSpriteSheet": null,
       "hitAnimation": null,
@@ -377,6 +399,8 @@
       "currentAttacksPerSecond": 0.25,
       "damageStartDelay": 0,
       "damageEndDelay": 0,
+      "createSound": "ProjectileCast2",
+      "hitSound": "MagicShotHit",
       "aliveAnimation": {
         "firstFrame": 0,
         "lastFrame": 29,

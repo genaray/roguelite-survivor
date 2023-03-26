@@ -18,8 +18,8 @@ namespace RogueliteSurvivor.Scenes
         private readonly string[] dots = new string[4] { "", ".", "..", "..." };
         private int doot = 0;
 
-        public LoadingScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, ProgressionContainer progressionContainer, float scaleFactor)
-            : base(spriteBatch, contentManager, graphics, world, physicsWorld, progressionContainer, scaleFactor)
+        public LoadingScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, float scaleFactor)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor)
         {
         }
 
@@ -31,6 +31,11 @@ namespace RogueliteSurvivor.Scenes
             };
 
             Loaded = true;
+        }
+
+        public override void SetActive()
+        {
+            
         }
 
         public override string Update(GameTime gameTime, params object[] values)

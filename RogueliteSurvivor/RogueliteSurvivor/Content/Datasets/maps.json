@@ -8,6 +8,7 @@
       "tilesetImages": [ "Tileset" ],
       "startingX": 384,
       "startingY": 752,
+      "music": "Action 1",
       "mapUnlockRequirement": {
         "mapUnlockType": "None"
       },
@@ -477,6 +478,7 @@
       "tilesetImages": [ "Tileset", "WallTops" ],
       "startingX": 384,
       "startingY": 592,
+      "music": "Action 2",
       "mapUnlockRequirement": {
         "mapUnlockType": "MapBestTime",
         "requirementText": "The Beginning",
@@ -990,6 +992,7 @@
       "tilesetImages": [ "Tileset", "CaveTops", "CaveWater" ],
       "startingX": 80,
       "startingY": 80,
+      "music": "Action 3",
       "mapUnlockRequirement": {
         "mapUnlockType": "MapBestTime",
         "requirementText": "The Church",

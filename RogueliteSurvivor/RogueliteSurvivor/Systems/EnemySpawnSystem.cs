@@ -175,7 +175,7 @@ namespace RogueliteSurvivor.Systems
             {
                 EnemyContainer container = enemyContainers[enemyType];
 
-                var entity = world.Create<Enemy, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Target, Health, Damage, Spell1, Body, Pickup, Experience>();
+                var entity = world.Create<Enemy, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Target, Health, Damage, Spell1, HitSound, Body, Pickup, Experience>();
 
                 Vector2 position = getSpawnPosition(player.Value.XY, offset, map);
 
@@ -195,6 +195,7 @@ namespace RogueliteSurvivor.Systems
                             new Health() { Current = container.Health, Max = container.Health },
                             new Damage() { Amount = container.Damage, BaseAmount = container.Damage },
                             SpellFactory.CreateSpell<Spell1>(spellContainers[container.Spell]),
+                            new HitSound() { SoundEffect = spellContainers[container.Spell].HitSound },
                             BodyFactory.CreateCircularBody(entity, container.Width, physicsWorld, body),
                             createPickupForEnemy(),
                             new Experience(container.Experience)

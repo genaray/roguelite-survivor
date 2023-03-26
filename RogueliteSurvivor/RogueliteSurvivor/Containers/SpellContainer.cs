@@ -19,6 +19,8 @@ namespace RogueliteSurvivor.Containers
         public float CurrentAttacksPerSecond { get; set; }
         public float DamageStartDelay { get; set; }
         public float DamageEndDelay { get; set; }
+        public string CreateSound { get; set; }
+        public string HitSound { get; set; }
         public AnimationContainer AliveAnimation { get; set; }
         public SpriteSheetContainer AliveSpriteSheet { get; set; }
         public AnimationContainer HitAnimation { get; set; }
@@ -46,6 +48,8 @@ namespace RogueliteSurvivor.Containers
                 CurrentAttacksPerSecond = (float)spell["currentAttacksPerSecond"],
                 DamageStartDelay = (float)spell["damageStartDelay"],
                 DamageEndDelay = (float)spell["damageEndDelay"],
+                CreateSound = (string)spell["createSound"],
+                HitSound = (string)spell["hitSound"],
                 AliveAnimation = AnimationContainer.ToAnimationContainer(spell["aliveAnimation"]),
                 AliveSpriteSheet = SpriteSheetContainer.ToSpriteSheetContainer(spell["aliveSpriteSheet"]),
                 HitAnimation = AnimationContainer.ToAnimationContainer(spell["hitAnimation"]),

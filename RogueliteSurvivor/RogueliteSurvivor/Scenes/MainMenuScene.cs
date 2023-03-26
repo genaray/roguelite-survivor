@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
@@ -19,6 +20,7 @@ namespace RogueliteSurvivor.Scenes
     {
         private Dictionary<string, Texture2D> textures = null;
         private Dictionary<string, SpriteFont> fonts = null;
+        private Dictionary<string, Song> songs = null;
 
         private bool readyForInput = false;
         private float counter = 0f;
@@ -38,8 +40,8 @@ namespace RogueliteSurvivor.Scenes
         private int descriptionLength = 80;
 
 
-        public MainMenuScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, World world, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
-            : base(spriteBatch, contentManager, graphics, world, physicsWorld, progressionContainer, scaleFactor)
+        public MainMenuScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor)
         {
             this.playerContainers = playerContainers;
             this.mapContainers = mapContainers.Values.ToList();
@@ -75,6 +77,13 @@ namespace RogueliteSurvivor.Scenes
                 };
             }
 
+            if(songs == null)
+            {
+                songs = new Dictionary<string, Song> {
+                    { "MenuTheme", Content.Load<Song>(Path.Combine("Music", "Night Ambient 2 (Loop)")) }
+                };
+            }
+
             if(creditsContainer == null)
             {
                 JObject credits = JObject.Parse(File.ReadAllText(Path.Combine(Content.RootDirectory, "Datasets", "credits.json")));
@@ -84,7 +93,14 @@ namespace RogueliteSurvivor.Scenes
             state = MainMenuState.MainMenu;
             selectedPlayer = playerContainers.First().Key;
             selectedMap = mapContainers.First().Name;
+            
             Loaded = true;
+        }
+
+        public override void SetActive()
+        {
+            MediaPlayer.Play(songs["MenuTheme"]);
+            MediaPlayer.IsRepeating = true;
         }
 
         public override string Update(GameTime gameTime, params object[] values)
@@ -599,7 +615,7 @@ namespace RogueliteSurvivor.Scenes
             }
             else if (state == MainMenuState.Credits)
             {
-                int counterX = 0, counterY = 0;
+                int counterX = 0, counterY = -96;
                 foreach(var outsideResource in creditsContainer.OutsideResources)
                 {
                     _spriteBatch.DrawString(
@@ -648,7 +664,7 @@ namespace RogueliteSurvivor.Scenes
 
                     if(counterY > 100)
                     {
-                        counterY = 0;
+                        counterY = -96;
                         counterX += 200;
                     }
                 }

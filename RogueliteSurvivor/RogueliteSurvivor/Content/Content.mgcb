@@ -723,6 +723,48 @@
 #begin Maps/The Beginning/WallTops.tsx
 /copy:Maps/The Beginning/WallTops.tsx
 
+#begin Music/Action 1.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Action 1.ogg
+
+#begin Music/Action 2.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Action 2.ogg
+
+#begin Music/Action 3.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Action 3.ogg
+
+#begin Music/Action 4.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Action 4.ogg
+
+#begin Music/Action 5.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Action 5.ogg
+
+#begin Music/Fx 3.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Fx 3.ogg
+
+#begin Music/Night Ambient 2 (Loop).ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Night Ambient 2 (Loop).ogg
+
 #begin Pickups/player-pickups.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -782,6 +824,84 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Player/LightningWizard.png
+
+#begin Sound Effects/02_Heal_02.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/02_Heal_02.ogg
+
+#begin Sound Effects/03_Claw_03.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/03_Claw_03.ogg
+
+#begin Sound Effects/04_Fire_explosion_04_medium.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/04_Fire_explosion_04_medium.ogg
+
+#begin Sound Effects/08_Bite_04.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/08_Bite_04.ogg
+
+#begin Sound Effects/13_Ice_explosion_01.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/13_Ice_explosion_01.ogg
+
+#begin Sound Effects/18_Thunder_02.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/18_Thunder_02.ogg
+
+#begin Sound Effects/22_Slash_04.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/22_Slash_04.ogg
+
+#begin Sound Effects/22_Water_02.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/22_Water_02.ogg
+
+#begin Sound Effects/25_Wind_01.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/25_Wind_01.ogg
+
+#begin Sound Effects/35_Miss_Evade_02.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/35_Miss_Evade_02.ogg
+
+#begin Sound Effects/45_Charge_05.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/45_Charge_05.ogg
+
+#begin Sound Effects/69_Enemy_death_01.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/69_Enemy_death_01.ogg
+
+#begin Sound Effects/77_flesh_02.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/77_flesh_02.ogg
 
 #begin Spells/enemy-energy-blast.png
 /importer:TextureImporter
