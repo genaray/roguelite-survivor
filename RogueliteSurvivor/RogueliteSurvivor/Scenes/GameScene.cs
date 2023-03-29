@@ -15,6 +15,7 @@ using RogueliteSurvivor.Containers;
 using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Helpers;
 using RogueliteSurvivor.Physics;
+using RogueliteSurvivor.Scenes.SceneComponents;
 using RogueliteSurvivor.Systems;
 using RogueliteSurvivor.Utils;
 using System;
@@ -57,12 +58,13 @@ namespace RogueliteSurvivor.Scenes
         
         private Random random;
         private List<LevelUpType> levelUpChoices = new List<LevelUpType>();
+        private List<Button> levelUpButtons;
         private LevelUpType selectedLevelUpChoice;
 
         private GameContactListener gameContactListener;
 
-        public GameScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, float scaleFactor, SettingsContainer settingsContainer)
-            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor, settingsContainer)
+        public GameScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, SettingsContainer settingsContainer)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, settingsContainer)
         {
             this.playerContainers = playerContainers;
             this.mapContainers = mapContainers;
@@ -369,7 +371,16 @@ namespace RogueliteSurvivor.Scenes
             {
                 if (stateChangeTime > InputConstants.ResponseTime)
                 {
-                    if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
+                    var mState = Mouse.GetState();
+                    bool clicked = false;
+
+                    if (mState.LeftButton == ButtonState.Pressed && levelUpButtons.Any(a => a.MouseOver()))
+                    {
+                        clicked = true;
+                        selectedLevelUpChoice = levelUpChoices[levelUpButtons.IndexOf(levelUpButtons.First(a => a.MouseOver()))];
+                    }
+
+                    if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
                         gameState = GameState.Running;
                         LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers);
@@ -396,7 +407,12 @@ namespace RogueliteSurvivor.Scenes
                             soundEffects["Hover"].Play();
                             stateChangeTime = 0f;
                         }
-                        
+                    }
+
+                    for (int i = 1; i <= levelUpButtons.Count; i++)
+                    {
+                        levelUpButtons[i - 1].Selected(selectedLevelUpChoice == levelUpChoices[i - 1]);
+                        levelUpButtons[i - 1].MouseOver(mState);
                     }
                 }
             }
@@ -443,7 +459,7 @@ namespace RogueliteSurvivor.Scenes
 
                         foreach (var system in updateSystems)
                         {
-                            system.Update(gameTime, totalGameTime, scaleFactor);
+                            system.Update(gameTime, totalGameTime, Game1.ScaleFactor);
                         }
                     }
                     stateChangeTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -503,6 +519,23 @@ namespace RogueliteSurvivor.Scenes
                             levelUpChoices.Add(choice);
                         }
                         selectedLevelUpChoice = levelUpChoices[0];
+                        levelUpButtons = new List<Button>();
+
+                        int counter = -136;
+                        foreach (var levelUpChoice in levelUpChoices)
+                        {
+                            levelUpButtons.Add(
+                                new Button(
+                                    textures["LevelUpChoices"],
+                                    new Vector2(GetWidthOffset(2) + counter, GetHeightOffset(2) + 32),
+                                    LevelUpChoiceHelper.GetLevelUpChoiceButton(levelUpChoice, false),
+                                    LevelUpChoiceHelper.GetLevelUpChoiceButton(levelUpChoice, true),
+                                    new Vector2(32, 32)
+                                )
+                            );
+
+                            counter += 80;
+                        }
                     }
                 }
             }
@@ -519,7 +552,7 @@ namespace RogueliteSurvivor.Scenes
                     foreach (var system in renderSystems)
                     {
                         _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend, transformMatrix: transformMatrix);
-                        system.Render(gameTime, _spriteBatch, textures, player, totalGameTime, gameState, layer, scaleFactor);
+                        system.Render(gameTime, _spriteBatch, textures, player, totalGameTime, gameState, layer, Game1.ScaleFactor);
                         _spriteBatch.End();
                     }
                 }
@@ -535,22 +568,9 @@ namespace RogueliteSurvivor.Scenes
                     Color.White
                 );
 
-                int counter = -136;
-                foreach (var levelUpChoice in levelUpChoices)
+                foreach(var button in levelUpButtons)
                 {
-                    _spriteBatch.Draw(
-                        textures["LevelUpChoices"],
-                        new Vector2(GetWidthOffset(2) + counter, GetHeightOffset(2) + 32),
-                        LevelUpChoiceHelper.GetLevelUpChoiceButton(levelUpChoice, levelUpChoice == selectedLevelUpChoice),
-                        Color.White,
-                        0f,
-                        new Vector2(32, 32),
-                        1f,
-                        SpriteEffects.None,
-                        0f
-                    );
-
-                    counter += 80;
+                    button.Draw(_spriteBatch);
                 }
 
                 _spriteBatch.DrawString(

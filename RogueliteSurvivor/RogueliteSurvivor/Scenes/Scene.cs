@@ -15,11 +15,9 @@ namespace RogueliteSurvivor.Scenes
         protected ProgressionContainer progressionContainer;
         protected SettingsContainer settingsContainer;
 
-        protected float scaleFactor;
-
         public bool Loaded { get; protected set; }
 
-        public Scene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, float scaleFactor, SettingsContainer settingsContainer)
+        public Scene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, SettingsContainer settingsContainer)
         {
             _spriteBatch = spriteBatch;
             Content = contentManager;
@@ -27,7 +25,6 @@ namespace RogueliteSurvivor.Scenes
             this.progressionContainer = progressionContainer;
 
             Loaded = false;
-            this.scaleFactor = scaleFactor;
             this.settingsContainer = settingsContainer;
         }
 
@@ -37,11 +34,11 @@ namespace RogueliteSurvivor.Scenes
         public abstract string Update(GameTime gameTime, params object[] values);
         protected float GetWidthOffset(float divisor)
         {
-            return _graphics.PreferredBackBufferWidth / (divisor * scaleFactor);
+            return _graphics.PreferredBackBufferWidth / (divisor * Game1.ScaleFactor);
         }
         protected float GetHeightOffset(float divisor)
         {
-            return _graphics.PreferredBackBufferHeight / (divisor * scaleFactor);
+            return _graphics.PreferredBackBufferHeight / (divisor * Game1.ScaleFactor);
         }
     }
 }

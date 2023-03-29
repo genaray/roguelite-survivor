@@ -1,5 +1,6 @@
 ﻿using Arch.Core;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -7,6 +8,7 @@ using Microsoft.Xna.Framework.Media;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Scenes.SceneComponents;
 using RogueliteSurvivor.Utils;
 using System;
 using System.Collections.Generic;
@@ -17,11 +19,12 @@ namespace RogueliteSurvivor.Scenes
 {
     public class GameOverScene : Scene
     {
-        //private Dictionary<string, Texture2D> textures;
+        private Dictionary<string, Texture2D> textures;
         private Dictionary<string, SpriteFont> fonts = null;
 
         private Dictionary<string, MapContainer> mapContainers;
         private Dictionary<string, Song> songs = null;
+        private Dictionary<string, SoundEffect> soundEffects = null;
 
         private GameSettings gameSettings;
         private GameStats gameStats;
@@ -31,21 +34,32 @@ namespace RogueliteSurvivor.Scenes
         private GameOverState state = GameOverState.Main;
         private float stateChangeTime = .11f;
 
-        public GameOverScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, Dictionary<string, MapContainer> mapContainers, float scaleFactor, SettingsContainer settingsContainer)
-            : base(spriteBatch, contentManager, graphics, progressionContainer, scaleFactor, settingsContainer)
+        private List<Button> buttons;
+        private int selectedButton = 1;
+
+        public GameOverScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, ProgressionContainer progressionContainer, Dictionary<string, MapContainer> mapContainers, SettingsContainer settingsContainer)
+            : base(spriteBatch, contentManager, graphics, progressionContainer, settingsContainer)
         {
             this.mapContainers = mapContainers;
         }
 
         public override void LoadContent()
         {
+            if (textures == null)
+            {
+                textures = new Dictionary<string, Texture2D>
+                {
+                    { "MainMenuButtons", Content.Load<Texture2D>(Path.Combine("UI", "main-menu-buttons")) },
+                };
+            }
+
             if (fonts == null)
             {
                 fonts = new Dictionary<string, SpriteFont>()
-            {
-                { "Font", Content.Load<SpriteFont>(Path.Combine("Fonts", "Font")) },
-                { "FontSmall", Content.Load<SpriteFont>(Path.Combine("Fonts", "FontSmall")) },
-            };
+                {
+                    { "Font", Content.Load<SpriteFont>(Path.Combine("Fonts", "Font")) },
+                    { "FontSmall", Content.Load<SpriteFont>(Path.Combine("Fonts", "FontSmall")) },
+                };
             }
 
             if (songs == null)
@@ -55,6 +69,40 @@ namespace RogueliteSurvivor.Scenes
                 };
             }
 
+            if (soundEffects == null)
+            {
+                soundEffects = new Dictionary<string, SoundEffect>()
+                {
+                    { "Hover", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "001_Hover_01")) },
+                    { "Confirm", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "013_Confirm_03")) },
+                };
+            }
+
+            buttons = new List<Button>()
+            {
+                new Button(
+                    textures["MainMenuButtons"],
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 96),
+                    new Rectangle(0, 320, 128, 32),
+                    new Rectangle(128, 320, 128, 32),
+                    new Vector2(64, 16)
+                ),
+                new Button(
+                    textures["MainMenuButtons"],
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 96),
+                    new Rectangle(0, 352, 128, 32),
+                    new Rectangle(128, 352, 128, 32),
+                    new Vector2(64, 16)
+                ),
+                new Button(
+                    textures["MainMenuButtons"],
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
+                    new Rectangle(0, 192, 128, 32),
+                    new Rectangle(128, 192, 128, 32),
+                    new Vector2(64, 16)
+                ),
+            };
+
             Loaded = true;
         }
 
@@ -63,6 +111,10 @@ namespace RogueliteSurvivor.Scenes
             MediaPlayer.Play(songs["GameOver"]);
             MediaPlayer.IsRepeating = false; 
             MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
+            state = GameOverState.Main;
+            buttons[0].Visible(false);
+            buttons[1].Visible(true);
+            selectedButton = 2;
         }
 
         public void SetGameSettings(GameSettings gameSettings)
@@ -78,6 +130,11 @@ namespace RogueliteSurvivor.Scenes
         public override string Update(GameTime gameTime, params object[] values)
         {
             string retVal = string.Empty;
+            var kState = Keyboard.GetState();
+            var gState = GamePad.GetState(PlayerIndex.One);
+            var mState = Mouse.GetState();
+            bool clicked = false;
+
             stateChangeTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (!saved)
@@ -126,17 +183,60 @@ namespace RogueliteSurvivor.Scenes
 
             if (stateChangeTime > InputConstants.ResponseTime)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Space) || GamePad.GetState(PlayerIndex.One).Buttons.Start == ButtonState.Pressed)
+                if (mState.LeftButton == ButtonState.Pressed && buttons.Any(a => a.MouseOver()))
                 {
-                    retVal = "main-menu";
-                    saved = false;
+                    clicked = true;
+                    selectedButton = buttons.IndexOf(buttons.First(a => a.MouseOver())) + 1;
+                }
+
+                if (clicked || kState.IsKeyDown(Keys.Enter) || GamePad.GetState(PlayerIndex.One).Buttons.A == ButtonState.Pressed)
+                {
+                    switch (selectedButton)
+                    {
+                        case 1:
+                            state = GameOverState.Main;
+                            buttons[0].Visible(false);
+                            buttons[1].Visible(true);
+                            selectedButton = 2;
+                            break;
+                        case 2:
+                            state = GameOverState.AdvancedStats;
+                            buttons[0].Visible(true);
+                            buttons[1].Visible(false);
+                            selectedButton = 1;
+                            break;
+                        case 3:
+                            retVal = "main-menu";
+                            saved = false;
+                            break;
+                    }
+                    soundEffects["Confirm"].Play();
                     stateChangeTime = 0;
                 }
-                else if (Keyboard.GetState().IsKeyDown(Keys.Tab) || GamePad.GetState(PlayerIndex.One).Buttons.Y == ButtonState.Pressed)
+                else if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
                 {
-                    state = state == GameOverState.Main ? GameOverState.AdvancedStats : GameOverState.Main;
-                    stateChangeTime = 0;
+                    if (selectedButton == 3)
+                    {
+                        selectedButton = state == GameOverState.Main ? 2 : 1;
+                        soundEffects["Hover"].Play();
+                        stateChangeTime = 0;
+                    }
                 }
+                else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
+                {
+                    if (selectedButton < 3)
+                    {
+                        selectedButton = 3;
+                        soundEffects["Hover"].Play();
+                        stateChangeTime = 0;
+                    }
+                }
+            }
+
+            for (int i = 1; i <= buttons.Count; i++)
+            {
+                buttons[i - 1].Selected(i == selectedButton);
+                buttons[i - 1].MouseOver(mState);
             }
 
             return retVal;
@@ -205,18 +305,10 @@ namespace RogueliteSurvivor.Scenes
 
             }
 
-            _spriteBatch.DrawString(
-                fonts["FontSmall"],
-                "Press Tab on the keyboard or Y on the controller to toggle between map stats and advanced stats",
-                new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 96),
-                Color.White
-            );
-            _spriteBatch.DrawString(
-                fonts["FontSmall"],
-                "Press Space on the keyboard or Start on the controller to return to the main menu",
-                new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 108),
-                Color.White
-            );
+            for (int i = 1; i <= buttons.Count; i++)
+            {
+                buttons[i - 1].Draw(_spriteBatch);
+            }
 
             _spriteBatch.End();
         }
