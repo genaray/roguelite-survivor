@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Media;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Helpers;
 using RogueliteSurvivor.Scenes.SceneComponents;
 using RogueliteSurvivor.Utils;
 using System;
@@ -257,7 +258,7 @@ namespace RogueliteSurvivor.Scenes
 
                 _spriteBatch.DrawString(
                     fonts["Font"],
-                   string.Concat("You killed ", gameStats.EnemiesKilled, " enemies in ", float.Round(gameStats.PlayTime, 2), " seconds!"),
+                   string.Concat("You killed ", gameStats.EnemiesKilled, " enemies in ", gameStats.PlayTime.ToFormattedTime(), "!"),
                     new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 32),
                     Color.White
                 );

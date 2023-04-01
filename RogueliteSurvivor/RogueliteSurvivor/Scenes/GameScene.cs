@@ -149,6 +149,9 @@ namespace RogueliteSurvivor.Scenes
                 { "HealthBar", Content.Load<Texture2D>(Path.Combine("Hud", "HealthBar")) },
                 { "ExperienceBar", Content.Load<Texture2D>(Path.Combine("Hud", "ExperienceBar")) },
                 { "StatsBackground", Content.Load<Texture2D>(Path.Combine("Hud", "StatsBackground")) },
+                { "Background", Content.Load<Texture2D>(Path.Combine("Hud", "Background")) },
+                { "SpellsHud", Content.Load<Texture2D>(Path.Combine("Hud", "SpellsHud")) },
+                { "PickupOverlay", Content.Load<Texture2D>(Path.Combine("Hud", "PickupOverlay")) },
 
                 { "LevelUpChoices", Content.Load<Texture2D>(Path.Combine("UI", "level-up-buttons")) },
 
@@ -285,7 +288,7 @@ namespace RogueliteSurvivor.Scenes
             mapContainer = mapContainers[gameSettings.MapName];
 
             var mapEntity = world.Create<Map, MapInfo>();
-            mapEntity.Set(new Map(), new MapInfo(Path.Combine(Content.RootDirectory, "Maps", mapContainer.Folder, mapContainer.MapFilename), Path.Combine(Content.RootDirectory, "Maps", mapContainer.Folder), physicsWorld, mapEntity, mapContainer.Spawnables));
+            mapEntity.Set(new Map() { Name = gameSettings.MapName }, new MapInfo(Path.Combine(Content.RootDirectory, "Maps", mapContainer.Folder, mapContainer.MapFilename), Path.Combine(Content.RootDirectory, "Maps", mapContainer.Folder), physicsWorld, mapEntity, mapContainer.Spawnables));
 
             foreach (var tilesetImage in mapContainer.TilesetImages)
             {

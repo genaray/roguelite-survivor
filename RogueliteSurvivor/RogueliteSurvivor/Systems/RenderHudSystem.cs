@@ -6,22 +6,21 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
+using RogueliteSurvivor.Helpers;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
+using System.Reflection;
 
 namespace RogueliteSurvivor.Systems
 {
     public class RenderHudSystem : ArchSystem, IRenderSystem, IUpdateSystem
     {
-        static Vector2 HealthLocation = new Vector2(10, 10);
-        static Vector2 HudLocation = new Vector2(5, 5);
-        static Vector2 TimeLocation = new Vector2(-100, 10);
-        static Color OffsetColor = new Color(1, 1, 1, .5f);
-        const int Increment = 100;
+        QueryDescription mapQuery = new QueryDescription()
+                                            .WithAll<MapInfo>();
 
         GraphicsDeviceManager graphics;
         Dictionary<string, SpriteFont> fonts;
-        StatPage statPage = StatPage.Main;
+        StatPage statPage = StatPage.Spells;
         int statPageInt = 0;
         float stateChangeTime = .11f;
         public RenderHudSystem(World world, GraphicsDeviceManager graphics, Dictionary<string, SpriteFont> fonts)
@@ -80,20 +79,34 @@ namespace RogueliteSurvivor.Systems
         {
             if (layer == 4)
             {
-                int counter = 0;
+                Map? map = null;
+                world.Query(in mapQuery, (ref Map mapInfo) =>
+                {
+                    if (map == null)
+                    {
+                        map = mapInfo;
+                    }
+                });
+
                 world.Query(in query, (in Entity entity, ref Health health, ref KillCount killCount, ref AttackSpeed attackSpeed, ref Speed speed
                     , ref SpellDamage spellDamage, ref SpellEffectChance spellEffectChance, ref Pierce pierce, ref AreaOfEffect areaOfEffect, ref Player playerInfo) =>
                 {
+
                     spriteBatch.Draw(
-                        textures["StatsBackground"],
-                        new Rectangle((int)HudLocation.X, (int)HudLocation.Y, 146, getStatBackgroundHeight(entity)),
-                        new Rectangle(0, 0, 64, 64),
-                        OffsetColor
+                        textures["Background"],
+                        new Vector2(0, 315),
+                        new Rectangle(0, 0, textures["Background"].Width, textures["Background"].Height),
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        1f,
+                        SpriteEffects.None,
+                        0
                     );
 
                     spriteBatch.Draw(
                         textures["HealthBar"],
-                        HealthLocation + (Vector2.UnitY * Increment * counter),
+                        new Vector2(4, 319),
                         new Rectangle(0, 0, (int)(textures["HealthBar"].Width * ((float)health.Current / health.Max)), textures["HealthBar"].Height),
                         Color.White,
                         0f,
@@ -105,26 +118,14 @@ namespace RogueliteSurvivor.Systems
 
                     spriteBatch.DrawString(
                         fonts["FontSmall"],
-                        string.Concat(health.Current, " / ", health.Max),
-                        HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitX * 5 + Vector2.UnitY * 2,
-                        Color.White
-                    );
-
-                    spriteBatch.Draw(
-                        textures["StatBar"],
-                        HealthLocation + (Vector2.UnitY * Increment * counter),
-                        new Rectangle(0, 0, textures["StatBar"].Width, textures["StatBar"].Height),
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        1f,
-                        SpriteEffects.None,
-                        0
+                        string.Concat("Health: ", health.Current, " / ", health.Max),
+                        new Vector2(9, 321),
+                        player.Has<Invincibility>() ? Color.Aqua : Color.White
                     );
 
                     spriteBatch.Draw(
                         textures["ExperienceBar"],
-                        HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 20,
+                        new Vector2(4, 342),
                         new Rectangle(0, 0, (int)(textures["ExperienceBar"].Width * ((float)(playerInfo.ExperienceRequiredForNextLevel - playerInfo.ExperienceToNextLevel) / playerInfo.ExperienceRequiredForNextLevel)), textures["ExperienceBar"].Height),
                         Color.White,
                         0f,
@@ -137,14 +138,72 @@ namespace RogueliteSurvivor.Systems
                     spriteBatch.DrawString(
                         fonts["FontSmall"],
                         string.Concat("Level: ", playerInfo.Level, "  (", (playerInfo.ExperienceRequiredForNextLevel - playerInfo.ExperienceToNextLevel), " / ", playerInfo.ExperienceRequiredForNextLevel, ")"),
-                        HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitX * 5 + Vector2.UnitY * 22,
-                        Color.White
+                        new Vector2(9, 344),
+                        player.Has<DoubleExperience>() ? Color.Aqua : Color.White
                     );
 
+                    switch (statPage)
+                    {
+                        case StatPage.Spells:
+                            renderMainSpellStats(spriteBatch, entity, attackSpeed, speed, spellDamage, spellEffectChance, pierce, areaOfEffect);
+                            break;
+                        case StatPage.Spell1:
+                            if (entity.TryGet(out Spell1 spell1))
+                            {
+                                renderSpellStats(spriteBatch, entity, spell1, pierce, areaOfEffect);
+                                spriteBatch.Draw(
+                                    textures["SpellsHud"],
+                                    new Vector2(129, 319),
+                                    getSpellHudSourceRectangle(Spells.Blank),
+                                    Color.White,
+                                    0f,
+                                    Vector2.Zero,
+                                    1f,
+                                    SpriteEffects.None,
+                                    0
+                                );
+                            }
+                            break;
+                        case StatPage.Spell2:
+                            if (entity.TryGet(out Spell2 spell2))
+                            {
+                                renderSpellStats(spriteBatch, entity, spell2, pierce, areaOfEffect);
+                                spriteBatch.Draw(
+                                    textures["SpellsHud"],
+                                    new Vector2(175, 319),
+                                    getSpellHudSourceRectangle(Spells.Blank),
+                                    Color.White,
+                                    0f,
+                                    Vector2.Zero,
+                                    1f,
+                                    SpriteEffects.None,
+                                    0
+                                );
+                            }
+                            break;
+                        case StatPage.Spell3:
+                            if (entity.TryGet(out Spell3 spell3))
+                            {
+                                renderSpellStats(spriteBatch, entity, spell3, pierce, areaOfEffect);
+                                spriteBatch.Draw(
+                                    textures["SpellsHud"],
+                                    new Vector2(221, 319),
+                                    getSpellHudSourceRectangle(Spells.Blank),
+                                    Color.White,
+                                    0f,
+                                    Vector2.Zero,
+                                    1f,
+                                    SpriteEffects.None,
+                                    0
+                                );
+                            }
+                            break;
+                    }
+
                     spriteBatch.Draw(
-                        textures["StatBar"],
-                        HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 20,
-                        new Rectangle(0, 0, textures["StatBar"].Width, textures["StatBar"].Height),
+                        textures["SpellsHud"],
+                        new Vector2(129, 319),
+                        getSpellHudSourceRectangle(entity.Get<Spell1>().Spell),
                         Color.White,
                         0f,
                         Vector2.Zero,
@@ -153,51 +212,46 @@ namespace RogueliteSurvivor.Systems
                         0
                     );
 
-                    switch (statPage)
-                    {
-                        case StatPage.Main:
-                            renderMainStats(spriteBatch, counter, entity, killCount);
-                            break;
-                        case StatPage.Spells:
-                            renderMainSpellStats(spriteBatch, counter, entity, attackSpeed, speed, spellDamage, spellEffectChance, pierce, areaOfEffect);
-                            break;
-                        case StatPage.Spell1:
-                            if(entity.TryGet(out Spell1 spell1))
-                            {
-                                renderSpellStats(spriteBatch, counter, entity, spell1, pierce, areaOfEffect);
-                            }
-                            break;
-                        case StatPage.Spell2:
-                            if (entity.TryGet(out Spell2 spell2))
-                            {
-                                renderSpellStats(spriteBatch, counter, entity, spell2, pierce, areaOfEffect);
-                            }
-                            break;
-                        case StatPage.Spell3:
-                            if (entity.TryGet(out Spell3 spell3))
-                            {
-                                renderSpellStats(spriteBatch, counter, entity, spell3, pierce, areaOfEffect);
-                            }
-                            break;
-                    }
-                    
-
-                    counter++;
-                });
-
-                spriteBatch.Draw(
-                        textures["StatsBackground"],
-                        new Rectangle((int)TimeLocation.X + (int)GetWidthOffset(graphics, scaleFactor, 1) - 4, (int)TimeLocation.Y - 5, 100, 24),
-                        new Rectangle(0, 0, 64, 64),
-                        OffsetColor
+                    spriteBatch.Draw(
+                        textures["SpellsHud"],
+                        new Vector2(175, 319),
+                        getSpellHudSourceRectangle(entity.Has<Spell2>() ? entity.Get<Spell2>().Spell : Spells.Five),
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        1f,
+                        SpriteEffects.None,
+                        0
                     );
 
-                spriteBatch.DrawString(
-                        fonts["Font"],
-                        string.Concat("Time: ", float.Round(totalElapsedTime, 2)),
-                        TimeLocation + Vector2.UnitX * GetWidthOffset(graphics, scaleFactor, 1),
+                    spriteBatch.Draw(
+                        textures["SpellsHud"],
+                        new Vector2(221, 319),
+                        getSpellHudSourceRectangle(entity.Has<Spell3>() ? entity.Get<Spell3>().Spell : Spells.Ten),
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        1f,
+                        SpriteEffects.None,
+                        0
+                    );
+
+                    spriteBatch.DrawString(
+                        fonts["FontSmall"],
+                        string.Concat(map.Value.Name, " - ", totalElapsedTime.ToFormattedTime()),
+                        new Vector2(501, 321),
                         Color.White
                     );
+
+                    spriteBatch.DrawString(
+                        fonts["FontSmall"],
+                        string.Concat("Enemies Killed: ", killCount.Count),
+                        new Vector2(501, 333),
+                        Color.White
+                    );
+
+                    renderPowerupTimers(spriteBatch, textures, entity);
+                });
 
                 if (gameState == GameState.Paused)
                 {
@@ -248,166 +302,170 @@ namespace RogueliteSurvivor.Systems
             }
         }
 
-        private int getStatBackgroundHeight(Entity player)
+        private void renderPowerupTimers(SpriteBatch spriteBatch, Dictionary<string, Texture2D> textures, Entity player)
         {
-            switch (statPage)
-            {
-                case StatPage.Main:
-                    int height = 62;
-                    if (player.Has<Invincibility>())
-                    {
-                        height += 12;
-                    }
-                    if (player.Has<DoubleExperience>())
-                    {
-                        height += 12;
-                    }
-                    if (player.Has<DoubleDamage>())
-                    {
-                        height += 12;
-                    }
-                    if (player.Has<DoubleAttackSpeed>())
-                    {
-                        height += 12;
-                    }
-                    return height;
-                case StatPage.Spells:
-                    return 136;
-                default:
-                    return 112;
-            }
-        }
-
-        private void renderMainStats(SpriteBatch spriteBatch, int counter, Entity player, KillCount killCount)
-        {
-            int offset = 12;
-            spriteBatch.DrawString(
-                fonts["FontSmall"],
-                string.Concat("Enemies Killed: ", killCount.Count),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 40 + Vector2.UnitX * 5,
-                Color.White
-            );
+            Vector2 position = new Vector2(9, 306);
+            
             if (player.TryGet(out Invincibility invincibility))
             {
-                spriteBatch.DrawString(
-                    fonts["FontSmall"],
-                    string.Concat("Invincibility: ", invincibility.TimeRemaining.ToString("F")),
-                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * (40 + offset) + Vector2.UnitX * 5,
-                    Color.White
+                renderPowerupTimer(spriteBatch, 
+                    textures, 
+                    PickupHelper.GetPickupSourceRectangle(PickupType.Invincibility),
+                    position,
+                    invincibility.TimeRemaining, 
+                    invincibility.MaxTime
                 );
-                offset += 12;
+
+                position += Vector2.UnitX * 20;
             }
             if (player.TryGet(out DoubleExperience doubleExperience))
             {
-                spriteBatch.DrawString(
-                    fonts["FontSmall"],
-                    string.Concat("Double Experience: ", doubleExperience.TimeRemaining.ToString("F")),
-                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * (40 + offset) + Vector2.UnitX * 5,
-                    Color.White
+                renderPowerupTimer(spriteBatch,
+                    textures,
+                    PickupHelper.GetPickupSourceRectangle(PickupType.DoubleExperience),
+                    position,
+                    doubleExperience.TimeRemaining,
+                    doubleExperience.MaxTime
                 );
-                offset += 12;
+
+                position += Vector2.UnitX * 20;
             }
             if (player.TryGet(out DoubleDamage doubleDamage))
             {
-                spriteBatch.DrawString(
-                    fonts["FontSmall"],
-                    string.Concat("Double Damage: ", doubleDamage.TimeRemaining.ToString("F")),
-                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * (40 + offset) + Vector2.UnitX * 5,
-                    Color.White
+                renderPowerupTimer(spriteBatch,
+                    textures,
+                    PickupHelper.GetPickupSourceRectangle(PickupType.DoubleDamage),
+                    position,
+                    doubleDamage.TimeRemaining,
+                    doubleDamage.MaxTime
                 );
-                offset += 12;
+
+                position += Vector2.UnitX * 20;
             }
             if (player.TryGet(out DoubleAttackSpeed doubleAttackSpeed))
             {
-                spriteBatch.DrawString(
-                    fonts["FontSmall"],
-                    string.Concat("Double Attack Speed: ", doubleAttackSpeed.TimeRemaining.ToString("F")),
-                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * (40 + offset) + Vector2.UnitX * 5,
-                    Color.White
+                renderPowerupTimer(spriteBatch,
+                    textures,
+                    PickupHelper.GetPickupSourceRectangle(PickupType.DoubleAttackSpeed),
+                    position,
+                    doubleAttackSpeed.TimeRemaining,
+                    doubleAttackSpeed.MaxTime
                 );
-                offset += 12;
             }
         }
 
-        private void renderMainSpellStats(SpriteBatch spriteBatch, int counter, Entity player, AttackSpeed attackSpeed, Speed speed, SpellDamage spellDamage, SpellEffectChance spellEffectChance, Pierce pierce, AreaOfEffect areaOfEffect)
+        private void renderPowerupTimer(SpriteBatch spriteBatch, Dictionary<string, Texture2D> textures, Rectangle pickupSource, Vector2 position, float timeLeft, float maxTime)
         {
+            spriteBatch.Draw(
+                textures["PickupOverlay"],
+                position,
+                new Rectangle(0, 0, 18, 18),
+                Color.White,
+                0f,
+                new Vector2(9, 9),
+                1f,
+                SpriteEffects.None,
+                .1f
+            );
+
+            spriteBatch.Draw(
+                textures["pickups"],
+                position,
+                pickupSource,
+                Color.White,
+                0f,
+                new Vector2(8, 8),
+                1f,
+                SpriteEffects.None,
+                .1f
+            );
+
+            spriteBatch.Draw(
+                textures["PickupOverlay"],
+                position + Vector2.UnitY * (18 - (18 * timeLeft / maxTime)),
+                new Rectangle(18, 0, 18, (int)(18 * timeLeft / maxTime)),
+                Color.White,
+                0f,
+                new Vector2(9, 9),
+                1f,
+                SpriteEffects.None,
+                .1f
+            );
+
             spriteBatch.DrawString(
                 fonts["FontSmall"],
-                "Base Stats",
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 40 + Vector2.UnitX * 5,
+                (timeLeft + 1).ToFormattedSeconds(),
+                position - Vector2.One * 5,
                 Color.White
             );
+        }
+
+        private void renderMainSpellStats(SpriteBatch spriteBatch, Entity player, AttackSpeed attackSpeed, Speed speed, SpellDamage spellDamage, SpellEffectChance spellEffectChance, Pierce pierce, AreaOfEffect areaOfEffect)
+        {
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
                 string.Concat("Attack Speed: ", (player.Has<DoubleAttackSpeed>() ? 2 * attackSpeed.CurrentAttackSpeed : attackSpeed.CurrentAttackSpeed).ToString("F"), "x"),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 52 + Vector2.UnitX * 5,
+                new Vector2(269, 321),
                 player.Has<DoubleAttackSpeed>() ? Color.Aqua : Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
                 string.Concat("Spell Damage: ", (player.Has<DoubleDamage>() ? 2 * spellDamage.CurrentSpellDamage : spellDamage.CurrentSpellDamage).ToString("F"), "x"),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 64 + Vector2.UnitX * 5,
+                new Vector2(269, 333),
                 player.Has<DoubleDamage>() ? Color.Aqua : Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
                 string.Concat("Spell Effect Chance: ", spellEffectChance.CurrentSpellEffectChance.ToString("F"), "x"),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 76 + Vector2.UnitX * 5,
+                new Vector2(269, 345),
                 Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
                 string.Concat("Move Speed: ", speed.speed),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 88 + Vector2.UnitX * 5,
+                new Vector2(400, 321),
                 Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
                 string.Concat("Pierce: ", pierce.Num),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 100 + Vector2.UnitX * 5,
+                new Vector2(400, 333),
                 Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
                 string.Concat("Area of Effect: ", areaOfEffect.Radius, "x"),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 112 + Vector2.UnitX * 5,
+                new Vector2(400, 345),
                 Color.White
             );
         }
     
-        private void renderSpellStats(SpriteBatch spriteBatch, int counter, Entity player, ISpell spell, Pierce pierce, AreaOfEffect areaOfEffect)
+        private void renderSpellStats(SpriteBatch spriteBatch, Entity player, ISpell spell, Pierce pierce, AreaOfEffect areaOfEffect)
         {
             spriteBatch.DrawString(
                 fonts["FontSmall"],
-                string.Concat(spell.Spell.GetReadableSpellName(), " Stats"),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 40 + Vector2.UnitX * 5,
-                Color.White
-            );
-
-            spriteBatch.DrawString(
-                fonts["FontSmall"],
                 string.Concat("Attack Speed: ", (player.Has<DoubleAttackSpeed>() ? 2 * spell.CurrentAttacksPerSecond : spell.CurrentAttacksPerSecond).ToString("F"), "/s"),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 52 + Vector2.UnitX * 5,
+                new Vector2(269, 321),
                 player.Has<DoubleAttackSpeed>() ? Color.Aqua : Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
                 string.Concat("Spell Damage: ", (player.Has<DoubleDamage>() ? 2 * spell.CurrentDamage : spell.CurrentDamage).ToString("F")),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 64 + Vector2.UnitX * 5,
+                new Vector2(269, 333),
                 player.Has<DoubleDamage>() ? Color.Aqua : Color.White
             );
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
                 string.Concat("Spell Effect Chance: ", string.Format("{0:P0}", spell.CurrentEffectChance)),
-                HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 76 + Vector2.UnitX * 5,
+                new Vector2(269, 345),
                 Color.White
             );
 
@@ -416,7 +474,7 @@ namespace RogueliteSurvivor.Systems
                 spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Pierce: ", pierce.Num),
-                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 88 + Vector2.UnitX * 5,
+                    new Vector2(400, 321),
                     Color.White
                 );
             }
@@ -425,10 +483,75 @@ namespace RogueliteSurvivor.Systems
                 spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Area of Effect: ", areaOfEffect.Radius, "x"),
-                    HealthLocation + (Vector2.UnitY * Increment * counter) + Vector2.UnitY * 88 + Vector2.UnitX * 5,
+                    new Vector2(400, 321),
                     Color.White
                 );
             }
+        }
+    
+        private Rectangle getSpellHudSourceRectangle(Spells spell)
+        {
+            Rectangle rectangle = new Rectangle();
+            rectangle.Width = 37;
+            rectangle.Height = 37;
+
+            switch (spell)
+            {
+                case Spells.FireAura:
+                    rectangle.X = 0;
+                    rectangle.Y = 0;
+                    break;
+                case Spells.FireExplosion:
+                    rectangle.X = 37;
+                    rectangle.Y = 0;
+                    break;
+                case Spells.Fireball:
+                    rectangle.X = 0;
+                    rectangle.Y = 37;
+                    break;
+                case Spells.IceAura:
+                    rectangle.X = 37;
+                    rectangle.Y = 37;
+                    break;
+                case Spells.IceShard:
+                    rectangle.X = 0;
+                    rectangle.Y = 74;
+                    break;
+                case Spells.IceSpikes:
+                    rectangle.X = 37;
+                    rectangle.Y = 74;
+                    break;
+                case Spells.LightningAura:
+                    rectangle.X = 0;
+                    rectangle.Y = 111;
+                    break;
+                case Spells.LightningBlast:
+                    rectangle.X = 37;
+                    rectangle.Y = 111;
+                    break;
+                case Spells.LightningStrike:
+                    rectangle.X = 0;
+                    rectangle.Y = 148;
+                    break;
+                case Spells.MagicShot:
+                    rectangle.X = 37;
+                    rectangle.Y = 148;
+                    break;
+                case Spells.Five:
+                    rectangle.X = 0;
+                    rectangle.Y = 185;
+                    break;
+                case Spells.Ten:
+                    rectangle.X = 37;
+                    rectangle.Y = 185;
+                    break;
+                case Spells.Blank:
+                    rectangle.X = 0;
+                    rectangle.Y = 222;
+                    break;
+            }
+
+            return rectangle;
         }
     }
 }

@@ -1037,7 +1037,7 @@ namespace RogueliteSurvivor.Scenes
 
                     _spriteBatch.DrawString(
                         fonts["FontSmall"],
-                        string.Concat("Best Time: ", float.Round(progressionContainer.LevelProgressions.Where(a => a.Name == map.Name).FirstOrDefault()?.BestTime ?? 0, 2)),
+                        string.Concat("Best Time: ", (progressionContainer.LevelProgressions.Where(a => a.Name == map.Name).FirstOrDefault()?.BestTime ?? 0).ToFormattedTime()),
                         new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
                         Color.White
                     );
@@ -1141,7 +1141,7 @@ namespace RogueliteSurvivor.Scenes
                             );
                             _spriteBatch.DrawString(
                                 fonts["FontSmall"],
-                                string.Concat("  Best Time: ", float.Round(map.BestTime, 2)),
+                                string.Concat("  Best Time: ", map.BestTime.ToFormattedTime()),
                                 new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 60 + counterY),
                                 Color.White
                             );

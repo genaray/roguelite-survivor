@@ -125,7 +125,7 @@ namespace RogueliteSurvivor.Physics
                     KillCount killCount = (KillCount)owner.Entity.Get(typeof(KillCount));
                     Player playerExperience = owner.Entity.Get<Player>();
                     killCount.AddKill(entity.Get<Enemy>().Name);
-                    if (entity.Has<DoubleExperience>())
+                    if (owner.Entity.Has<DoubleExperience>())
                     {
                         playerExperience.TotalExperience += enemyExperience.Amount * 2;
                         playerExperience.ExperienceToNextLevel -= enemyExperience.Amount * 2;

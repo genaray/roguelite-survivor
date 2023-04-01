@@ -99,44 +99,48 @@ namespace RogueliteSurvivor.Helpers
                     if(player.TryGet(out Invincibility invincibility))
                     {
                         invincibility.TimeRemaining = pickupAmount;
+                        invincibility.MaxTime = pickupAmount;
                         player.Set(invincibility);
                     }
                     else
                     {
-                        player.Add(new Invincibility() { TimeRemaining = pickupAmount });
+                        player.Add(new Invincibility() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
                     break;
                 case PickupType.DoubleExperience:
                     if (player.TryGet(out DoubleExperience doubleExperience))
                     {
                         doubleExperience.TimeRemaining = pickupAmount;
+                        doubleExperience.MaxTime = pickupAmount;
                         player.Set(doubleExperience);
                     }
                     else
                     {
-                        player.Add(new DoubleExperience() { TimeRemaining = pickupAmount });
+                        player.Add(new DoubleExperience() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
                     break;
                 case PickupType.DoubleDamage:
                     if (player.TryGet(out DoubleDamage doubleDamage))
                     {
                         doubleDamage.TimeRemaining = pickupAmount;
+                        doubleDamage.MaxTime = pickupAmount;
                         player.Set(doubleDamage);
                     }
                     else
                     {
-                        player.Add(new DoubleDamage() { TimeRemaining = pickupAmount });
+                        player.Add(new DoubleDamage() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
                     break;
                 case PickupType.DoubleAttackSpeed:
                     if (player.TryGet(out DoubleAttackSpeed doubleAttackSpeed))
                     {
                         doubleAttackSpeed.TimeRemaining = pickupAmount;
+                        doubleAttackSpeed.MaxTime = pickupAmount;
                         player.Set(doubleAttackSpeed);
                     }
                     else
                     {
-                        player.Add(new DoubleAttackSpeed() { TimeRemaining = pickupAmount });
+                        player.Add(new DoubleAttackSpeed() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
                     break;
             }

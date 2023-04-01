@@ -20,7 +20,10 @@ namespace RogueliteSurvivor.Constants
         LightningAura,
         MagicShot,
         EnemyMelee,
-        EnemyEnergyBlast
+        EnemyEnergyBlast,
+        Five,
+        Ten,
+        Blank
     }
 
     public static class SpellsExtensions

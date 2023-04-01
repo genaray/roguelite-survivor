@@ -8,7 +8,6 @@ namespace RogueliteSurvivor.Constants
 {
     public enum StatPage
     {
-        Main,
         Spells,
         Spell1,
         Spell2,
