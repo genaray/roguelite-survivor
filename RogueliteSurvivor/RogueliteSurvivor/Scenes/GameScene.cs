@@ -16,6 +16,7 @@ using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Helpers;
 using RogueliteSurvivor.Physics;
 using RogueliteSurvivor.Scenes.SceneComponents;
+using RogueliteSurvivor.Scenes.Windows;
 using RogueliteSurvivor.Systems;
 using RogueliteSurvivor.Utils;
 using System;
@@ -60,6 +61,8 @@ namespace RogueliteSurvivor.Scenes
         private List<LevelUpType> levelUpChoices = new List<LevelUpType>();
         private List<Button> levelUpButtons;
         private LevelUpType selectedLevelUpChoice;
+
+        private Dictionary<string, Window> subScenes;
 
         private GameContactListener gameContactListener;
 
@@ -117,6 +120,7 @@ namespace RogueliteSurvivor.Scenes
             resetWorld();
             loadTexturesAndFonts();
             loadSoundEffects();
+            loadSubscenes();
 
             loadMap();
             loadSpells();
@@ -154,6 +158,10 @@ namespace RogueliteSurvivor.Scenes
                 { "PickupOverlay", Content.Load<Texture2D>(Path.Combine("Hud", "PickupOverlay")) },
 
                 { "LevelUpChoices", Content.Load<Texture2D>(Path.Combine("UI", "level-up-buttons")) },
+                { "MainMenuButtons", Content.Load<Texture2D>(Path.Combine("UI", "main-menu-buttons")) },
+                { "VolumeButtons", Content.Load<Texture2D>(Path.Combine("UI", "volume-buttons")) },
+                { "InGameMenuWindow", Content.Load<Texture2D>(Path.Combine("UI", "in-game-menu-window")) },
+                { "InGameOptionsWindow", Content.Load<Texture2D>(Path.Combine("UI", "in-game-options-window")) },
 
                 { "pickups", Content.Load<Texture2D>(Path.Combine("Pickups", "player-pickups")) },
 
@@ -227,6 +235,124 @@ namespace RogueliteSurvivor.Scenes
                     SpellContainer.ToSpellContainer(spell)
                 );
             }
+        }
+
+        private void loadSubscenes()
+        {
+            subScenes = new Dictionary<string, Window>()
+            {
+                { 
+                    "InGameMenuWindow", 
+                    new InGameMenuWindow
+                    (
+                        textures["InGameMenuWindow"], 
+                        new Vector2(GetWidthOffset(2), GetHeightOffset(2)), 
+                        new List<IFormComponent>()
+                        {
+                            new Button(
+                                textures["MainMenuButtons"],
+                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 72),
+                                new Rectangle(0, 448, 128, 32),
+                                new Rectangle(128, 448, 128, 32),
+                                new Vector2(64, 16)
+                            ),
+                            new Button(
+                                textures["MainMenuButtons"],
+                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 24),
+                                new Rectangle(0, 160, 128, 32),
+                                new Rectangle(128, 160, 128, 32),
+                                new Vector2(64, 16)
+                            ),
+                            new Button(
+                                textures["MainMenuButtons"],
+                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 24),
+                                new Rectangle(0, 384, 128, 32),
+                                new Rectangle(128, 384, 128, 32),
+                                new Vector2(64, 16)
+                            ),
+                            new Button(
+                                textures["MainMenuButtons"],
+                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 72),
+                                new Rectangle(0, 192, 128, 32),
+                                new Rectangle(128, 192, 128, 32),
+                                new Vector2(64, 16)
+                            ),
+                        },
+                        soundEffects["Hover"],
+                        soundEffects["Confirm"]
+                    ) 
+                },
+                {
+                    "InGameOptionsWindow",
+                    new InGameOptionsMenuWindow
+                    (
+                        textures["InGameOptionsWindow"],
+                        new Vector2(GetWidthOffset(2), GetHeightOffset(2)),
+                        new List<IFormComponent>()
+                        {
+                            new Button(textures["VolumeButtons"],
+                                new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 64),
+                                new Rectangle(0, 0, 16, 16),
+                                new Rectangle(16, 0, 16, 16),
+                                new Vector2(8, 8)
+                            ),
+                            new Button(textures["VolumeButtons"],
+                                new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 64),
+                                new Rectangle(0, 16, 16, 16),
+                                new Rectangle(16, 16, 16, 16),
+                                new Vector2(8, 8)
+                            ),
+                            new Button(textures["VolumeButtons"],
+                                new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 32),
+                                new Rectangle(0, 0, 16, 16),
+                                new Rectangle(16, 0, 16, 16),
+                                new Vector2(8, 8)
+                            ),
+                            new Button(textures["VolumeButtons"],
+                                new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 32),
+                                new Rectangle(0, 16, 16, 16),
+                                new Rectangle(16, 16, 16, 16),
+                                new Vector2(8, 8)
+                            ),
+                            new Button(textures["VolumeButtons"],
+                                new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2)),
+                                new Rectangle(0, 0, 16, 16),
+                                new Rectangle(16, 0, 16, 16),
+                                new Vector2(8, 8)
+                            ),
+                            new Button(textures["VolumeButtons"],
+                                new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2)),
+                                new Rectangle(0, 16, 16, 16),
+                                new Rectangle(16, 16, 16, 16),
+                                new Vector2(8, 8)
+                            ),
+                            new Button(textures["VolumeButtons"],
+                                new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) + 32),
+                                new Rectangle(0, 0, 16, 16),
+                                new Rectangle(16, 0, 16, 16),
+                                new Vector2(8, 8)
+                            ),
+                            new Button(textures["VolumeButtons"],
+                                new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) + 32),
+                                new Rectangle(0, 16, 16, 16),
+                                new Rectangle(16, 16, 16, 16),
+                                new Vector2(8, 8)
+                            ),
+                            new Button(
+                                textures["MainMenuButtons"],
+                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 64),
+                                new Rectangle(0, 0, 128, 32),
+                                new Rectangle(128, 0, 128, 32),
+                                new Vector2(64, 16)
+                            ),
+                        },
+                        soundEffects["Hover"],
+                        soundEffects["Confirm"],
+                        fonts,
+                        settingsContainer
+                    )
+                }
+            };
         }
 
         private void resetWorld()
@@ -419,34 +545,51 @@ namespace RogueliteSurvivor.Scenes
                     }
                 }
             }
-            else if(gameState == GameState.WantToQuit)
+            else if(gameState == GameState.InGameMenu)
             {
-
                 if (stateChangeTime > InputConstants.ResponseTime)
                 {
-                    if (kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
+                    switch (subScenes["InGameMenuWindow"].Update(gameTime))
                     {
-                        stateChangeTime = 0f;
-                        Loaded = false;
-                        retVal = "game-over";
+                        case "continue":
+                            gameState = GameState.Running;
+                            stateChangeTime = 0f;
+                            break;
+                        case "options":
+                            gameState = GameState.Options;
+                            stateChangeTime = 0f;
+                            break;
+                        case "restart":
+                            retVal = "loading";
+                            stateChangeTime = 0f;
+                            Loaded = false;
+                            break;
+                        case "game-over":
+                            stateChangeTime = 0f;
+                            Loaded = false;
+                            retVal = "game-over";
+                            break;
                     }
-                    else if(kState.IsKeyDown(Keys.Escape) || gState.Buttons.B == ButtonState.Pressed)
+                }
+            }
+            else if(gameState == GameState.Options)
+            {
+                if (stateChangeTime > InputConstants.ResponseTime)
+                {
+                    switch (subScenes["InGameOptionsWindow"].Update(gameTime))
                     {
-                        gameState = GameState.Running;
-                        stateChangeTime = 0f;
+                        case "menu":
+                            gameState = GameState.InGameMenu;
+                            stateChangeTime = 0f;
+                            break;
                     }
                 }
             }
             else
             {
-                if (stateChangeTime > InputConstants.ResponseTime && (GamePad.GetState(PlayerIndex.One).Buttons.Start == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.P)))
+                if (stateChangeTime > InputConstants.ResponseTime && (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)))
                 {
-                    gameState = gameState == GameState.Running ? GameState.Paused : GameState.Running;
-                    stateChangeTime = 0f;
-                }
-                else if (stateChangeTime > InputConstants.ResponseTime && (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)))
-                {
-                    gameState = GameState.WantToQuit;
+                    gameState = GameState.InGameMenu;
                     stateChangeTime = 0f;
                 }
                 else if (player.Get<EntityStatus>().State == State.Dead)
@@ -550,15 +693,27 @@ namespace RogueliteSurvivor.Scenes
         {
             if (gameState != GameState.LevelUp)
             {
+                _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend, transformMatrix: transformMatrix);
+
                 for (int layer = 1; layer < 5; layer++)
                 {
                     foreach (var system in renderSystems)
                     {
-                        _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend, transformMatrix: transformMatrix);
                         system.Render(gameTime, _spriteBatch, textures, player, totalGameTime, gameState, layer, Game1.ScaleFactor);
-                        _spriteBatch.End();
                     }
                 }
+
+                switch (gameState)
+                {
+                    case GameState.InGameMenu:
+                        subScenes["InGameMenuWindow"].Draw(_spriteBatch);
+                        break;
+                    case GameState.Options:
+                        subScenes["InGameOptionsWindow"].Draw(_spriteBatch);
+                        break;
+                }
+
+                _spriteBatch.End();
             }
             else
             {

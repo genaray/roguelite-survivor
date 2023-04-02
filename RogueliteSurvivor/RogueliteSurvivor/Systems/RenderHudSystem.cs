@@ -252,53 +252,6 @@ namespace RogueliteSurvivor.Systems
 
                     renderPowerupTimers(spriteBatch, textures, entity);
                 });
-
-                if (gameState == GameState.Paused)
-                {
-                    spriteBatch.Draw(
-                        textures["StatsBackground"],
-                        new Rectangle((int)GetWidthOffset(graphics, scaleFactor, 2) - 55, (int)GetHeightOffset(graphics, scaleFactor, 2) - 4, 110, 24),
-                        new Rectangle(0, 0, 64, 64),
-                        Color.White
-                    );
-
-                    spriteBatch.DrawString(
-                        fonts["Font"],
-                        "Game Paused",
-                        new Vector2((int)GetWidthOffset(graphics, scaleFactor, 2) - 50, (int)GetHeightOffset(graphics, scaleFactor, 2)),
-                        Color.White
-                    );
-                }
-                else if(gameState == GameState.WantToQuit)
-                {
-                    spriteBatch.Draw(
-                        textures["StatsBackground"],
-                        new Rectangle((int)GetWidthOffset(graphics, scaleFactor, 2) - 200, (int)GetHeightOffset(graphics, scaleFactor, 2) - 4, 400, 48),
-                        new Rectangle(0, 0, 64, 64),
-                        Color.White
-                    );
-
-                    spriteBatch.DrawString(
-                        fonts["Font"],
-                        "Are the undead getting too rough and making you quit?",
-                        new Vector2((int)GetWidthOffset(graphics, scaleFactor, 2) - 188, (int)GetHeightOffset(graphics, scaleFactor, 2)),
-                        Color.White
-                    );
-
-                    spriteBatch.DrawString(
-                        fonts["FontSmall"],
-                        "Press Enter or A button to leave like a coward",
-                        new Vector2((int)GetWidthOffset(graphics, scaleFactor, 2) - 150, (int)GetHeightOffset(graphics, scaleFactor, 2) + 16),
-                        Color.White
-                    );
-                    spriteBatch.DrawString(
-                        fonts["FontSmall"],
-                        "Press Escape or B button to continue fighting the undead",
-                        new Vector2((int)GetWidthOffset(graphics, scaleFactor, 2) - 150, (int)GetHeightOffset(graphics, scaleFactor, 2) + 28),
-                        Color.White
-                    );
-                }
-
             }
         }
 

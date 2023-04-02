@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
-    public class SelectableOption : IFormComponent
+    public class SelectableOption : IFormComponent, IDrawableComponent, ISelectableComponent
     {
         Texture2D itemTexture;
         Texture2D outlineTexture;

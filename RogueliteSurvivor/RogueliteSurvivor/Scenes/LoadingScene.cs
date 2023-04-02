@@ -37,6 +37,7 @@ namespace RogueliteSurvivor.Scenes
                 textures = new Dictionary<string, Texture2D>
                 {
                     { "MainMenuButtons", Content.Load<Texture2D>(Path.Combine("UI", "main-menu-buttons")) },
+                    { "MainBackground", Content.Load<Texture2D>(Path.Combine("UI", "main-background")) },
                 };
             }
 
@@ -128,6 +129,18 @@ namespace RogueliteSurvivor.Scenes
                 "Roguelite Survivor",
                 new Vector2(GetWidthOffset(2) - 62, GetHeightOffset(2) - 64),
                 Color.White
+            );
+
+            _spriteBatch.Draw(
+                textures["MainBackground"],
+                Vector2.Zero,
+                new Rectangle(0, 0, 640, 360),
+                Color.White,
+                0f,
+                Vector2.Zero,
+                1f,
+                SpriteEffects.None,
+                0f
             );
 
             if ((bool)values[0])

@@ -3,8 +3,8 @@
     public enum GameState
     {
         Running,
-        Paused,
+        Options,
         LevelUp,
-        WantToQuit,
+        InGameMenu,
     }
 }

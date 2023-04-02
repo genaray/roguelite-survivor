@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
-    public class Button : IFormComponent
+    public class Button : IFormComponent, IDrawableComponent, ISelectableComponent
     {
         Texture2D texture;
         Vector2 position;

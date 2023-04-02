@@ -68,6 +68,7 @@ namespace RogueliteSurvivor.Scenes
                 {
                     { "MainMenuButtons", Content.Load<Texture2D>(Path.Combine("UI", "main-menu-buttons")) },
                     { "VolumeButtons", Content.Load<Texture2D>(Path.Combine("UI", "volume-buttons")) },
+                    { "MainBackground", Content.Load<Texture2D>(Path.Combine("UI", "main-background")) },
                     { "PlayerSelectOutline", Content.Load<Texture2D>(Path.Combine("UI", "player-select-outline")) },
                     { "FireWizard", Content.Load<Texture2D>(Path.Combine("Player", "FireWizard")) },
                     { "IceWizard", Content.Load<Texture2D>(Path.Combine("Player", "IceWizard")) },
@@ -424,10 +425,10 @@ namespace RogueliteSurvivor.Scenes
                 }
                 else if (state == MainMenuState.CharacterSelection)
                 {
-                    if (mState.LeftButton == ButtonState.Pressed && characterSelectionComponents.Any(a => a.MouseOver()))
+                    if (mState.LeftButton == ButtonState.Pressed && characterSelectionComponents.Any(a => a is ISelectableComponent && ((ISelectableComponent)a).MouseOver()))
                     {
                         clicked = true;
-                        selectedButton = characterSelectionComponents.IndexOf(characterSelectionComponents.First(a => a.MouseOver())) + 1;
+                        selectedButton = characterSelectionComponents.IndexOf(characterSelectionComponents.First(a => a is ISelectableComponent && ((ISelectableComponent)a).MouseOver())) + 1;
                         setSelectedPlayer();
                     }
 
@@ -489,8 +490,11 @@ namespace RogueliteSurvivor.Scenes
 
                     for (int i = 1; i <= characterSelectionComponents.Count; i++)
                     {
-                        characterSelectionComponents[i - 1].Selected(i == selectedButton);
-                        characterSelectionComponents[i - 1].MouseOver(mState);
+                        if (characterSelectionComponents[i - 1] is ISelectableComponent)
+                        {
+                            ((ISelectableComponent)characterSelectionComponents[i - 1]).Selected(i == selectedButton);
+                            ((ISelectableComponent)characterSelectionComponents[i - 1]).MouseOver(mState);
+                        }
                     }
                 }
                 else if(state == MainMenuState.MapSelection)
@@ -575,6 +579,7 @@ namespace RogueliteSurvivor.Scenes
                                 break;
                             case 4:
                                 state = MainMenuState.CharacterSelection;
+                                selectedButton = playerContainers.Keys.ToList().IndexOf(selectedPlayer) + 1;
                                 readyForInput = false;
                                 break;
                         }
@@ -813,6 +818,18 @@ namespace RogueliteSurvivor.Scenes
         public override void Draw(GameTime gameTime, Matrix transformMatrix, params object[] values)
         {
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend, transformMatrix: transformMatrix);
+
+            _spriteBatch.Draw(
+                    textures["MainBackground"],
+                    Vector2.Zero,
+                    new Rectangle(0, 0, 640, 360),
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
 
             _spriteBatch.DrawString(
                 fonts["Font"],
