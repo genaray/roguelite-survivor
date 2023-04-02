@@ -66,7 +66,10 @@ namespace RogueliteSurvivor.Systems
                 if (single.DamageStartDelay < 0 && !body.IsAwake())
                 {
                     body.SetAwake(true);
-                    soundEffects[createSound.SoundEffect].Play();
+                    if (!string.IsNullOrEmpty(createSound.SoundEffect))
+                    {
+                        soundEffects[createSound.SoundEffect].Play();
+                    }
                 }
                 else if (single.DamageEndDelay < 0 && body.IsAwake())
                 {

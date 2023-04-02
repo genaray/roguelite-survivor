@@ -19,6 +19,8 @@ namespace RogueliteSurvivor.Constants
         LightningStrike,
         LightningAura,
         MagicShot,
+        MagicBeam,
+        MagicAura,
         SpellEffectChance,
         Pierce,
         AreaOfEffect,

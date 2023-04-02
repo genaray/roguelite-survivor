@@ -180,9 +180,6 @@ namespace RogueliteSurvivor.ComponentFactories
         {
             var aura = world.Create<Aura, EntityStatus, Position, Animation, SpriteSheet, Damage, Owner>();
             var position = entity.Get<Position>();
-            var body = new BodyDef();
-            body.position = new System.Numerics.Vector2(position.XY.X, position.XY.Y) / PhysicsConstants.PhysicsToPixelsRatio;
-            body.fixedRotation = true;
 
             float radiusMultiplier = entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f;
 
@@ -205,6 +202,54 @@ namespace RogueliteSurvivor.ComponentFactories
             float radiusMultiplier = (entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f) + radiusIncrease;
             
             var aura = spell.Child.Get<Aura>();
+            aura.RadiusMultiplier = radiusMultiplier;
+            var spriteSheet = spell.Child.Get<SpriteSheet>();
+            spriteSheet.Scale = radiusMultiplier;
+
+            spell.Child.Set(aura, spriteSheet);
+
+        }
+
+        public static Entity CreateMagicBeam(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, SpellEffects effect, Dictionary<string, SoundEffect> soundEffects)
+        {
+            var aura = world.Create<MagicBeam, EntityStatus, Position, Velocity, Speed, Target, Animation, SpriteSheet, Damage, Owner, LoopSound, Body>();
+
+            float radiusMultiplier = entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f;
+
+            var body = new BodyDef();
+            var position = entity.Get<Position>();
+            body.position = new System.Numerics.Vector2(position.XY.X, position.XY.Y) / PhysicsConstants.PhysicsToPixelsRatio;
+            body.fixedRotation = true;
+
+            var soundInstance = soundEffects[spellContainers[spell.Spell].CreateSound].CreateInstance();
+            soundInstance.IsLooped = true;
+
+            aura.Set(
+                new MagicBeam() { BaseRadius = 14, RadiusMultiplier = radiusMultiplier, HitPosition = new Vector2(16, 36) },
+                new EntityStatus(),
+                new Position() { XY = position.XY },
+                new Velocity(),
+                new Speed() { speed = spell.CurrentProjectileSpeed },
+                new Target(),
+                GetSpellAliveAnimation(spellContainers[spell.Spell]),
+                GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], position.XY, position.XY, radiusMultiplier),
+                new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
+                new Owner() { Entity = entity },
+                new LoopSound() { SoundEffect = soundInstance },
+                BodyFactory.CreateCircularBody(aura, 14, physicsWorld, body, .1f)
+            );
+
+            
+
+            return aura;
+        }
+
+        public static void UpdateMagicBeam<T>(Entity entity, T spell, float radiusIncrease)
+            where T : ISpell
+        {
+            float radiusMultiplier = (entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f) + radiusIncrease;
+
+            var aura = spell.Child.Get<MagicBeam>();
             aura.RadiusMultiplier = radiusMultiplier;
             var spriteSheet = spell.Child.Get<SpriteSheet>();
             spriteSheet.Scale = radiusMultiplier;

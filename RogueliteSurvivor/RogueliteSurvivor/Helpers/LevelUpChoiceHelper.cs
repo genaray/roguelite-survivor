@@ -1,6 +1,7 @@
 ﻿using Arch.Core;
 using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
@@ -54,6 +55,10 @@ namespace RogueliteSurvivor.Helpers
                     return new Rectangle(128 + xOffset, 512, 64, 64);
                 case LevelUpType.MagicShot:
                     return new Rectangle(xOffset, 512, 64, 64);
+                case LevelUpType.MagicBeam:
+                    return new Rectangle(xOffset, 576, 64, 64);
+                case LevelUpType.MagicAura:
+                    return new Rectangle(128 + xOffset, 576, 64, 64);
                 default:
                     return new Rectangle();
             }
@@ -140,12 +145,16 @@ namespace RogueliteSurvivor.Helpers
                     return LevelUpType.LightningAura;
                 case "MagicShot":
                     return LevelUpType.MagicShot;
+                case "MagicBeam":
+                    return LevelUpType.MagicBeam;
+                case "MagicAura":
+                    return LevelUpType.MagicAura;
                 default:
                     return LevelUpType.None;
             }
         }
 
-        public static bool ProcessLevelUp(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, ref Entity player, LevelUpType levelUpType, Dictionary<Spells, SpellContainer> spellContainers)
+        public static bool ProcessLevelUp(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, ref Entity player, LevelUpType levelUpType, Dictionary<Spells, SpellContainer> spellContainers, Dictionary<string, SoundEffect> soundEffects)
         {
             bool destroy = true;
             float pickupAmount = GetLevelUpAmount(levelUpType);
@@ -189,6 +198,8 @@ namespace RogueliteSurvivor.Helpers
                 case LevelUpType.LightningStrike:
                 case LevelUpType.LightningAura:
                 case LevelUpType.MagicShot:
+                case LevelUpType.MagicBeam:
+                case LevelUpType.MagicAura:
                     var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
                     ISpell spell = null;
                     if (spells.Count == 1)
@@ -206,6 +217,19 @@ namespace RogueliteSurvivor.Helpers
                     {
                         var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect);
                         spell.Child = aura;
+                        if (spells.Count == 1)
+                        {
+                            player.Set((Spell2)spell);
+                        }
+                        else if (spells.Count == 2)
+                        {
+                            player.Set((Spell3)spell);
+                        }
+                    }
+                    else if (spell.Type == SpellType.MagicBeam)
+                    {
+                        var beam = SpellFactory.CreateMagicBeam(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect, soundEffects);
+                        spell.Child = beam;
                         if (spells.Count == 1)
                         {
                             player.Set((Spell2)spell);
@@ -311,6 +335,10 @@ namespace RogueliteSurvivor.Helpers
                 {
                     SpellFactory.UpdateAura(player, spell1, pickupAmount);
                 }
+                else if(spell1.Type == SpellType.MagicBeam)
+                {
+                    SpellFactory.UpdateMagicBeam(player, spell1, pickupAmount);
+                }
             }
             if (player.TryGet(out Spell2 spell2))
             {
@@ -318,12 +346,20 @@ namespace RogueliteSurvivor.Helpers
                 {
                     SpellFactory.UpdateAura(player, spell2, pickupAmount);
                 }
+                else if (spell2.Type == SpellType.MagicBeam)
+                {
+                    SpellFactory.UpdateMagicBeam(player, spell2, pickupAmount);
+                }
             }
             if (player.TryGet(out Spell3 spell3))
             {
                 if (spell3.Type == SpellType.Aura)
                 {
                     SpellFactory.UpdateAura(player, spell3, pickupAmount);
+                }
+                else if (spell3.Type == SpellType.MagicBeam)
+                {
+                    SpellFactory.UpdateMagicBeam(player, spell3, pickupAmount);
                 }
             }
 

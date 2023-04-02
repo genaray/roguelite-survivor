@@ -365,6 +365,70 @@
       }
     },
     {
+      "spell": "MagicBeam",
+      "effect": "None",
+      "type": "MagicBeam",
+      "baseEffectChance": 0.0,
+      "currentEffectChance": 0.0,
+      "baseDamage": 1,
+      "currentDamage": 1,
+      "baseProjectileSpeed": 50,
+      "currentProjectileSpeed": 50,
+      "baseAttacksPerSecond": 10,
+      "currentAttacksPerSecond": 10,
+      "damageStartDelay": 0.0,
+      "damageEndDelay": 0.0,
+      "createSound": "MagicBeam",
+      "hitSound": "",
+      "aliveAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 29,
+        "playbackSpeed": 0.025,
+        "numDirections": 1,
+        "repeatable": true
+      },
+      "aliveSpriteSheet": {
+        "framesPerRow": 30,
+        "framesPerColumn": 1,
+        "rotation": "none",
+        "scale": 1
+      },
+      "hitAnimation": null,
+      "hitSpriteSheet": null
+    },
+    {
+      "spell": "MagicAura",
+      "effect": "None",
+      "type": "Aura",
+      "baseEffectChance": 0.0,
+      "currentEffectChance": 0.0,
+      "baseDamage": 2,
+      "currentDamage": 2,
+      "baseProjectileSpeed": 0,
+      "currentProjectileSpeed": 0,
+      "baseAttacksPerSecond": 8,
+      "currentAttacksPerSecond": 8,
+      "damageStartDelay": 0,
+      "damageEndDelay": 0,
+      "createSound": "",
+      "hitSound": "",
+      "aliveAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 29,
+        "playbackSpeed": 0.05,
+        "numDirections": 1,
+        "repeatable": true
+      },
+      "aliveSpriteSheet": {
+        "framesPerRow": 30,
+        "framesPerColumn": 1,
+        "rotation": "none",
+        "scale": 1
+      },
+      "hitAnimation": null,
+      "hitSpriteSheet": null
+    },
+    {
       "spell": "EnemyMelee",
       "effect": "None",
       "type": "None",

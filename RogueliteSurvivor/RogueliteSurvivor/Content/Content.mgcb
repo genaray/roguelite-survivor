@@ -963,6 +963,12 @@
 /processorParam:Quality=Best
 /build:Sound Effects/77_flesh_02.ogg
 
+#begin Sound Effects/machine working.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound Effects/machine working.ogg
+
 #begin Spells/enemy-energy-blast.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1082,6 +1088,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Spells/lightning-strike.png
+
+#begin Spells/magic-aura.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/magic-aura.png
+
+#begin Spells/magic-beam.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/magic-beam.png
 
 #begin Spells/magic-shot.png
 /importer:TextureImporter

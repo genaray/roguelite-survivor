@@ -19,6 +19,8 @@ namespace RogueliteSurvivor.Constants
         LightningStrike,
         LightningAura,
         MagicShot,
+        MagicBeam,
+        MagicAura,
         EnemyMelee,
         EnemyEnergyBlast,
         Five,
@@ -42,6 +44,8 @@ namespace RogueliteSurvivor.Constants
                 Spells.LightningStrike,
                 Spells.LightningAura, 
                 Spells.MagicShot,
+                Spells.MagicBeam,
+                Spells.MagicAura,
             };
         }
 
@@ -71,6 +75,10 @@ namespace RogueliteSurvivor.Constants
                     return Spells.LightningAura;
                 case "MagicShot":
                     return Spells.MagicShot;
+                case "MagicBeam":
+                    return Spells.MagicBeam;
+                case "MagicAura":
+                    return Spells.MagicAura;
                 case "EnemyMelee":
                     return Spells.EnemyMelee;
                 case "EnemyEnergyBlast":
@@ -104,6 +112,10 @@ namespace RogueliteSurvivor.Constants
                     return "Lightning Aura";
                 case Spells.MagicShot:
                     return "Magic Shot";
+                case Spells.MagicBeam:
+                    return "Magic Beam";
+                case Spells.MagicAura:
+                    return "Magic Aura";
                 case Spells.EnemyEnergyBlast:
                     return "Enemy Energy Blast";
                 default:

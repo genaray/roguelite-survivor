@@ -77,7 +77,7 @@ namespace RogueliteSurvivor.Systems
             {
                 spell.Cooldown -= spell.CurrentAttackSpeed;
 
-                if (spell.Type != SpellType.Aura)
+                if (spell.Type != SpellType.Aura && spell.Type != SpellType.MagicBeam)
                 {
                     var target = entity.Get<Target>();
                     SpellEffects effect = SpellEffects.None;
@@ -102,7 +102,7 @@ namespace RogueliteSurvivor.Systems
                         SpellFactory.CreateEnemyProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect, soundEffects);
                     }
                 }
-                else
+                else if(spell.Type == SpellType.Aura)
                 {
                     var body = spell.Child.Get<Position>();
                     System.Numerics.Vector2 position = new System.Numerics.Vector2(body.XY.X, body.XY.Y);
@@ -121,6 +121,33 @@ namespace RogueliteSurvivor.Systems
                             Entity touchedEntity = (Entity)fixture.Body.UserData;
                             if (touchedEntity.Has<Enemy>()
                                 && Vector2.Distance(touchedEntity.Get<Position>().XY, entity.Get<Position>().XY) <= aura.BaseRadius * aura.RadiusMultiplier)
+                            {
+                                setEnemyHealthAndState(touchedEntity, touchedEntity.Get<EntityStatus>(), spell.Child.Get<Damage>(), spell.Child.Get<Owner>(), spell.CurrentEffectChance);
+                            }
+                        }
+                    }
+                }
+                else if(spell.Type == SpellType.MagicBeam)
+                {
+                    var body = spell.Child.Get<Position>();
+                    var magicBeam = spell.Child.Get<MagicBeam>();
+
+                    System.Numerics.Vector2 position = new System.Numerics.Vector2(body.XY.X, body.XY.Y);
+                    Vector2 comparePosition = body.XY;
+                    AABB aabb = new AABB(
+                        (position - System.Numerics.Vector2.One * magicBeam.BaseRadius * magicBeam.RadiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio,
+                        (position + System.Numerics.Vector2.One * magicBeam.BaseRadius * magicBeam.RadiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio
+                    );
+
+                    physicsWorld.QueryAABB(out Fixture[] touched, aabb);
+
+                    foreach (Fixture fixture in touched)
+                    {
+                        if (fixture != null && fixture.Body.UserData != null)
+                        {
+                            Entity touchedEntity = (Entity)fixture.Body.UserData;
+                            if (touchedEntity.Has<Enemy>()
+                                && Vector2.Distance(touchedEntity.Get<Position>().XY, comparePosition) <= magicBeam.BaseRadius * magicBeam.RadiusMultiplier)
                             {
                                 setEnemyHealthAndState(touchedEntity, touchedEntity.Get<EntityStatus>(), spell.Child.Get<Damage>(), spell.Child.Get<Owner>(), spell.CurrentEffectChance);
                             }

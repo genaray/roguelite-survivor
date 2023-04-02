@@ -55,6 +55,8 @@ namespace RogueliteSurvivor.Scenes
         private Dictionary<string, PlayerContainer> playerContainers;
         private Dictionary<string, MapContainer> mapContainers;
 
+        private QueryDescription loopedSounds = new QueryDescription().WithAll<LoopSound>();
+
         private MapContainer mapContainer;
         
         private Random random;
@@ -65,6 +67,8 @@ namespace RogueliteSurvivor.Scenes
         private Dictionary<string, Window> subScenes;
 
         private GameContactListener gameContactListener;
+
+        private bool firstLoop = true;
 
         public GameScene(SpriteBatch spriteBatch, ContentManager contentManager, GraphicsDeviceManager graphics, Dictionary<string, PlayerContainer> playerContainers, Dictionary<string, MapContainer> mapContainers, ProgressionContainer progressionContainer, Dictionary<string, EnemyContainer> enemyContainers, SettingsContainer settingsContainer)
             : base(spriteBatch, contentManager, graphics, progressionContainer, settingsContainer)
@@ -147,6 +151,8 @@ namespace RogueliteSurvivor.Scenes
                 { "IceAura", Content.Load<Texture2D>(Path.Combine("Spells", "ice-aura")) },
                 { "LightningAura", Content.Load<Texture2D>(Path.Combine("Spells", "lightning-aura")) },
                 { "MagicShot", Content.Load<Texture2D>(Path.Combine("Spells", "magic-shot")) },
+                { "MagicBeam", Content.Load<Texture2D>(Path.Combine("Spells", "magic-beam")) },
+                { "MagicAura", Content.Load<Texture2D>(Path.Combine("Spells", "magic-aura")) },
                 { "EnemyEnergyBlast", Content.Load<Texture2D>(Path.Combine("Spells", "enemy-energy-blast")) },
 
                 { "StatBar", Content.Load<Texture2D>(Path.Combine("Hud", "StatBar")) },
@@ -162,6 +168,7 @@ namespace RogueliteSurvivor.Scenes
                 { "VolumeButtons", Content.Load<Texture2D>(Path.Combine("UI", "volume-buttons")) },
                 { "InGameMenuWindow", Content.Load<Texture2D>(Path.Combine("UI", "in-game-menu-window")) },
                 { "InGameOptionsWindow", Content.Load<Texture2D>(Path.Combine("UI", "in-game-options-window")) },
+                { "MainBackground", Content.Load<Texture2D>(Path.Combine("UI", "main-background")) },
 
                 { "pickups", Content.Load<Texture2D>(Path.Combine("Pickups", "player-pickups")) },
 
@@ -217,6 +224,7 @@ namespace RogueliteSurvivor.Scenes
                     { "Confirm", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "013_Confirm_03")) },
                     { "Pickup", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "029_Decline_09")) },
                     { "Denied", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "033_Denied_03")) },
+                    { "MagicBeam", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "machine working")) },
                 };
 
                 gameContactListener.SetSoundEffects(soundEffects);
@@ -387,7 +395,7 @@ namespace RogueliteSurvivor.Scenes
             {
                 new PlayerInputSystem(world),
                 new TargetingSystem(world),
-                new EnemyAISystem(world),
+                new AIMovementSystem(world),
                 new AnimationSetSystem(world),
                 new AnimationUpdateSystem(world),
                 new CollisionSystem(world, physicsWorld, soundEffects),
@@ -476,10 +484,16 @@ namespace RogueliteSurvivor.Scenes
                 spell.Child = aura;
                 player.Set(spell);
             }
-            
+            else if (spell.Type == SpellType.MagicBeam)
+            {
+                var beam = SpellFactory.CreateMagicBeam(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect, soundEffects);
+                spell.Child = beam;
+                player.Set(spell);
+            }
+
             TraitsHelper.AddTraitsToEntity(player, playerContainer.Traits);
 
-            LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, LevelUpType.None, spellContainers);
+            LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, LevelUpType.None, spellContainers, soundEffects);
         }
 
         public override void SetActive()
@@ -487,10 +501,20 @@ namespace RogueliteSurvivor.Scenes
             MediaPlayer.Play(songs["GameMusic"]);
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.GameMusicVolume;
+            firstLoop = true;
         }
 
         public override string Update(GameTime gameTime, params object[] values)
         {
+            if(firstLoop)
+            {
+                world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
+                {
+                    loopedSound.SoundEffect.Play();
+                });
+                firstLoop = false;
+            }
+
             string retVal = string.Empty;
             var kState = Keyboard.GetState();
             var gState = GamePad.GetState(PlayerIndex.One);
@@ -512,7 +536,7 @@ namespace RogueliteSurvivor.Scenes
                     if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                     {
                         gameState = GameState.Running;
-                        LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers);
+                        LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers, soundEffects);
                         soundEffects["Confirm"].Play();
                         stateChangeTime = 0f;
                     }
@@ -554,6 +578,10 @@ namespace RogueliteSurvivor.Scenes
                         case "continue":
                             gameState = GameState.Running;
                             stateChangeTime = 0f;
+                            world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
+                            {
+                                loopedSound.SoundEffect.Resume();
+                            });
                             break;
                         case "options":
                             gameState = GameState.Options;
@@ -580,6 +608,10 @@ namespace RogueliteSurvivor.Scenes
                     {
                         case "menu":
                             gameState = GameState.InGameMenu;
+                            world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
+                            {
+                                loopedSound.SoundEffect.Volume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
+                            });
                             stateChangeTime = 0f;
                             break;
                     }
@@ -590,11 +622,23 @@ namespace RogueliteSurvivor.Scenes
                 if (stateChangeTime > InputConstants.ResponseTime && (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)))
                 {
                     gameState = GameState.InGameMenu;
+
+                    world.Query(in loopedSounds, (ref LoopSound loopedSound) => 
+                    {
+                        loopedSound.SoundEffect.Stop();
+                    });
+
                     stateChangeTime = 0f;
                 }
                 else if (player.Get<EntityStatus>().State == State.Dead)
                 {
                     Loaded = false;
+                    
+                    world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
+                    {
+                        loopedSound.SoundEffect.Stop();
+                    });
+
                     retVal = "game-over";
                 }
                 else
@@ -718,6 +762,18 @@ namespace RogueliteSurvivor.Scenes
             else
             {
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend, transformMatrix: transformMatrix);
+
+                _spriteBatch.Draw(
+                    textures["MainBackground"],
+                    Vector2.Zero,
+                    new Rectangle(0, 0, 640, 360),
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
 
                 _spriteBatch.DrawString(
                     fonts["Font"],

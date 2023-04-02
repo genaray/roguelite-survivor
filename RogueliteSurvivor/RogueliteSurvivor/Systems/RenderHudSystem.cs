@@ -498,9 +498,17 @@ namespace RogueliteSurvivor.Systems
                     rectangle.X = 37;
                     rectangle.Y = 185;
                     break;
-                case Spells.Blank:
+                case Spells.MagicBeam:
                     rectangle.X = 0;
                     rectangle.Y = 222;
+                    break;
+                case Spells.MagicAura:
+                    rectangle.X = 37;
+                    rectangle.Y = 222;
+                    break;
+                case Spells.Blank:
+                    rectangle.X = 0;
+                    rectangle.Y = 259;
                     break;
             }
 

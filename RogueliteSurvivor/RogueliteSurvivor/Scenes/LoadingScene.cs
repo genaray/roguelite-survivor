@@ -123,14 +123,7 @@ namespace RogueliteSurvivor.Scenes
         public override void Draw(GameTime gameTime, Matrix transformMatrix, params object[] values)
         {
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend, transformMatrix: transformMatrix);
-
-            _spriteBatch.DrawString(
-                fonts["Font"],
-                "Roguelite Survivor",
-                new Vector2(GetWidthOffset(2) - 62, GetHeightOffset(2) - 64),
-                Color.White
-            );
-
+            
             _spriteBatch.Draw(
                 textures["MainBackground"],
                 Vector2.Zero,
@@ -142,6 +135,15 @@ namespace RogueliteSurvivor.Scenes
                 SpriteEffects.None,
                 0f
             );
+
+            _spriteBatch.DrawString(
+                fonts["Font"],
+                "Roguelite Survivor",
+                new Vector2(GetWidthOffset(2) - 62, GetHeightOffset(2) - 64),
+                Color.White
+            );
+
+            
 
             if ((bool)values[0])
             {
