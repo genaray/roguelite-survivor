@@ -257,5 +257,27 @@ namespace RogueliteSurvivor.ComponentFactories
             spell.Child.Set(aura, spriteSheet);
 
         }
+
+        public static Entity CreateStationary(World world, Dictionary<string, Texture2D> textures, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell)
+        {
+            var stationary = world.Create<Stationary, EntityStatus, Position, Animation, SpriteSheet, Damage, AttackSpeed, SpellEffectChance, Owner>();
+            var position = entity.Get<Position>();
+
+            float radiusMultiplier = entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f;
+
+            stationary.Set(
+                new Stationary() { TimeLeft = spell.CurrentAttacksPerSecond * 30, Cooldown = 0, BaseRadius = 16, RadiusMultiplier = radiusMultiplier },
+                new EntityStatus(),
+                new Position() { XY = position.XY },
+                GetSpellAliveAnimation(spellContainers[spell.Spell]),
+                GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], position.XY, position.XY, radiusMultiplier),
+                new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = spell.Effect },
+                new AttackSpeed() { BaseAttackSpeed = 0.5f, CurrentAttackSpeed = 0.5f },
+                new SpellEffectChance() { BaseSpellEffectChance = spell.BaseEffectChance, CurrentSpellEffectChance = spell.CurrentEffectChance },
+                new Owner() { Entity = entity }
+            );
+
+            return stationary;
+        }
     }
 }

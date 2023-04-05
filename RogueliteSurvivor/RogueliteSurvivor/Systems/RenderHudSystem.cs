@@ -506,9 +506,17 @@ namespace RogueliteSurvivor.Systems
                     rectangle.X = 37;
                     rectangle.Y = 222;
                     break;
-                case Spells.Blank:
+                case Spells.FireRain:
                     rectangle.X = 0;
                     rectangle.Y = 259;
+                    break;
+                case Spells.PoisonCloud:
+                    rectangle.X = 37;
+                    rectangle.Y = 259;
+                    break;
+                case Spells.Blank:
+                    rectangle.X = 0;
+                    rectangle.Y = 296;
                     break;
             }
 

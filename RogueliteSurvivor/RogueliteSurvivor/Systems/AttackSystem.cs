@@ -10,6 +10,7 @@ using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Helpers;
 using RogueliteSurvivor.Physics;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,9 @@ namespace RogueliteSurvivor.Systems
 
         QueryDescription spell3Query = new QueryDescription()
                                 .WithAll<Spell3>();
+
+        QueryDescription stationaryQuery = new QueryDescription()
+                                .WithAll<Stationary>();
 
 
 
@@ -61,6 +65,24 @@ namespace RogueliteSurvivor.Systems
             world.Query(in spell3Query, (in Entity entity, ref Position pos, ref Spell3 spell3) =>
             {
                 spell3.Cooldown = processSpell(gameTime, entity, pos, spell3);
+            });
+
+            world.Query(in stationaryQuery, (ref Stationary stationary, ref Position pos, ref EntityStatus entityStatus, ref AttackSpeed attackSpeed, ref Damage damage, ref Owner owner, ref SpellEffectChance spellEffectChance) =>
+            {
+            if (entityStatus.State == State.Alive) {
+                stationary.Cooldown += (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+                if (stationary.Cooldown > attackSpeed.CurrentAttackSpeed)
+                {
+                    stationary.Cooldown -= attackSpeed.CurrentAttackSpeed;
+
+                    checkHitInRadius(pos,
+                                        damage,
+                                        owner,
+                                        stationary.BaseRadius,
+                                        stationary.RadiusMultiplier,
+                                        spellEffectChance.CurrentSpellEffectChance);
+                    }
+                }
             });
         }
 
@@ -101,143 +123,62 @@ namespace RogueliteSurvivor.Systems
                     {
                         SpellFactory.CreateEnemyProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect, soundEffects);
                     }
+                    else if(spell.Type == SpellType.Stationary)
+                    {
+                        SpellFactory.CreateStationary(world, textures, spellContainers, entity, spell);
+                    }
                 }
                 else if(spell.Type == SpellType.Aura)
                 {
-                    var body = spell.Child.Get<Position>();
-                    System.Numerics.Vector2 position = new System.Numerics.Vector2(body.XY.X, body.XY.Y);
                     var aura = spell.Child.Get<Aura>();
-                    AABB aabb = new AABB(
-                        (position - System.Numerics.Vector2.One * aura.BaseRadius * aura.RadiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio,
-                        (position + System.Numerics.Vector2.One * aura.BaseRadius * aura.RadiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio
-                    );
-
-                    physicsWorld.QueryAABB(out Fixture[] touched, aabb);
-
-                    foreach(Fixture fixture in touched)
-                    {
-                        if (fixture != null && fixture.Body.UserData != null)
-                        {
-                            Entity touchedEntity = (Entity)fixture.Body.UserData;
-                            if (touchedEntity.Has<Enemy>()
-                                && Vector2.Distance(touchedEntity.Get<Position>().XY, entity.Get<Position>().XY) <= aura.BaseRadius * aura.RadiusMultiplier)
-                            {
-                                setEnemyHealthAndState(touchedEntity, touchedEntity.Get<EntityStatus>(), spell.Child.Get<Damage>(), spell.Child.Get<Owner>(), spell.CurrentEffectChance);
-                            }
-                        }
-                    }
+                    checkHitInRadius(spell.Child.Get<Position>(),
+                                        spell.Child.Get<Damage>(),
+                                        spell.Child.Get<Owner>(),
+                                        aura.BaseRadius,
+                                        aura.RadiusMultiplier,
+                                        spell.CurrentEffectChance);
                 }
                 else if(spell.Type == SpellType.MagicBeam)
                 {
-                    var body = spell.Child.Get<Position>();
                     var magicBeam = spell.Child.Get<MagicBeam>();
-
-                    System.Numerics.Vector2 position = new System.Numerics.Vector2(body.XY.X, body.XY.Y);
-                    Vector2 comparePosition = body.XY;
-                    AABB aabb = new AABB(
-                        (position - System.Numerics.Vector2.One * magicBeam.BaseRadius * magicBeam.RadiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio,
-                        (position + System.Numerics.Vector2.One * magicBeam.BaseRadius * magicBeam.RadiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio
-                    );
-
-                    physicsWorld.QueryAABB(out Fixture[] touched, aabb);
-
-                    foreach (Fixture fixture in touched)
-                    {
-                        if (fixture != null && fixture.Body.UserData != null)
-                        {
-                            Entity touchedEntity = (Entity)fixture.Body.UserData;
-                            if (touchedEntity.Has<Enemy>()
-                                && Vector2.Distance(touchedEntity.Get<Position>().XY, comparePosition) <= magicBeam.BaseRadius * magicBeam.RadiusMultiplier)
-                            {
-                                setEnemyHealthAndState(touchedEntity, touchedEntity.Get<EntityStatus>(), spell.Child.Get<Damage>(), spell.Child.Get<Owner>(), spell.CurrentEffectChance);
-                            }
-                        }
-                    }
+                    checkHitInRadius(spell.Child.Get<Position>(),
+                                        spell.Child.Get<Damage>(),
+                                        spell.Child.Get<Owner>(),
+                                        magicBeam.BaseRadius,
+                                        magicBeam.RadiusMultiplier,
+                                        spell.CurrentEffectChance);
                 }
             }
 
             return spell.Cooldown;
         }
 
-        private void setEnemyHealthAndState(Entity entity, EntityStatus entityStatus, Damage damage, Owner owner, float spellEffectChance)
+        private void checkHitInRadius(Position body, Damage damage, Owner owner, float baseRadius, float radiusMultiplier, float currentEffectChance)
         {
-            if (entityStatus.State == State.Alive)
+            System.Numerics.Vector2 position = new System.Numerics.Vector2(body.XY.X, body.XY.Y);
+            Vector2 comparePosition = body.XY;
+            AABB aabb = new AABB(
+                (position - System.Numerics.Vector2.One * baseRadius * radiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio,
+                (position + System.Numerics.Vector2.One * baseRadius * radiusMultiplier) / PhysicsConstants.PhysicsToPixelsRatio
+            );
+
+            physicsWorld.QueryAABB(out Fixture[] touched, aabb);
+
+            foreach (Fixture fixture in touched)
             {
-                Health health = entity.Get<Health>();
-                health.Current -= (int)damage.Amount;
-                if (entity.Has<DoubleDamage>())
+                if (fixture != null && fixture.Body.UserData != null)
                 {
-                    health.Current -= (int)damage.Amount;
-                }
-
-                if (health.Current < 1)
-                {
-                    entityStatus.State = State.ReadyToDie;
-                    entity.Set(entityStatus);
-                    Experience enemyExperience = entity.Get<Experience>();
-                    KillCount killCount = (KillCount)owner.Entity.Get(typeof(KillCount));
-                    Player playerExperience = owner.Entity.Get<Player>();
-                    killCount.AddKill(entity.Get<Enemy>().Name);
-                    if (owner.Entity.Has<DoubleExperience>())
-                    {
-                        playerExperience.TotalExperience += enemyExperience.Amount * 2;
-                        playerExperience.ExperienceToNextLevel -= enemyExperience.Amount * 2;
-                    }
-                    else
-                    {
-                        playerExperience.TotalExperience += enemyExperience.Amount;
-                        playerExperience.ExperienceToNextLevel -= enemyExperience.Amount;
-                    }
-                    owner.Entity.Set(killCount, playerExperience);
-                }
-                else
-                {
-                    Animation anim = entity.Get<Animation>();
-                    anim.Overlay = Color.Red;
-
-                    entity.Set(health, anim);
-                    if (damage.SpellEffect != SpellEffects.None && spellEffectChance > 0)
+                    Entity touchedEntity = (Entity)fixture.Body.UserData;
+                    if (touchedEntity.Has<Enemy>()
+                        && Vector2.Distance(touchedEntity.Get<Position>().XY, comparePosition) <= baseRadius * radiusMultiplier)
                     {
                         SpellEffects effect = SpellEffects.None;
-                        
-                        if (random.Next(1000) < (spellEffectChance * 1000))
+
+                        if (random.Next(1000) < (currentEffectChance * 1000))
                         {
                             effect = damage.SpellEffect;
                         }
-                        
-                        switch (effect)
-                        {
-                            case SpellEffects.Burn:
-                                if (!entity.Has<Burn>())
-                                {
-                                    entity.Add(new Burn() { TimeLeft = 5f, TickRate = .5f, NextTick = .5f });
-                                }
-                                else
-                                {
-                                    entity.Set(new Burn() { TimeLeft = 5f, TickRate = .5f, NextTick = .5f });
-                                }
-                                break;
-                            case SpellEffects.Slow:
-                                if (!entity.Has<Slow>())
-                                {
-                                    entity.Add(new Slow() { TimeLeft = 5f });
-                                }
-                                else
-                                {
-                                    entity.Set(new Slow() { TimeLeft = 5f });
-                                }
-                                break;
-                            case SpellEffects.Shock:
-                                if (!entity.Has<Shock>())
-                                {
-                                    entity.Add(new Shock() { TimeLeft = 1f });
-                                }
-                                else
-                                {
-                                    entity.Set(new Shock() { TimeLeft = 1f });
-                                }
-                                break;
-                        }
+                        AttackHelpers.SetEnemyHealthAndState(touchedEntity, touchedEntity.Get<EntityStatus>(), damage, owner, effect);
                     }
                 }
             }

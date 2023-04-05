@@ -106,7 +106,7 @@ namespace RogueliteSurvivor.Systems
                 if(entityStatus.State != State.Alive)
                 {
                     physicsWorld.DestroyBody(body);
-                    entity.Remove<Body, Burn, Slow, Shock>();
+                    entity.Remove<Body, Burn, Slow, Shock, Poison>();
                 }
             });
         }

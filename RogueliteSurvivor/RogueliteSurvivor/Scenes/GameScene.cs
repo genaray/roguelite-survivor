@@ -153,6 +153,8 @@ namespace RogueliteSurvivor.Scenes
                 { "MagicShot", Content.Load<Texture2D>(Path.Combine("Spells", "magic-shot")) },
                 { "MagicBeam", Content.Load<Texture2D>(Path.Combine("Spells", "magic-beam")) },
                 { "MagicAura", Content.Load<Texture2D>(Path.Combine("Spells", "magic-aura")) },
+                { "FireRain", Content.Load<Texture2D>(Path.Combine("Spells", "fire-rain")) },
+                { "PoisonCloud", Content.Load<Texture2D>(Path.Combine("Spells", "poison-cloud")) },
                 { "EnemyEnergyBlast", Content.Load<Texture2D>(Path.Combine("Spells", "enemy-energy-blast")) },
 
                 { "StatBar", Content.Load<Texture2D>(Path.Combine("Hud", "StatBar")) },

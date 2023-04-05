@@ -14,6 +14,10 @@ namespace RogueliteSurvivor.Systems
                                                     .WithAll<Slow>();
         private QueryDescription shockQuery = new QueryDescription()
                                                     .WithAll<Shock>();
+        private QueryDescription stationaryQuery = new QueryDescription()
+                                                    .WithAll<Stationary>();
+        private QueryDescription poisonQuery = new QueryDescription()
+                                                    .WithAll<Poison>();
         public SpellEffectSystem(World world)
             : base(world, new QueryDescription())
         {
@@ -61,6 +65,26 @@ namespace RogueliteSurvivor.Systems
                 if (shock.TimeLeft < 0)
                 {
                     entity.Remove<Shock>();
+                }
+            });
+
+            world.Query(in poisonQuery, (in Entity entity, ref Poison poison) =>
+            {
+                poison.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+
+                if (poison.TimeLeft < 0)
+                {
+                    entity.Remove<Shock>();
+                }
+            });
+
+            world.Query(in stationaryQuery, (ref Stationary stationary, ref EntityStatus entityStatus) =>
+            {
+                stationary.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+
+                if(stationary.TimeLeft < 0)
+                {
+                    entityStatus.State = Constants.State.Dead;
                 }
             });
         }

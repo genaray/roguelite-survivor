@@ -59,6 +59,10 @@ namespace RogueliteSurvivor.Helpers
                     return new Rectangle(xOffset, 576, 64, 64);
                 case LevelUpType.MagicAura:
                     return new Rectangle(128 + xOffset, 576, 64, 64);
+                case LevelUpType.FireRain:
+                    return new Rectangle(xOffset, 640, 64, 64);
+                case LevelUpType.PoisonCloud:
+                    return new Rectangle(128 + xOffset, 640, 64, 64);
                 default:
                     return new Rectangle();
             }
@@ -131,6 +135,8 @@ namespace RogueliteSurvivor.Helpers
                     return LevelUpType.FireExplosion;
                 case "FireAura":
                     return LevelUpType.FireAura;
+                case "FireRain":
+                    return LevelUpType.FireRain;
                 case "IceShard":
                     return LevelUpType.IceShard;
                 case "IceSpikes":
@@ -149,6 +155,8 @@ namespace RogueliteSurvivor.Helpers
                     return LevelUpType.MagicBeam;
                 case "MagicAura":
                     return LevelUpType.MagicAura;
+                case "PoisonCloud":
+                    return LevelUpType.PoisonCloud;
                 default:
                     return LevelUpType.None;
             }
@@ -191,6 +199,7 @@ namespace RogueliteSurvivor.Helpers
                 case LevelUpType.Fireball:
                 case LevelUpType.FireExplosion:
                 case LevelUpType.FireAura:
+                case LevelUpType.FireRain:
                 case LevelUpType.IceShard:
                 case LevelUpType.IceSpikes:
                 case LevelUpType.IceAura:
@@ -200,6 +209,7 @@ namespace RogueliteSurvivor.Helpers
                 case LevelUpType.MagicShot:
                 case LevelUpType.MagicBeam:
                 case LevelUpType.MagicAura:
+                case LevelUpType.PoisonCloud:
                     var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
                     ISpell spell = null;
                     if (spells.Count == 1)

@@ -12,6 +12,7 @@ namespace RogueliteSurvivor.Constants
         Burn,
         Shock,
         Slow,
+        Poison,
     }
 
     public static class SpellsEffectsExtensions
@@ -28,6 +29,8 @@ namespace RogueliteSurvivor.Constants
                     return SpellEffects.Shock;
                 case "Slow":
                     return SpellEffects.Slow;
+                case "Poison":
+                    return SpellEffects.Poison;
                 default:
                     return SpellEffects.None;
             }

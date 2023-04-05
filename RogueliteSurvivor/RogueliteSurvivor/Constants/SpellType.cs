@@ -13,6 +13,7 @@ namespace RogueliteSurvivor.Constants
         SingleTarget,
         Aura,
         MagicBeam,
+        Stationary,
         EnemyProjectile,
     }
 
@@ -32,6 +33,8 @@ namespace RogueliteSurvivor.Constants
                     return SpellType.Aura;
                 case "MagicBeam":
                     return SpellType.MagicBeam;
+                case "Stationary":
+                    return SpellType.Stationary;
                 case "EnemyProjectile":
                     return SpellType.EnemyProjectile;
                 default:

@@ -429,6 +429,70 @@
       "hitSpriteSheet": null
     },
     {
+      "spell": "FireRain",
+      "effect": "Burn",
+      "type": "Stationary",
+      "baseEffectChance": 0.3,
+      "currentEffectChance": 0.3,
+      "baseDamage": 10,
+      "currentDamage": 10,
+      "baseProjectileSpeed": 0,
+      "currentProjectileSpeed": 0,
+      "baseAttacksPerSecond": 0.1,
+      "currentAttacksPerSecond": 0.1,
+      "damageStartDelay": 0,
+      "damageEndDelay": 0,
+      "createSound": "",
+      "hitSound": "",
+      "aliveAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 29,
+        "playbackSpeed": 0.02,
+        "numDirections": 1,
+        "repeatable": true
+      },
+      "aliveSpriteSheet": {
+        "framesPerRow": 30,
+        "framesPerColumn": 1,
+        "rotation": "none",
+        "scale": 1
+      },
+      "hitAnimation": null,
+      "hitSpriteSheet": null
+    },
+    {
+      "spell": "PoisonCloud",
+      "effect": "Poison",
+      "type": "Stationary",
+      "baseEffectChance": 0.3,
+      "currentEffectChance": 0.3,
+      "baseDamage": 10,
+      "currentDamage": 10,
+      "baseProjectileSpeed": 0,
+      "currentProjectileSpeed": 0,
+      "baseAttacksPerSecond": 0.1,
+      "currentAttacksPerSecond": 0.1,
+      "damageStartDelay": 0,
+      "damageEndDelay": 0,
+      "createSound": "",
+      "hitSound": "",
+      "aliveAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 29,
+        "playbackSpeed": 0.1,
+        "numDirections": 1,
+        "repeatable": true
+      },
+      "aliveSpriteSheet": {
+        "framesPerRow": 30,
+        "framesPerColumn": 1,
+        "rotation": "none",
+        "scale": 1
+      },
+      "hitAnimation": null,
+      "hitSpriteSheet": null
+    },
+    {
       "spell": "EnemyMelee",
       "effect": "None",
       "type": "None",

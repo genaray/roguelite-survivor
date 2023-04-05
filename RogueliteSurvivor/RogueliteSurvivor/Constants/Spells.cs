@@ -12,6 +12,7 @@ namespace RogueliteSurvivor.Constants
         Fireball,
         FireExplosion,
         FireAura,
+        FireRain,
         IceShard,
         IceSpikes,
         IceAura,
@@ -21,6 +22,7 @@ namespace RogueliteSurvivor.Constants
         MagicShot,
         MagicBeam,
         MagicAura,
+        PoisonCloud,
         EnemyMelee,
         EnemyEnergyBlast,
         Five,
@@ -37,6 +39,7 @@ namespace RogueliteSurvivor.Constants
                 Spells.Fireball,
                 Spells.FireExplosion,
                 Spells.FireAura,
+                Spells.FireRain,
                 Spells.IceShard,
                 Spells.IceSpikes,
                 Spells.IceAura,
@@ -46,6 +49,7 @@ namespace RogueliteSurvivor.Constants
                 Spells.MagicShot,
                 Spells.MagicBeam,
                 Spells.MagicAura,
+                Spells.PoisonCloud,
             };
         }
 
@@ -61,6 +65,8 @@ namespace RogueliteSurvivor.Constants
                     return Spells.FireExplosion;
                 case "FireAura":
                     return Spells.FireAura;
+                case "FireRain":
+                    return Spells.FireRain;
                 case "IceShard":
                     return Spells.IceShard;
                 case "IceSpikes":
@@ -79,6 +85,8 @@ namespace RogueliteSurvivor.Constants
                     return Spells.MagicBeam;
                 case "MagicAura":
                     return Spells.MagicAura;
+                case "PoisonCloud":
+                    return Spells.PoisonCloud;
                 case "EnemyMelee":
                     return Spells.EnemyMelee;
                 case "EnemyEnergyBlast":
@@ -98,6 +106,8 @@ namespace RogueliteSurvivor.Constants
                     return "Fire Explosion";
                 case Spells.FireAura:
                     return "Fire Aura";
+                case Spells.FireRain:
+                    return "Fire Rain";
                 case Spells.IceShard:
                     return "Ice Shard";
                 case Spells.IceSpikes:
@@ -116,6 +126,8 @@ namespace RogueliteSurvivor.Constants
                     return "Magic Beam";
                 case Spells.MagicAura:
                     return "Magic Aura";
+                case Spells.PoisonCloud:
+                    return "Poison Cloud";
                 case Spells.EnemyEnergyBlast:
                     return "Enemy Energy Blast";
                 default:

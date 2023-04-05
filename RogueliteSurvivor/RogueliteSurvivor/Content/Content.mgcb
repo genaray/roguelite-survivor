@@ -1005,6 +1005,18 @@
 /processorParam:TextureFormat=Color
 /build:Spells/fire-explosion.png
 
+#begin Spells/fire-rain.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/fire-rain.png
+
 #begin Spells/fireball.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1124,6 +1136,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Spells/magic-shot.png
+
+#begin Spells/poison-cloud.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Spells/poison-cloud.png
 
 #begin UI/in-game-menu-window.png
 /importer:TextureImporter

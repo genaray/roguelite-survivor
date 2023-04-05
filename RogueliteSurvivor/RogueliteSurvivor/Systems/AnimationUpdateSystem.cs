@@ -11,6 +11,7 @@ namespace RogueliteSurvivor.Systems
         QueryDescription burnQuery = new QueryDescription().WithAll<Burn>();
         QueryDescription slowQuery = new QueryDescription().WithAll<Slow>();
         QueryDescription shockQuery = new QueryDescription().WithAll<Shock>();
+        QueryDescription poisonQuery = new QueryDescription().WithAll<Poison>();
 
         public AnimationUpdateSystem(World world)
             : base(world, new QueryDescription()
@@ -52,6 +53,11 @@ namespace RogueliteSurvivor.Systems
             world.Query(in shockQuery, (ref Animation anim) =>
             {
                 anim.Overlay = Color.Yellow;
+            });
+
+            world.Query(in poisonQuery, (ref Animation anim) =>
+            {
+                anim.Overlay = Color.Green;
             });
         }
     }
