@@ -198,7 +198,7 @@ namespace RogueliteSurvivor.Physics
                     }
                     else
                     {
-                        killCount.KillerName = other.Get<Owner>().Entity.Get<Enemy>().Name;
+                        killCount.KillerName = other.Get<Owner>().EntityReference.Entity.Get<Enemy>().Name;
                         killCount.KillerMethod = "blasted";
                     }
 

@@ -4,6 +4,6 @@ namespace RogueliteSurvivor.Components
 {
     public struct Owner
     {
-        public Entity Entity { get; set; }
+        public EntityReference EntityReference { get; set; }
     }
 }

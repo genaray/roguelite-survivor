@@ -44,7 +44,8 @@ namespace RogueliteSurvivor.ComponentFactories
                 spellContainer.AliveAnimation.LastFrame,
                 spellContainer.AliveAnimation.PlaybackSpeed,
                 spellContainer.AliveAnimation.NumDirections,
-                spellContainer.AliveAnimation.Repeatable);
+                spellContainer.AliveAnimation.Repeatable
+            );
         }
 
         public static SpriteSheet GetSpellAliveSpriteSheet(Dictionary<string, Texture2D> textures, SpellContainer spellContainer, Vector2 currentPosition, Vector2 targetPosition, float scaleMultiplier = 1f)
@@ -111,7 +112,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition),
                 new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
-                new Owner() { Entity = entity },
+                new Owner() { EntityReference = world.Reference(entity) },
                 new Pierce(entity.Has<Pierce>() ? entity.Get<Pierce>().Num : 0),
                 new HitSound() { SoundEffect = spellContainers[spell.Spell].HitSound },
                 BodyFactory.CreateCircularBody(projectile, 14, physicsWorld, body, .1f)
@@ -141,7 +142,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition),
                 new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
-                new Owner() { Entity = entity },
+                new Owner() { EntityReference = world.Reference(entity) },
                 new Pierce(entity.Has<Pierce>() ? entity.Get<Pierce>().Num : 0),
                 new HitSound() { SoundEffect = spellContainers[spell.Spell].HitSound },
                 BodyFactory.CreateCircularBody(projectile, 14, physicsWorld, body, .1f)
@@ -170,7 +171,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], pos.XY, target.TargetPosition, radiusMultiplier),
                 new Damage() { Amount = spell.CurrentDamage * damageMultiplier, BaseAmount = spell.CurrentDamage * damageMultiplier, SpellEffect = effect },
-                new Owner() { Entity = entity },
+                new Owner() { EntityReference = world.Reference(entity) },
                 new CreateSound() { SoundEffect = spellContainers[spell.Spell].CreateSound },
                 BodyFactory.CreateCircularBody(singleTarget, (int)(32 * radiusMultiplier), physicsWorld, body, .1f, false)
             );
@@ -190,7 +191,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], position.XY, position.XY, radiusMultiplier),
                 new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
-                new Owner() { Entity = entity }
+                new Owner() { EntityReference = world.Reference(entity) }
             );
 
             return aura;
@@ -201,12 +202,12 @@ namespace RogueliteSurvivor.ComponentFactories
         {
             float radiusMultiplier = (entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f) + radiusIncrease;
             
-            var aura = spell.Child.Get<Aura>();
+            var aura = spell.ChildReference.Entity.Get<Aura>();
             aura.RadiusMultiplier = radiusMultiplier;
-            var spriteSheet = spell.Child.Get<SpriteSheet>();
+            var spriteSheet = spell.ChildReference.Entity.Get<SpriteSheet>();
             spriteSheet.Scale = radiusMultiplier;
 
-            spell.Child.Set(aura, spriteSheet);
+            spell.ChildReference.Entity.Set(aura, spriteSheet);
 
         }
 
@@ -234,7 +235,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 GetSpellAliveAnimation(spellContainers[spell.Spell]),
                 GetSpellAliveSpriteSheet(textures, spellContainers[spell.Spell], position.XY, position.XY, radiusMultiplier),
                 new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = effect },
-                new Owner() { Entity = entity },
+                new Owner() { EntityReference = world.Reference(entity) },
                 new LoopSound() { SoundEffect = soundInstance },
                 BodyFactory.CreateCircularBody(aura, 14, physicsWorld, body, .1f)
             );
@@ -249,12 +250,12 @@ namespace RogueliteSurvivor.ComponentFactories
         {
             float radiusMultiplier = (entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f) + radiusIncrease;
 
-            var aura = spell.Child.Get<MagicBeam>();
+            var aura = spell.ChildReference.Entity.Get<MagicBeam>();
             aura.RadiusMultiplier = radiusMultiplier;
-            var spriteSheet = spell.Child.Get<SpriteSheet>();
+            var spriteSheet = spell.ChildReference.Entity.Get<SpriteSheet>();
             spriteSheet.Scale = radiusMultiplier;
 
-            spell.Child.Set(aura, spriteSheet);
+            spell.ChildReference.Entity.Set(aura, spriteSheet);
 
         }
 
@@ -274,7 +275,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 new Damage() { Amount = spell.CurrentDamage, BaseAmount = spell.CurrentDamage, SpellEffect = spell.Effect },
                 new AttackSpeed() { BaseAttackSpeed = 0.5f, CurrentAttackSpeed = 0.5f },
                 new SpellEffectChance() { BaseSpellEffectChance = spell.BaseEffectChance, CurrentSpellEffectChance = spell.CurrentEffectChance },
-                new Owner() { Entity = entity }
+                new Owner() { EntityReference = world.Reference(entity) }
             );
 
             return stationary;

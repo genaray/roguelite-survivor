@@ -221,10 +221,12 @@ namespace RogueliteSurvivor.Systems
 
         private void createPickup(Pickup pickup, Position position)
         {
-            var entity = world.Create<PickupSprite, Position>();
+            var entity = world.Create<PickupSprite, Position, EntityStatus>();
 
-            entity.Set(new PickupSprite() { Type = pickup.Type, PickupAmount = pickup.PickupAmount },
-                new Position() { XY = new Vector2(position.XY.X, position.XY.Y) }
+            entity.Set(
+                new PickupSprite() { Type = pickup.Type, PickupAmount = pickup.PickupAmount },
+                new Position() { XY = new Vector2(position.XY.X, position.XY.Y) }, 
+                new EntityStatus()
             );
         }
     }

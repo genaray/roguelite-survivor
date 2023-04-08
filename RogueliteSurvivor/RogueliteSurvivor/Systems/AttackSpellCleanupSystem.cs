@@ -9,7 +9,7 @@ namespace RogueliteSurvivor.Systems
     {
         public AttackSpellCleanupSystem(World world)
             : base(world, new QueryDescription()
-                                .WithAny<Projectile, SingleTarget, EnemyProjectile>())
+                                .WithAny<Projectile, SingleTarget, EnemyProjectile, PickupSprite>())
         { }
 
         public void Update(GameTime gameTime, float totalElapsedTime, float scaleFactor)

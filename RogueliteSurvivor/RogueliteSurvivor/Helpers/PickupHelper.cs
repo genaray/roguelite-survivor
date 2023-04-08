@@ -77,18 +77,18 @@ namespace RogueliteSurvivor.Helpers
             return pickup;
         }
 
-        public static bool ProcessPickup(ref Entity player, PickupType pickupType)
+        public static bool ProcessPickup(EntityReference player, PickupType pickupType)
         {
             bool destroy = true;
             float pickupAmount = GetPickupAmount(pickupType);
             switch (pickupType)
             {
                 case PickupType.Health:
-                    var health = player.Get<Health>();
+                    var health = player.Entity.Get<Health>();
                     if (health.Current < health.Max)
                     {
                         health.Current = int.Min(health.Max, (int)pickupAmount + health.Current);
-                        player.Set(health);
+                        player.Entity.Set(health);
                     }
                     else
                     {
@@ -96,51 +96,51 @@ namespace RogueliteSurvivor.Helpers
                     }
                     break;
                 case PickupType.Invincibility:
-                    if(player.TryGet(out Invincibility invincibility))
+                    if(player.Entity.TryGet(out Invincibility invincibility))
                     {
                         invincibility.TimeRemaining = pickupAmount;
                         invincibility.MaxTime = pickupAmount;
-                        player.Set(invincibility);
+                        player.Entity.Set(invincibility);
                     }
                     else
                     {
-                        player.Add(new Invincibility() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
+                        player.Entity.Add(new Invincibility() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
                     break;
                 case PickupType.DoubleExperience:
-                    if (player.TryGet(out DoubleExperience doubleExperience))
+                    if (player.Entity.TryGet(out DoubleExperience doubleExperience))
                     {
                         doubleExperience.TimeRemaining = pickupAmount;
                         doubleExperience.MaxTime = pickupAmount;
-                        player.Set(doubleExperience);
+                        player.Entity.Set(doubleExperience);
                     }
                     else
                     {
-                        player.Add(new DoubleExperience() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
+                        player.Entity.Add(new DoubleExperience() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
                     break;
                 case PickupType.DoubleDamage:
-                    if (player.TryGet(out DoubleDamage doubleDamage))
+                    if (player.Entity.TryGet(out DoubleDamage doubleDamage))
                     {
                         doubleDamage.TimeRemaining = pickupAmount;
                         doubleDamage.MaxTime = pickupAmount;
-                        player.Set(doubleDamage);
+                        player.Entity.Set(doubleDamage);
                     }
                     else
                     {
-                        player.Add(new DoubleDamage() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
+                        player.Entity.Add(new DoubleDamage() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
                     break;
                 case PickupType.DoubleAttackSpeed:
-                    if (player.TryGet(out DoubleAttackSpeed doubleAttackSpeed))
+                    if (player.Entity.TryGet(out DoubleAttackSpeed doubleAttackSpeed))
                     {
                         doubleAttackSpeed.TimeRemaining = pickupAmount;
                         doubleAttackSpeed.MaxTime = pickupAmount;
-                        player.Set(doubleAttackSpeed);
+                        player.Entity.Set(doubleAttackSpeed);
                     }
                     else
                     {
-                        player.Add(new DoubleAttackSpeed() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
+                        player.Entity.Add(new DoubleAttackSpeed() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
                     break;
             }

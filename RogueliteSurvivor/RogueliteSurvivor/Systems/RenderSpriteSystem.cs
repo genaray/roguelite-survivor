@@ -16,11 +16,12 @@ namespace RogueliteSurvivor.Systems
         QueryDescription auraQuery = new QueryDescription()
                                 .WithAll<Aura, EntityStatus, Position, SpriteSheet, Animation>();
         QueryDescription groundSpritesQuery = new QueryDescription()
-                                .WithAll<EntityStatus, Position, SpriteSheet, Animation>()
-                                .WithNone<Aura, CanFly>();
+                                                .WithNone<Aura, CanFly>()
+                                                .WithAll<EntityStatus, Position, SpriteSheet, Animation>();
+
         QueryDescription flyingSpritesQuery = new QueryDescription()
-                                .WithAll<EntityStatus, Position, SpriteSheet, Animation, CanFly>()
-                                .WithNone<Aura>();
+                                .WithNone<Aura>()
+                                .WithAll<EntityStatus, Position, SpriteSheet, Animation, CanFly>();
 
         public RenderSpriteSystem(World world, GraphicsDeviceManager graphics)
             : base(world, new QueryDescription())

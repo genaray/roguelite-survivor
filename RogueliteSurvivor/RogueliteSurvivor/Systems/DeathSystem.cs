@@ -22,7 +22,7 @@ namespace RogueliteSurvivor.Systems
                                             .WithAny<Projectile, EnemyProjectile>();
 
         QueryDescription enemyQuery = new QueryDescription()
-                                            .WithAll<Enemy>();
+                                            .WithAll<Enemy>(); 
 
         Dictionary<string, Texture2D> textures;
         Box2D.NetStandard.Dynamics.World.World physicsWorld;

@@ -37,7 +37,7 @@ namespace RogueliteSurvivor.Systems
 
             world.Query(in query, (in Entity entity, ref EntityStatus status, ref Position pos, ref Velocity vel, ref Speed sp, ref Target target) =>
             {
-                target.TargetPosition = entity.Has<Enemy>() ? findTarget(playerQuery, pos.XY, pos.XY) : findTarget(enemyQuery, entity.Get<Owner>().Entity.Get<Position>().XY, entity.Get<Owner>().Entity.Get<Position>().XY);
+                target.TargetPosition = entity.Has<Enemy>() ? findTarget(playerQuery, pos.XY, pos.XY) : findTarget(enemyQuery, entity.Get<Owner>().EntityReference.Entity.Get<Position>().XY, entity.Get<Owner>().EntityReference.Entity.Get<Position>().XY);
                 if ( (((entity.Id % maxModulus) - modulus) == 0 || entity.Has<MagicBeam>()) 
                     && status.State == Constants.State.Alive)
                 {

@@ -130,20 +130,20 @@ namespace RogueliteSurvivor.Systems
                 }
                 else if(spell.Type == SpellType.Aura)
                 {
-                    var aura = spell.Child.Get<Aura>();
-                    checkHitInRadius(spell.Child.Get<Position>(),
-                                        spell.Child.Get<Damage>(),
-                                        spell.Child.Get<Owner>(),
+                    var aura = spell.ChildReference.Entity.Get<Aura>();
+                    checkHitInRadius(spell.ChildReference.Entity.Get<Position>(),
+                                        spell.ChildReference.Entity.Get<Damage>(),
+                                        spell.ChildReference.Entity.Get<Owner>(),
                                         aura.BaseRadius,
                                         aura.RadiusMultiplier,
                                         spell.CurrentEffectChance);
                 }
                 else if(spell.Type == SpellType.MagicBeam)
                 {
-                    var magicBeam = spell.Child.Get<MagicBeam>();
-                    checkHitInRadius(spell.Child.Get<Position>(),
-                                        spell.Child.Get<Damage>(),
-                                        spell.Child.Get<Owner>(),
+                    var magicBeam = spell.ChildReference.Entity.Get<MagicBeam>();
+                    checkHitInRadius(spell.ChildReference.Entity.Get<Position>(),
+                                        spell.ChildReference.Entity.Get<Damage>(),
+                                        spell.ChildReference.Entity.Get<Owner>(),
                                         magicBeam.BaseRadius,
                                         magicBeam.RadiusMultiplier,
                                         spell.CurrentEffectChance);

@@ -232,7 +232,7 @@ namespace RogueliteSurvivor.Helpers
                     if (spell.Type == SpellType.Aura)
                     {
                         var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect);
-                        spell.Child = aura;
+                        spell.ChildReference = world.Reference(aura);
                         if (spells.Count == 1)
                         {
                             player.Set((Spell2)spell);
@@ -245,7 +245,7 @@ namespace RogueliteSurvivor.Helpers
                     else if (spell.Type == SpellType.MagicBeam)
                     {
                         var beam = SpellFactory.CreateMagicBeam(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect, soundEffects);
-                        spell.Child = beam;
+                        spell.ChildReference = world.Reference(beam);
                         if (spells.Count == 1)
                         {
                             player.Set((Spell2)spell);

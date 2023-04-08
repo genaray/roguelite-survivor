@@ -20,7 +20,7 @@ namespace RogueliteSurvivor.Helpers
                 Health health = entity.Get<Health>();
                 bool hasPoison = entity.Has<Poison>();
                 health.Current -= (int)(damage.Amount * (hasPoison ? 1.2f : 1f));
-                if (owner.Entity.Has<DoubleDamage>())
+                if (owner.EntityReference.Entity.Has<DoubleDamage>())
                 {
                     health.Current -= (int)(damage.Amount * (hasPoison ? 1.2f : 1f));
                 }
@@ -29,10 +29,10 @@ namespace RogueliteSurvivor.Helpers
                     entityStatus.State = State.ReadyToDie;
                     entity.Set(entityStatus);
                     Experience enemyExperience = entity.Get<Experience>();
-                    KillCount killCount = (KillCount)owner.Entity.Get(typeof(KillCount));
-                    Player playerExperience = owner.Entity.Get<Player>();
+                    KillCount killCount = (KillCount)owner.EntityReference.Entity.Get(typeof(KillCount));
+                    Player playerExperience = owner.EntityReference.Entity.Get<Player>();
                     killCount.AddKill(entity.Get<Enemy>().Name);
-                    if (owner.Entity.Has<DoubleExperience>())
+                    if (owner.EntityReference.Entity.Has<DoubleExperience>())
                     {
                         playerExperience.TotalExperience += enemyExperience.Amount * 2;
                         playerExperience.ExperienceToNextLevel -= enemyExperience.Amount * 2;
@@ -42,7 +42,7 @@ namespace RogueliteSurvivor.Helpers
                         playerExperience.TotalExperience += enemyExperience.Amount;
                         playerExperience.ExperienceToNextLevel -= enemyExperience.Amount;
                     }
-                    owner.Entity.Set(killCount, playerExperience);
+                    owner.EntityReference.Entity.Set(killCount, playerExperience);
                 }
                 else
                 {

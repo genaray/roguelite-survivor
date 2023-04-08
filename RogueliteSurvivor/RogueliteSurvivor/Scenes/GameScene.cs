@@ -486,13 +486,13 @@ namespace RogueliteSurvivor.Scenes
             if(spell.Type == SpellType.Aura)
             {
                 var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect);
-                spell.Child = aura;
+                spell.ChildReference = world.Reference(aura);
                 player.Set(spell);
             }
             else if (spell.Type == SpellType.MagicBeam)
             {
                 var beam = SpellFactory.CreateMagicBeam(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect, soundEffects);
-                spell.Child = beam;
+                spell.ChildReference = world.Reference(beam);
                 player.Set(spell);
             }
 

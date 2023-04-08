@@ -86,26 +86,26 @@ namespace RogueliteSurvivor.Systems
             
                 if(entity.TryGet(out Spell1 spell1) && spell1.Type == SpellType.Aura)
                 {
-                    var aura = spell1.Child.Get<Position>();
+                    var aura = spell1.ChildReference.Entity.Get<Position>();
 
                     aura.XY = new Vector2(position.X, position.Y) * PhysicsConstants.PhysicsToPixelsRatio;
-                    spell1.Child.Set(aura);
+                    spell1.ChildReference.Entity.Set(aura);
                 }
 
                 if (entity.TryGet(out Spell2 spell2) && spell2.Type == SpellType.Aura)
                 {
-                    var aura = spell2.Child.Get<Position>();
+                    var aura = spell2.ChildReference.Entity.Get<Position>();
 
                     aura.XY = new Vector2(position.X, position.Y) * PhysicsConstants.PhysicsToPixelsRatio;
-                    spell2.Child.Set(aura);
+                    spell2.ChildReference.Entity.Set(aura);
                 }
 
                 if (entity.TryGet(out Spell3 spell3) && spell3.Type == SpellType.Aura)
                 {
-                    var aura = spell3.Child.Get<Position>();
+                    var aura = spell3.ChildReference.Entity.Get<Position>();
 
                     aura.XY = new Vector2(position.X, position.Y) * PhysicsConstants.PhysicsToPixelsRatio;
-                    spell3.Child.Set(aura);
+                    spell3.ChildReference.Entity.Set(aura);
                 }
             });
 
