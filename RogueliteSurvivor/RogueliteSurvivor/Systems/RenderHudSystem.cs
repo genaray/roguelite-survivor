@@ -518,6 +518,10 @@ namespace RogueliteSurvivor.Systems
                     rectangle.X = 0;
                     rectangle.Y = 296;
                     break;
+                case Spells.PoisonDart:
+                    rectangle.X = 37;
+                    rectangle.Y = 296;
+                    break;
             }
 
             return rectangle;

@@ -18,26 +18,26 @@
       "hitSound": "FireballHit",
       "aliveAnimation": {
         "firstFrame": 0,
-        "lastFrame": 3,
+        "lastFrame": 29,
         "playbackSpeed": 0.1,
         "numDirections": 1,
         "repeatable": true
       },
       "aliveSpriteSheet": {
-        "framesPerRow": 4,
+        "framesPerRow": 30,
         "framesPerColumn": 1,
         "rotation": "target",
         "scale": 0.5
       },
       "hitAnimation": {
         "firstFrame": 0,
-        "lastFrame": 5,
+        "lastFrame": 16,
         "playbackSpeed": 0.03,
         "numDirections": 1,
         "repeatable": false
       },
       "hitSpriteSheet": {
-        "framesPerRow": 6,
+        "framesPerRow": 17,
         "framesPerColumn": 1,
         "rotation": "equal",
         "scale": 0.5
@@ -125,26 +125,26 @@
       "hitSound": "IceShardHit",
       "aliveAnimation": {
         "firstFrame": 0,
-        "lastFrame": 9,
+        "lastFrame": 29,
         "playbackSpeed": 0.1,
         "numDirections": 1,
         "repeatable": true
       },
       "aliveSpriteSheet": {
-        "framesPerRow": 10,
+        "framesPerRow": 30,
         "framesPerColumn": 1,
         "rotation": "target",
         "scale": 0.5
       },
       "hitAnimation": {
         "firstFrame": 0,
-        "lastFrame": 6,
+        "lastFrame": 12,
         "playbackSpeed": 0.03,
         "numDirections": 1,
         "repeatable": false
       },
       "hitSpriteSheet": {
-        "framesPerRow": 7,
+        "framesPerRow": 13,
         "framesPerColumn": 1,
         "rotation": "equal",
         "scale": 0.5
@@ -232,26 +232,26 @@
       "hitSound": "LightningBlastHit",
       "aliveAnimation": {
         "firstFrame": 0,
-        "lastFrame": 4,
+        "lastFrame": 29,
         "playbackSpeed": 0.1,
         "numDirections": 1,
         "repeatable": true
       },
       "aliveSpriteSheet": {
-        "framesPerRow": 5,
+        "framesPerRow": 30,
         "framesPerColumn": 1,
         "rotation": "target",
         "scale": 0.5
       },
       "hitAnimation": {
         "firstFrame": 0,
-        "lastFrame": 4,
+        "lastFrame": 11,
         "playbackSpeed": 0.03,
         "numDirections": 1,
         "repeatable": false
       },
       "hitSpriteSheet": {
-        "framesPerRow": 5,
+        "framesPerRow": 12,
         "framesPerColumn": 1,
         "rotation": "equal",
         "scale": 0.5
@@ -491,6 +491,49 @@
       },
       "hitAnimation": null,
       "hitSpriteSheet": null
+    },
+    {
+      "spell": "PoisonDart",
+      "effect": "Poison",
+      "type": "Projectile",
+      "baseEffectChance": 0.1,
+      "currentEffectChance": 0.1,
+      "baseDamage": 6,
+      "currentDamage": 6,
+      "baseProjectileSpeed": 400,
+      "currentProjectileSpeed": 400,
+      "baseAttacksPerSecond": 3,
+      "currentAttacksPerSecond": 3,
+      "damageStartDelay": 0,
+      "damageEndDelay": 0,
+      "createSound": "ProjectileCast1",
+      "hitSound": "PoisonDartHit",
+      "aliveAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 29,
+        "playbackSpeed": 0.1,
+        "numDirections": 1,
+        "repeatable": true
+      },
+      "aliveSpriteSheet": {
+        "framesPerRow": 30,
+        "framesPerColumn": 1,
+        "rotation": "target",
+        "scale": 0.5
+      },
+      "hitAnimation": {
+        "firstFrame": 0,
+        "lastFrame": 8,
+        "playbackSpeed": 0.03,
+        "numDirections": 1,
+        "repeatable": false
+      },
+      "hitSpriteSheet": {
+        "framesPerRow": 9,
+        "framesPerColumn": 1,
+        "rotation": "equal",
+        "scale": 0.5
+      }
     },
     {
       "spell": "EnemyMelee",

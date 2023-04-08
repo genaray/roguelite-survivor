@@ -23,6 +23,7 @@ namespace RogueliteSurvivor.Constants
         MagicBeam,
         MagicAura,
         PoisonCloud,
+        PoisonDart,
         SpellEffectChance,
         Pierce,
         AreaOfEffect,

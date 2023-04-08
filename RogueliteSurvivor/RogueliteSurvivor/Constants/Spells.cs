@@ -23,6 +23,7 @@ namespace RogueliteSurvivor.Constants
         MagicBeam,
         MagicAura,
         PoisonCloud,
+        PoisonDart,
         EnemyMelee,
         EnemyEnergyBlast,
         Five,
@@ -50,6 +51,7 @@ namespace RogueliteSurvivor.Constants
                 Spells.MagicBeam,
                 Spells.MagicAura,
                 Spells.PoisonCloud,
+                Spells.PoisonDart,
             };
         }
 
@@ -87,6 +89,8 @@ namespace RogueliteSurvivor.Constants
                     return Spells.MagicAura;
                 case "PoisonCloud":
                     return Spells.PoisonCloud;
+                case "PoisonDart":
+                    return Spells.PoisonDart;
                 case "EnemyMelee":
                     return Spells.EnemyMelee;
                 case "EnemyEnergyBlast":
@@ -128,6 +132,8 @@ namespace RogueliteSurvivor.Constants
                     return "Magic Aura";
                 case Spells.PoisonCloud:
                     return "Poison Cloud";
+                case Spells.PoisonDart:
+                    return "Poison Dart";
                 case Spells.EnemyEnergyBlast:
                     return "Enemy Energy Blast";
                 default:

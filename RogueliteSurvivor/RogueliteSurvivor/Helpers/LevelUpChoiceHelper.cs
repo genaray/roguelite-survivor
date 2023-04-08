@@ -9,6 +9,7 @@ using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,6 +64,8 @@ namespace RogueliteSurvivor.Helpers
                     return new Rectangle(xOffset, 640, 64, 64);
                 case LevelUpType.PoisonCloud:
                     return new Rectangle(128 + xOffset, 640, 64, 64);
+                case LevelUpType.PoisonDart:
+                    return new Rectangle(128 + xOffset, 192, 64, 64);
                 default:
                     return new Rectangle();
             }
@@ -157,6 +160,8 @@ namespace RogueliteSurvivor.Helpers
                     return LevelUpType.MagicAura;
                 case "PoisonCloud":
                     return LevelUpType.PoisonCloud;
+                case "PoisonDart":
+                    return LevelUpType.PoisonDart;
                 default:
                     return LevelUpType.None;
             }
@@ -210,6 +215,7 @@ namespace RogueliteSurvivor.Helpers
                 case LevelUpType.MagicBeam:
                 case LevelUpType.MagicAura:
                 case LevelUpType.PoisonCloud:
+                case LevelUpType.PoisonDart:
                     var spells = player.GetAllComponents().Where(a => a is ISpell).ToList();
                     ISpell spell = null;
                     if (spells.Count == 1)

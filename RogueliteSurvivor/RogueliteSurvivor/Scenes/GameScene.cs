@@ -156,6 +156,7 @@ namespace RogueliteSurvivor.Scenes
                 { "FireRain", Content.Load<Texture2D>(Path.Combine("Spells", "fire-rain")) },
                 { "PoisonCloud", Content.Load<Texture2D>(Path.Combine("Spells", "poison-cloud")) },
                 { "EnemyEnergyBlast", Content.Load<Texture2D>(Path.Combine("Spells", "enemy-energy-blast")) },
+                { "PoisonDart", Content.Load<Texture2D>(Path.Combine("Spells", "poison-dart")) },
 
                 { "StatBar", Content.Load<Texture2D>(Path.Combine("Hud", "StatBar")) },
                 { "HealthBar", Content.Load<Texture2D>(Path.Combine("Hud", "HealthBar")) },
@@ -193,6 +194,7 @@ namespace RogueliteSurvivor.Scenes
                 { "LightningBlastHit", Content.Load<Texture2D>(Path.Combine("Effects", "lightning-blast-hit")) },
                 { "FireballHit", Content.Load<Texture2D>(Path.Combine("Effects", "fireball-hit")) },
                 { "MagicShotHit", Content.Load<Texture2D>(Path.Combine("Effects", "magic-shot-hit")) },
+                { "PoisonDartHit", Content.Load<Texture2D>(Path.Combine("Effects", "poison-dart-hit")) },
                 { "EnemyEnergyBlastHit", Content.Load<Texture2D>(Path.Combine("Effects", "enemy-energy-blast-hit")) },
             };
 
@@ -220,6 +222,7 @@ namespace RogueliteSurvivor.Scenes
                     { "LightningBlastHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "25_Wind_01")) },
                     { "ProjectileCast2", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "35_Miss_Evade_02")) },
                     { "IceShardHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "45_Charge_05")) },
+                    { "PoisonDartHit", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "25_Wind_01")) },
                     { "EnemyDeath1", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "69_Enemy_death_01")) },
                     { "EnemyDeath2", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "77_flesh_02")) },
                     { "Hover", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "001_Hover_01")) },
