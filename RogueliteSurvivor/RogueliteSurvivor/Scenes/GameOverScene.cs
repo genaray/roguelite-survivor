@@ -178,7 +178,7 @@ namespace RogueliteSurvivor.Scenes
                         enemyStats.KilledBy += gameStats.Killer == enemy.Key ? 1 : 0;
                     }
                 }
-
+                progressionContainer.NumBooks += gameStats.NumBooks;
                 progressionContainer.Save();
                 saved = true;
             }
@@ -264,14 +264,14 @@ namespace RogueliteSurvivor.Scenes
             {
                 _spriteBatch.DrawString(
                     fonts["Font"],
-                   string.Concat(getProperArticle(gameStats.Killer), gameStats.Killer, " ", gameStats.KillerMethod," you into oblivion..."),
+                   string.Concat("You survived for ", gameStats.PlayTime.ToFormattedTime(), " before ", getProperArticle(gameStats.Killer), gameStats.Killer, " ", gameStats.KillerMethod," you into oblivion..."),
                     new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 64),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["Font"],
-                   string.Concat("You killed ", gameStats.EnemiesKilled, " enemies in ", gameStats.PlayTime.ToFormattedTime(), "!"),
+                   string.Concat("You killed ", gameStats.EnemiesKilled, " enemies and collected ", gameStats.NumBooks, " books to learn from!"),
                     new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 32),
                     Color.White
                 );
@@ -331,10 +331,10 @@ namespace RogueliteSurvivor.Scenes
         {
             if (enemyName.StartsWith('A') || enemyName.StartsWith('E') || enemyName.StartsWith('I') || enemyName.StartsWith('O') || enemyName.StartsWith('U'))
             {
-                return "An ";
+                return "an ";
             }
 
-            return "A ";
+            return "a ";
         }
     }
 }

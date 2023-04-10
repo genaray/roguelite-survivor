@@ -41,6 +41,7 @@ namespace RogueliteSurvivor.Scenes
         private List<Button> playStatsButtons;
         private List<IFormComponent> characterSelectionComponents;
         private List<Button> mapSelectionButtons;
+        private List<Button> playerUpgradeButtons;
 
         private Dictionary<string, PlayerContainer> playerContainers;
         Dictionary<string, EnemyContainer> enemyContainers;
@@ -124,9 +125,16 @@ namespace RogueliteSurvivor.Scenes
             {
                 new Button(
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 48),
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 96),
                     new Rectangle(0, 32, 128, 32),
                     new Rectangle(128, 32, 128, 32),
+                    new Vector2(64, 16)
+                ),
+                new Button(
+                    textures["MainMenuButtons"],
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 48),
+                    new Rectangle(0, 480, 128, 32),
+                    new Rectangle(128, 480, 128, 32),
                     new Vector2(64, 16)
                 ),
                 new Button(
@@ -159,64 +167,38 @@ namespace RogueliteSurvivor.Scenes
                 ),
             };
 
-            optionsButtons = new List<Button>()
+            optionsButtons = new List<Button>();
+            for(int i = 0; i < 4; i++)
             {
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 88),
-                    new Rectangle(0, 0, 16, 16),
-                    new Rectangle(16, 0, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 88),
-                    new Rectangle(0, 16, 16, 16),
-                    new Rectangle(16, 16, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 56),
-                    new Rectangle(0, 0, 16, 16),
-                    new Rectangle(16, 0, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 56),
-                    new Rectangle(0, 16, 16, 16),
-                    new Rectangle(16, 16, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 24),
-                    new Rectangle(0, 0, 16, 16),
-                    new Rectangle(16, 0, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 24),
-                    new Rectangle(0, 16, 16, 16),
-                    new Rectangle(16, 16, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) + 8),
-                    new Rectangle(0, 0, 16, 16),
-                    new Rectangle(16, 0, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) + 8),
-                    new Rectangle(0, 16, 16, 16),
-                    new Rectangle(16, 16, 16, 16),
-                    new Vector2(8, 8)
-                ),
+                optionsButtons.Add(
+                    new Button(
+                        textures["VolumeButtons"],
+                        new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 88 + (i * 32)),
+                        new Rectangle(0, 0, 16, 16),
+                        new Rectangle(16, 0, 16, 16),
+                        new Vector2(8, 8)
+                    )
+                );
+                optionsButtons.Add(
+                    new Button(
+                        textures["VolumeButtons"],
+                        new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 88 + (i * 32)),
+                        new Rectangle(0, 16, 16, 16),
+                        new Rectangle(16, 16, 16, 16),
+                        new Vector2(8, 8)
+                    )
+                );
+            }
+
+            optionsButtons.Add(
                 new Button(
                     textures["MainMenuButtons"],
                     new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
                     new Rectangle(0, 192, 128, 32),
                     new Rectangle(128, 192, 128, 32),
                     new Vector2(64, 16)
-                ),
-            };
+                )
+            );
 
             creditsButtons = new List<Button>()
             {
@@ -335,6 +317,40 @@ namespace RogueliteSurvivor.Scenes
                 ),
             };
 
+            playerUpgradeButtons = new List<Button>();
+
+            for (int i = 0; i < 7; i++)
+            {
+                playerUpgradeButtons.Add(
+                    new Button(
+                        textures["VolumeButtons"],
+                        new Vector2(GetWidthOffset(2) + 26, GetHeightOffset(2) - 112 + (i * 32)),
+                        new Rectangle(0, 0, 16, 16),
+                        new Rectangle(16, 0, 16, 16),
+                        new Vector2(8, 8)
+                    )
+                );
+                playerUpgradeButtons.Add(
+                    new Button(
+                        textures["VolumeButtons"],
+                        new Vector2(GetWidthOffset(2) + 50, GetHeightOffset(2) - 112 + (i * 32)),
+                        new Rectangle(0, 16, 16, 16),
+                        new Rectangle(16, 16, 16, 16),
+                        new Vector2(8, 8)
+                    )
+                );
+            }
+
+            playerUpgradeButtons.Add(
+                new Button(
+                    textures["MainMenuButtons"],
+                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
+                    new Rectangle(0, 192, 128, 32),
+                    new Rectangle(128, 192, 128, 32),
+                    new Vector2(64, 16)
+                )
+            );
+
             Loaded = true;
         }
 
@@ -382,15 +398,18 @@ namespace RogueliteSurvivor.Scenes
                                 setSelectedPlayer();
                                 break;
                             case 2:
-                                state = MainMenuState.PlayStats;
+                                state = MainMenuState.PlayerUpgrades;
                                 break;
                             case 3:
-                                state = MainMenuState.Options;
+                                state = MainMenuState.PlayStats;
                                 break;
                             case 4:
-                                state = MainMenuState.Credits;
+                                state = MainMenuState.Options;
                                 break;
                             case 5:
+                                state = MainMenuState.Credits;
+                                break;
+                            case 6:
                                 retVal = "exit";
                                 break;
                         }
@@ -409,7 +428,7 @@ namespace RogueliteSurvivor.Scenes
                     }
                     else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
                     {
-                        if(selectedButton < 5)
+                        if(selectedButton < mainMenuButtons.Count)
                         {
                             selectedButton++;
                             soundEffects["Hover"].Play();
@@ -810,6 +829,246 @@ namespace RogueliteSurvivor.Scenes
                         optionsButtons[i - 1].MouseOver(mState);
                     }
                 }
+                else if (state == MainMenuState.PlayerUpgrades)
+                {
+                    if (mState.LeftButton == ButtonState.Pressed && playerUpgradeButtons.Any(a => a.MouseOver()))
+                    {
+                        clicked = true;
+                        selectedButton = playerUpgradeButtons.IndexOf(playerUpgradeButtons.First(a => a.MouseOver())) + 1;
+                    }
+
+                    if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
+                    {
+                        bool failed = false;
+                        switch (selectedButton)
+                        {
+                            case 1:
+                                if (progressionContainer.PlayerUpgrades.Health > 0)
+                                {
+                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.Health / 4) * 10); 
+                                    progressionContainer.PlayerUpgrades.Health -= 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 2:
+                                int healthBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Health + 4) / 4) * 10);
+                                if (progressionContainer.NumBooks >= healthBookCost && progressionContainer.PlayerUpgrades.Health < 20)
+                                {
+                                    progressionContainer.NumBooks -= healthBookCost;
+                                    progressionContainer.PlayerUpgrades.Health += 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 3:
+                                if (progressionContainer.PlayerUpgrades.Damage > 0)
+                                {
+                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.Damage / 4) * 10);
+                                    progressionContainer.PlayerUpgrades.Damage -= 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 4:
+                                int damageBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Damage + 4) / 4) * 10);
+                                if (progressionContainer.NumBooks >= damageBookCost && progressionContainer.PlayerUpgrades.Damage < 20)
+                                {
+                                    progressionContainer.NumBooks -= damageBookCost;
+                                    progressionContainer.PlayerUpgrades.Damage += 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 5:
+                                if (progressionContainer.PlayerUpgrades.SpellEffectChance > 0)
+                                {
+                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.SpellEffectChance / 4) * 10);
+                                    progressionContainer.PlayerUpgrades.SpellEffectChance -= 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 6:
+                                int spellEffectChanceBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.SpellEffectChance + 4) / 4) * 10);
+                                if (progressionContainer.NumBooks >= spellEffectChanceBookCost && progressionContainer.PlayerUpgrades.SpellEffectChance < 20)
+                                {
+                                    progressionContainer.NumBooks -= spellEffectChanceBookCost;
+                                    progressionContainer.PlayerUpgrades.SpellEffectChance += 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 7:
+                                if (progressionContainer.PlayerUpgrades.Pierce > 0)
+                                {
+                                    progressionContainer.NumBooks += 100;
+                                    progressionContainer.PlayerUpgrades.Pierce -= 1;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 8:
+                                int pierceBookCost = 100;
+                                if (progressionContainer.NumBooks >= pierceBookCost && progressionContainer.PlayerUpgrades.Pierce < 1)
+                                {
+                                    progressionContainer.NumBooks -= pierceBookCost;
+                                    progressionContainer.PlayerUpgrades.Pierce += 1;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 9:
+                                if (progressionContainer.PlayerUpgrades.AttackSpeed > 0)
+                                {
+                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.AttackSpeed / 4) * 10);
+
+                                    progressionContainer.PlayerUpgrades.AttackSpeed -= 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 10:
+                                int attackSpeedBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AttackSpeed + 4) / 4) * 10);
+                                if (progressionContainer.NumBooks >= attackSpeedBookCost && progressionContainer.PlayerUpgrades.AttackSpeed < 20)
+                                {
+                                    progressionContainer.NumBooks -= attackSpeedBookCost;
+                                    progressionContainer.PlayerUpgrades.AttackSpeed += 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 11:
+                                if (progressionContainer.PlayerUpgrades.AreaOfEffect > 0)
+                                {
+                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.AreaOfEffect / 4) * 10);
+                                    progressionContainer.PlayerUpgrades.AreaOfEffect -= 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 12:
+                                int areaOfEffectBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AreaOfEffect + 4) / 4) * 10);
+                                if (progressionContainer.NumBooks >= areaOfEffectBookCost && progressionContainer.PlayerUpgrades.AreaOfEffect < 20)
+                                {
+                                    progressionContainer.NumBooks -= areaOfEffectBookCost;
+                                    progressionContainer.PlayerUpgrades.AreaOfEffect += 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 13:
+                                if (progressionContainer.PlayerUpgrades.MoveSpeed > 0)
+                                {
+                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.MoveSpeed / 4) * 10);
+                                    progressionContainer.PlayerUpgrades.MoveSpeed -= 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 14:
+                                int moveSpeedBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.MoveSpeed + 4) / 4) * 10);
+                                if (progressionContainer.NumBooks >= moveSpeedBookCost && progressionContainer.PlayerUpgrades.MoveSpeed < 20)
+                                {
+                                    progressionContainer.NumBooks -= moveSpeedBookCost;
+                                    progressionContainer.PlayerUpgrades.MoveSpeed += 4;
+                                }
+                                else
+                                {
+                                    failed = true;
+                                }
+                                break;
+                            case 15:
+                                progressionContainer.Save();
+                                selectedButton = 1;
+                                state = MainMenuState.MainMenu;
+                                break;
+                        }
+                        if (failed)
+                        {
+                            soundEffects["Denied"].Play();
+                        }
+                        else
+                        {
+                            soundEffects["Confirm"].Play();
+                        }
+                        readyForInput = false;
+                    }
+                    else if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
+                    {
+                        if (selectedButton - 2 > 0)
+                        {
+                            selectedButton -= 2;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }
+                    }
+                    else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
+                    {
+                        if (selectedButton + 2 <= playerUpgradeButtons.Count)
+                        {
+                            selectedButton += 2;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }
+                        else if (selectedButton == (playerUpgradeButtons.Count - 1))
+                        {
+                            selectedButton = playerUpgradeButtons.Count;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }
+                    }
+                    else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
+                    {
+                        if (selectedButton < (playerUpgradeButtons.Count - 1) && selectedButton % 2 == 0)
+                        {
+                            selectedButton--;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }
+                    }
+                    else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
+                    {
+                        if (selectedButton < (playerUpgradeButtons.Count - 1) && selectedButton % 2 == 1)
+                        {
+                            selectedButton++;
+                            soundEffects["Hover"].Play();
+                            readyForInput = false;
+                        }
+                    }
+
+                    for (int i = 1; i <= playerUpgradeButtons.Count; i++)
+                    {
+                        playerUpgradeButtons[i - 1].Selected(i == selectedButton);
+                        playerUpgradeButtons[i - 1].MouseOver(mState);
+                    }
+                }
             }
 
             return retVal;
@@ -834,7 +1093,7 @@ namespace RogueliteSurvivor.Scenes
             _spriteBatch.DrawString(
                 fonts["Font"],
                 "Roguelite Survivor",
-                new Vector2(GetWidthOffset(2) - 62, GetHeightOffset(2) - 128),
+                new Vector2(GetWidthOffset(2) - 62, GetHeightOffset(2) - 144),
                 Color.White
             );
 
@@ -912,49 +1171,49 @@ namespace RogueliteSurvivor.Scenes
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    string.Concat("Starting Health: ", (int)(playerContainer.Health *  100)),
+                    string.Concat("Starting Health: ", (int)(playerContainer.Health * 100 + progressionContainer.PlayerUpgrades.Health)),
                     new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 24),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    string.Concat("Move Speed: ", (int)(playerContainer.Speed * 100)),
+                    string.Concat("Move Speed: ", (int)(playerContainer.Speed * 100 + progressionContainer.PlayerUpgrades.MoveSpeed)),
                     new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 36),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    string.Concat("Spell Damage: ", (playerContainer.SpellDamage + 1f).ToString("F"), "x"),
+                    string.Concat("Spell Damage: ", (playerContainer.SpellDamage + 1f + (progressionContainer.PlayerUpgrades.Damage / 100f)).ToString("F"), "x"),
                     new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 48),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    string.Concat("Spell Effect Chance: ", (playerContainer.SpellEffectChance + 1f).ToString("F"), "x"),
+                    string.Concat("Spell Effect Chance: ", (playerContainer.SpellEffectChance + 1f + (progressionContainer.PlayerUpgrades.SpellEffectChance / 100f)).ToString("F"), "x"),
                     new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 12),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    string.Concat("Attack Speed: ", (playerContainer.AttackSpeed + 1f).ToString("F"), "x"),
+                    string.Concat("Attack Speed: ", (playerContainer.AttackSpeed + 1f + (progressionContainer.PlayerUpgrades.AttackSpeed / 100f)).ToString("F"), "x"),
                     new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 24),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    string.Concat("Pierce: ", playerContainer.Pierce),
+                    string.Concat("Pierce: ", playerContainer.Pierce + progressionContainer.PlayerUpgrades.Pierce),
                     new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 36),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    string.Concat("Area of Effect: ", (playerContainer.AreaOfEffect + 1f).ToString("F"), "x"),
+                    string.Concat("Area of Effect: ", (playerContainer.AreaOfEffect + 1f + (progressionContainer.PlayerUpgrades.AreaOfEffect / 100f)).ToString("F"), "x"),
                     new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 48),
                     Color.White
                 );
@@ -1258,6 +1517,132 @@ namespace RogueliteSurvivor.Scenes
                 {
                     optionsButtons[i - 1].Draw(_spriteBatch);
                 }   
+            }
+            else if(state == MainMenuState.PlayerUpgrades)
+            {
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Health: +", progressionContainer.PlayerUpgrades.Health),
+                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) - 120),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    progressionContainer.PlayerUpgrades.Health < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Health + 4) / 4) * 10))
+                        : "Stat Maxed",
+                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) - 120),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Damage: +", (progressionContainer.PlayerUpgrades.Damage / 100f).ToString("F"), "x"),
+                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) - 88),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    progressionContainer.PlayerUpgrades.Damage < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Damage + 4) / 4) * 10))
+                        : "Stat Maxed",
+                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) - 88),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Spell Effect Chance: +", (progressionContainer.PlayerUpgrades.SpellEffectChance / 100f).ToString("F"), "x"),
+                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) - 56),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    progressionContainer.PlayerUpgrades.SpellEffectChance < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.SpellEffectChance + 4) / 4) * 10))
+                        : "Stat Maxed",
+                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) - 56),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Pierce: +", progressionContainer.PlayerUpgrades.Pierce),
+                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) - 24),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    progressionContainer.PlayerUpgrades.Pierce < 1
+                        ? string.Concat("Book Cost: ", 100)
+                        : "Stat Maxed",
+                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) - 24),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Attack Speed: +", (progressionContainer.PlayerUpgrades.AttackSpeed / 100f).ToString("F"), "x"),
+                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) + 8),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    progressionContainer.PlayerUpgrades.AttackSpeed < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AttackSpeed + 4) / 4) * 10))
+                        : "Stat Maxed",
+                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) + 8),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Area Of Effect: +", (progressionContainer.PlayerUpgrades.AreaOfEffect / 100f).ToString("F"), "x"),
+                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) + 40),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    progressionContainer.PlayerUpgrades.AreaOfEffect < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AreaOfEffect + 4) / 4) * 10))
+                        : "Stat Maxed",
+                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) + 40),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Move Speed: +", progressionContainer.PlayerUpgrades.MoveSpeed),
+                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) + 72),
+                    Color.White
+                );
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    progressionContainer.PlayerUpgrades.MoveSpeed < 20 
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.MoveSpeed + 4) / 4) * 10))
+                        : "Stat Maxed",
+                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) + 72),
+                    Color.White
+                );                
+
+                _spriteBatch.DrawString(
+                    fonts["Font"],
+                    string.Concat("Books to read: ", progressionContainer.NumBooks),
+                    new Vector2(GetWidthOffset(2) - 55, GetHeightOffset(2) + 104),
+                    Color.White
+                );
+
+                for (int i = 1; i <= playerUpgradeButtons.Count; i++)
+                {
+                    playerUpgradeButtons[i - 1].Draw(_spriteBatch);
+                }
             }
             _spriteBatch.End();
         }

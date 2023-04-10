@@ -29,7 +29,7 @@ namespace RogueliteSurvivor.Helpers
                     entityStatus.State = State.ReadyToDie;
                     entity.Set(entityStatus);
                     Experience enemyExperience = entity.Get<Experience>();
-                    KillCount killCount = (KillCount)owner.EntityReference.Entity.Get(typeof(KillCount));
+                    KillCount killCount = owner.EntityReference.Entity.Get<KillCount>();
                     Player playerExperience = owner.EntityReference.Entity.Get<Player>();
                     killCount.AddKill(entity.Get<Enemy>().Name);
                     if (owner.EntityReference.Entity.Has<DoubleExperience>())

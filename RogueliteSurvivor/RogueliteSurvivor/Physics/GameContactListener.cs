@@ -189,7 +189,7 @@ namespace RogueliteSurvivor.Physics
 
                 if (health.Current < 1)
                 {
-                    KillCount killCount = (KillCount)entity.Get(typeof(KillCount));
+                    KillCount killCount = entity.Get<KillCount>();
 
                     if (other.Has<Enemy>())
                     {

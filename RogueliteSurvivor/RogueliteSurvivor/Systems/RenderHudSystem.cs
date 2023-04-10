@@ -245,8 +245,15 @@ namespace RogueliteSurvivor.Systems
 
                     spriteBatch.DrawString(
                         fonts["FontSmall"],
-                        string.Concat("Enemies Killed: ", killCount.Count),
+                        string.Concat("Enemies Killed: ", killCount.NumKills),
                         new Vector2(501, 333),
+                        Color.White
+                    );
+
+                    spriteBatch.DrawString(
+                        fonts["FontSmall"],
+                        string.Concat("Books Collected: ", killCount.NumBooks),
+                        new Vector2(501, 345),
                         Color.White
                     );
 
@@ -393,7 +400,7 @@ namespace RogueliteSurvivor.Systems
 
             spriteBatch.DrawString(
                 fonts["FontSmall"],
-                string.Concat("Area of Effect: ", areaOfEffect.Radius, "x"),
+                string.Concat("Area of Effect: ", areaOfEffect.Radius.ToString("F"), "x"),
                 new Vector2(400, 345),
                 Color.White
             );
@@ -435,7 +442,7 @@ namespace RogueliteSurvivor.Systems
             {
                 spriteBatch.DrawString(
                     fonts["FontSmall"],
-                    string.Concat("Area of Effect: ", areaOfEffect.Radius, "x"),
+                    string.Concat("Area of Effect: ", areaOfEffect.Radius.ToString("F"), "x"),
                     new Vector2(400, 321),
                     Color.White
                 );

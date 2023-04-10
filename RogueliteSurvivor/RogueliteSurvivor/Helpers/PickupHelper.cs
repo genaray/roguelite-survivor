@@ -46,6 +46,10 @@ namespace RogueliteSurvivor.Helpers
                     x = 128;
                     y = 64;
                     break;
+                case PickupType.Book:
+                    x = 128;
+                    y = 304;
+                    break;
             }
 
             return new Rectangle(x, y, 16, 16);
@@ -142,6 +146,11 @@ namespace RogueliteSurvivor.Helpers
                     {
                         player.Entity.Add(new DoubleAttackSpeed() { TimeRemaining = pickupAmount, MaxTime = pickupAmount });
                     }
+                    break;
+                case PickupType.Book:
+                    KillCount killCount = player.Entity.Get<KillCount>();
+                    killCount.NumBooks++;
+                    player.Entity.Set(killCount);
                     break;
             }
 

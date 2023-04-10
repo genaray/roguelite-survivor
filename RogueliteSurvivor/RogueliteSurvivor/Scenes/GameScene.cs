@@ -95,10 +95,11 @@ namespace RogueliteSurvivor.Scenes
         {
             var stats = new GameStats();
 
-            KillCount killCount = (KillCount)player.Get(typeof(KillCount));
+            KillCount killCount = player.Get<KillCount>();
 
 
-            stats.EnemiesKilled = killCount.Count;
+            stats.EnemiesKilled = killCount.NumKills;
+            stats.NumBooks = killCount.NumBooks;
             string killerName = killCount.KillerName;
             if (!string.IsNullOrEmpty(killerName))
             {
@@ -286,8 +287,8 @@ namespace RogueliteSurvivor.Scenes
                             new Button(
                                 textures["MainMenuButtons"],
                                 new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 72),
-                                new Rectangle(0, 192, 128, 32),
-                                new Rectangle(128, 192, 128, 32),
+                                new Rectangle(0, 512, 128, 32),
+                                new Rectangle(128, 512, 128, 32),
                                 new Vector2(64, 16)
                             ),
                         },
@@ -465,19 +466,19 @@ namespace RogueliteSurvivor.Scenes
                 new EntityStatus(),
                 new Position() { XY = new Vector2(mapContainer.Start.X, mapContainer.Start.Y) },
                 new Velocity() { Vector = Vector2.Zero },
-                new Speed() { speed = 100 * playerContainer.Speed },
-                new AttackSpeed(1f + playerContainer.AttackSpeed),
-                new SpellDamage(1f + playerContainer.SpellDamage),
-                new SpellEffectChance(1f + playerContainer.SpellEffectChance),
-                new Pierce(0 + playerContainer.Pierce),
-                new AreaOfEffect(1f + playerContainer.AreaOfEffect),
+                new Speed() { speed = 100 * playerContainer.Speed + progressionContainer.PlayerUpgrades.MoveSpeed },
+                new AttackSpeed(1f + playerContainer.AttackSpeed + (progressionContainer.PlayerUpgrades.AttackSpeed / 100f)),
+                new SpellDamage(1f + playerContainer.SpellDamage + (progressionContainer.PlayerUpgrades.Damage / 100f)),
+                new SpellEffectChance(1f + playerContainer.SpellEffectChance + (progressionContainer.PlayerUpgrades.SpellEffectChance / 100f)),
+                new Pierce(0 + playerContainer.Pierce + progressionContainer.PlayerUpgrades.Pierce),
+                new AreaOfEffect(1f + playerContainer.AreaOfEffect + (progressionContainer.PlayerUpgrades.AreaOfEffect / 100f)),
                 PlayerFactory.GetPlayerAnimation(playerContainer),
                 PlayerFactory.GetPlayerSpriteSheet(playerContainer, textures),
                 new Target(),
                 spell,
-                new Health() { Current = (int)(100 * playerContainer.Health)
-                                , Max = (int)(100 * playerContainer.Health)
-                                , BaseMax = (int)(100 * playerContainer.Health)
+                new Health() { Current = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
+                                , Max = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
+                                , BaseMax = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
                 },
                 new KillCount(),
                 BodyFactory.CreateCircularBody(player, 14, physicsWorld, body, 99)

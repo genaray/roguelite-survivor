@@ -27,12 +27,12 @@ namespace RogueliteSurvivor.Physics
                     if (a.Has<Map>())
                     {
                         position = fixtureA.Body.Position * PhysicsConstants.PhysicsToPixelsRatio;
-                        map = (MapInfo)a.Get(typeof(MapInfo));
+                        map = a.Get<MapInfo>();
                     }
                     else
                     {
                         position = fixtureB.Body.Position * PhysicsConstants.PhysicsToPixelsRatio;
-                        map = (MapInfo)b.Get(typeof(MapInfo));
+                        map = b.Get<MapInfo>();
                     }
 
                     retVal = map.IsTileFullHeight((int)position.X, (int)position.Y);

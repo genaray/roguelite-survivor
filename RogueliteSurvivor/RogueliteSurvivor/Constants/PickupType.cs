@@ -7,6 +7,7 @@
         Invincibility,
         DoubleExperience,
         DoubleDamage,
-        DoubleAttackSpeed
+        DoubleAttackSpeed,
+        Book,
     }
 }

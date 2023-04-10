@@ -156,8 +156,9 @@ namespace RogueliteSurvivor.Systems
             }
 
             pickupTable = new RandomTable<PickupType>()
-                .Add(PickupType.None, 100)
+                .Add(PickupType.None, 200)
                 .Add(PickupType.Health, 1 + difficulty)
+                .Add(PickupType.Book, 1 + difficulty)
                 .Add(PickupType.Invincibility, 1)
                 .Add(PickupType.DoubleExperience, 1)
                 .Add(PickupType.DoubleDamage, 1)

@@ -12,6 +12,8 @@ namespace RogueliteSurvivor.Containers
     {
         public List<LevelProgressionContainer> LevelProgressions { get; set; }
         public List<EnemyKillStatsContainer> EnemyKillStats { get; set; }
+        public int NumBooks { get; set; }
+        public PlayerUpgradesContainer PlayerUpgrades { get; set; }
 
         public void Save()
         {
@@ -41,6 +43,20 @@ namespace RogueliteSurvivor.Containers
                 {
                     progressionContainer.EnemyKillStats.Add(EnemyKillStatsContainer.ToEnemyKillStatsContainer(enemyStats));
                 }
+            }
+
+            if (progression["NumBooks"] != null)
+            {
+                progressionContainer.NumBooks = (int)progression["NumBooks"];
+            }
+
+            if (progression["PlayerUpgrades"] != null)
+            {
+                progressionContainer.PlayerUpgrades = PlayerUpgradesContainer.ToPlayerUpgradesContainer(progression["PlayerUpgrades"]);
+            }
+            else
+            {
+                progressionContainer.PlayerUpgrades = new PlayerUpgradesContainer();
             }
 
             return progressionContainer;
@@ -83,4 +99,30 @@ namespace RogueliteSurvivor.Containers
         }
     }
 
+    public class PlayerUpgradesContainer
+    {
+        public int Health { get; set; }
+        public int Damage { get; set; }
+        public int SpellEffectChance { get; set; }
+        public int Pierce { get; set; }
+        public int AttackSpeed { get; set; }
+        public int AreaOfEffect { get; set; }
+        public int MoveSpeed { get; set; }
+
+        public static PlayerUpgradesContainer ToPlayerUpgradesContainer(JToken playerUpgrades)
+        {
+            var playerUpgradesContainer = new PlayerUpgradesContainer()
+            {
+                Health = (int)playerUpgrades["Health"],
+                Damage = (int)playerUpgrades["Damage"],
+                SpellEffectChance = (int)playerUpgrades["SpellEffectChance"],
+                Pierce = (int)playerUpgrades["Pierce"],
+                AttackSpeed = (int)playerUpgrades["AttackSpeed"],
+                AreaOfEffect = (int)playerUpgrades["AreaOfEffect"],
+                MoveSpeed = (int)playerUpgrades["MoveSpeed"]
+            };
+
+            return playerUpgradesContainer;
+        }
+    }
 }

@@ -7,10 +7,11 @@ namespace RogueliteSurvivor.Components
         public KillCount() 
         {
             Kills = new Dictionary<string, int>();
-            Count = 0;
+            NumKills = 0;
         }
 
-        public int Count { get; private set; }
+        public int NumKills { get; private set; }
+        public int NumBooks { get; set; }
         public string KillerName { get; set; }
         public string KillerMethod { get; set; }
         public Dictionary<string, int> Kills { get; set; }
@@ -25,7 +26,7 @@ namespace RogueliteSurvivor.Components
             {
                 Kills.Add(killerName, 1);
             }
-            Count++;
+            NumKills++;
         }
     }
 }

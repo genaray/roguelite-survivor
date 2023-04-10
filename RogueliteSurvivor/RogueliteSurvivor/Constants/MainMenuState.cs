@@ -8,5 +8,6 @@
         Credits,
         PlayStats,
         Options,
+        PlayerUpgrades,
     }
 }
