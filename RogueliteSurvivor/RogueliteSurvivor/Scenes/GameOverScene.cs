@@ -1,13 +1,12 @@
-﻿using Arch.Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Helpers;
 using RogueliteSurvivor.Scenes.SceneComponents;
 using RogueliteSurvivor.Utils;
@@ -83,22 +82,25 @@ namespace RogueliteSurvivor.Scenes
             buttons = new List<Button>()
             {
                 new Button(
+                    "btnBasicStats",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 96),
+                    new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2) + 96),
                     new Rectangle(0, 320, 128, 32),
                     new Rectangle(128, 320, 128, 32),
                     new Vector2(64, 16)
                 ),
                 new Button(
+                    "btnAdvancedStats",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 96),
+                    new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2) + 96),
                     new Rectangle(0, 352, 128, 32),
                     new Rectangle(128, 352, 128, 32),
                     new Vector2(64, 16)
                 ),
                 new Button(
+                    "btnBackToMain",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
+                    new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2) + 144),
                     new Rectangle(0, 192, 128, 32),
                     new Rectangle(128, 192, 128, 32),
                     new Vector2(64, 16)
@@ -111,11 +113,11 @@ namespace RogueliteSurvivor.Scenes
         public override void SetActive()
         {
             MediaPlayer.Play(songs["GameOver"]);
-            MediaPlayer.IsRepeating = false; 
+            MediaPlayer.IsRepeating = false;
             MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
             state = GameOverState.Main;
-            buttons[0].Visible(false);
-            buttons[1].Visible(true);
+            buttons[0].Visible = false;
+            buttons[1].Visible = true;
             selectedButton = 2;
         }
 
@@ -146,12 +148,12 @@ namespace RogueliteSurvivor.Scenes
                 newBest = gameStats.PlayTime > level.BestTime;
 
                 if (newBest)
-                {                    
-                    unlockedMap = mapContainers.Values.Where(a => a.UnlockRequirement.MapUnlockType == Constants.MapUnlockType.MapBestTime 
+                {
+                    unlockedMap = mapContainers.Values.Where(a => a.UnlockRequirement.MapUnlockType == Constants.MapUnlockType.MapBestTime
                                                                     && a.UnlockRequirement.RequirementText == gameSettings.MapName
                                                                     && a.UnlockRequirement.RequirementAmount <= gameStats.PlayTime).FirstOrDefault();
 
-                    if(unlockedMap != null && level.BestTime >= unlockedMap.UnlockRequirement.RequirementAmount)
+                    if (unlockedMap != null && level.BestTime >= unlockedMap.UnlockRequirement.RequirementAmount)
                     {
                         unlockedMap = null;
                     }
@@ -159,15 +161,15 @@ namespace RogueliteSurvivor.Scenes
                     level.BestTime = MathF.Max(gameStats.PlayTime, level.BestTime);
                 }
 
-                if(progressionContainer.EnemyKillStats == null)
+                if (progressionContainer.EnemyKillStats == null)
                 {
                     progressionContainer.EnemyKillStats = new List<EnemyKillStatsContainer>();
                 }
 
-                foreach(var enemy in gameStats.Kills)
+                foreach (var enemy in gameStats.Kills)
                 {
                     var enemyStats = progressionContainer.EnemyKillStats.Where(a => a.Name == enemy.Key).FirstOrDefault();
-                    if(enemyStats == null)
+                    if (enemyStats == null)
                     {
                         enemyStats = new EnemyKillStatsContainer() { Name = enemy.Key, Kills = enemy.Value, KilledBy = gameStats.Killer == enemy.Key ? 1 : 0 };
                         progressionContainer.EnemyKillStats.Add(enemyStats);
@@ -197,14 +199,14 @@ namespace RogueliteSurvivor.Scenes
                     {
                         case 1:
                             state = GameOverState.Main;
-                            buttons[0].Visible(false);
-                            buttons[1].Visible(true);
+                            buttons[0].Visible = false;
+                            buttons[1].Visible = true;
                             selectedButton = 2;
                             break;
                         case 2:
                             state = GameOverState.AdvancedStats;
-                            buttons[0].Visible(true);
-                            buttons[1].Visible(false);
+                            buttons[0].Visible = true;
+                            buttons[1].Visible = false;
                             selectedButton = 1;
                             break;
                         case 3:
@@ -237,7 +239,7 @@ namespace RogueliteSurvivor.Scenes
 
             for (int i = 1; i <= buttons.Count; i++)
             {
-                buttons[i - 1].Selected(i == selectedButton);
+                buttons[i - 1].Selected = i == selectedButton;
                 buttons[i - 1].MouseOver(mState);
             }
 
@@ -264,15 +266,15 @@ namespace RogueliteSurvivor.Scenes
             {
                 _spriteBatch.DrawString(
                     fonts["Font"],
-                   string.Concat("You survived for ", gameStats.PlayTime.ToFormattedTime(), " before ", getProperArticle(gameStats.Killer), gameStats.Killer, " ", gameStats.KillerMethod," you into oblivion..."),
-                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 64),
+                   string.Concat("You survived for ", gameStats.PlayTime.ToFormattedTime(), " before ", getProperArticle(gameStats.Killer), gameStats.Killer, " ", gameStats.KillerMethod, " you into oblivion..."),
+                    new Vector2(_graphics.GetWidthOffset(10.66f), _graphics.GetHeightOffset(2) - 64),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["Font"],
                    string.Concat("You killed ", gameStats.EnemiesKilled, " enemies and collected ", gameStats.NumBooks, " books to learn from!"),
-                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 32),
+                    new Vector2(_graphics.GetWidthOffset(10.66f), _graphics.GetHeightOffset(2) - 32),
                     Color.White
                 );
 
@@ -281,7 +283,7 @@ namespace RogueliteSurvivor.Scenes
                     _spriteBatch.DrawString(
                         fonts["Font"],
                        string.Concat("New best time for ", gameSettings.MapName, "!"),
-                        new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2)),
+                        new Vector2(_graphics.GetWidthOffset(10.66f), _graphics.GetHeightOffset(2)),
                         Color.White
                     );
                 }
@@ -291,27 +293,27 @@ namespace RogueliteSurvivor.Scenes
                     _spriteBatch.DrawString(
                         fonts["Font"],
                        string.Concat("You've unlocked ", unlockedMap.Name, "!"),
-                        new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) + 32),
+                        new Vector2(_graphics.GetWidthOffset(10.66f), _graphics.GetHeightOffset(2) + 32),
                         Color.White
                     );
                 }
             }
-            else if(state == GameOverState.AdvancedStats)
+            else if (state == GameOverState.AdvancedStats)
             {
                 _spriteBatch.DrawString(
                     fonts["Font"],
                     "Enemies Killed: ",
-                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 64),
+                    new Vector2(_graphics.GetWidthOffset(10.66f), _graphics.GetHeightOffset(2) - 64),
                     Color.White
                 );
 
                 int counter = 0;
-                foreach(var enemy in gameStats.Kills)
+                foreach (var enemy in gameStats.Kills)
                 {
                     _spriteBatch.DrawString(
                         fonts["FontSmall"],
                         string.Concat(" - ", enemy.Key, " : ", enemy.Value),
-                        new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 48 + counter),
+                        new Vector2(_graphics.GetWidthOffset(10.66f), _graphics.GetHeightOffset(2) - 48 + counter),
                         Color.White
                     );
                     counter += 12;

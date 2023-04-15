@@ -1,10 +1,10 @@
-﻿using Arch.Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Scenes.SceneComponents;
 using System.Collections.Generic;
 using System.IO;
@@ -61,8 +61,9 @@ namespace RogueliteSurvivor.Scenes
             buttons = new List<Button>()
             {
                 new Button(
+                    "btnStart",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 96),
+                    new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2) + 96),
                     new Rectangle(0, 224, 128, 32),
                     new Rectangle(128, 224, 128, 32),
                     new Vector2(64, 16)
@@ -74,7 +75,7 @@ namespace RogueliteSurvivor.Scenes
 
         public override void SetActive()
         {
-            
+
         }
 
         public override string Update(GameTime gameTime, params object[] values)
@@ -103,7 +104,7 @@ namespace RogueliteSurvivor.Scenes
 
                 for (int i = 1; i <= buttons.Count; i++)
                 {
-                    buttons[i - 1].Selected(i == selectedButton);
+                    buttons[i - 1].Selected = i == selectedButton;
                     buttons[i - 1].MouseOver(mState);
                 }
             }
@@ -123,7 +124,7 @@ namespace RogueliteSurvivor.Scenes
         public override void Draw(GameTime gameTime, Matrix transformMatrix, params object[] values)
         {
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend, transformMatrix: transformMatrix);
-            
+
             _spriteBatch.Draw(
                 textures["MainBackground"],
                 Vector2.Zero,
@@ -139,18 +140,18 @@ namespace RogueliteSurvivor.Scenes
             _spriteBatch.DrawString(
                 fonts["Font"],
                 "Roguelite Survivor",
-                new Vector2(GetWidthOffset(2) - 62, GetHeightOffset(2) - 64),
+                new Vector2(_graphics.GetWidthOffset(2) - 62, _graphics.GetHeightOffset(2) - 64),
                 Color.White
             );
 
-            
+
 
             if ((bool)values[0])
             {
                 _spriteBatch.DrawString(
                     fonts["Font"],
                     "Get ready to send the undead back to their graves!",
-                    new Vector2(GetWidthOffset(2) - 180, GetHeightOffset(2)),
+                    new Vector2(_graphics.GetWidthOffset(2) - 180, _graphics.GetHeightOffset(2)),
                     Color.White
                 );
             }
@@ -159,7 +160,7 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.DrawString(
                     fonts["Font"],
                     "Loading" + dots[doot],
-                    new Vector2(GetWidthOffset(2) - 30, GetHeightOffset(2)),
+                    new Vector2(_graphics.GetWidthOffset(2) - 30, _graphics.GetHeightOffset(2)),
                     Color.White
                 );
             }

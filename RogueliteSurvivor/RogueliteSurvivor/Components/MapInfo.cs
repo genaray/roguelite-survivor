@@ -7,7 +7,6 @@ using RogueliteSurvivor.Extensions;
 using Roy_T.AStar.Grids;
 using Roy_T.AStar.Paths;
 using Roy_T.AStar.Primitives;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -71,7 +70,7 @@ namespace RogueliteSurvivor.Components
                         }
                     }
 
-                    if(!passable)
+                    if (!passable)
                     {
                         grids[MovementType.Ground].DisconnectNode(new GridPosition(x, y));
                         grids[MovementType.Ground].RemoveDiagonalConnectionsIntersectingWithNode(new GridPosition(x, y));
@@ -131,19 +130,19 @@ namespace RogueliteSurvivor.Components
         {
             bool fullHeight = true;
             var tileLayers = Map.Layers.Where(x => x.type == TiledLayerType.TileLayer);
-            
-                foreach (var layer in tileLayers)
-                {
-                    if (layer.properties[0].value == "true")
-                    {
-                        var tile = getTile(layer, x / Map.TileWidth, y / Map.TileHeight);
 
-                        if (tile != null && tile.properties.Where(a => a.name == "Full Height").First().value == "false")
-                        {
-                            fullHeight = false;
-                        }
+            foreach (var layer in tileLayers)
+            {
+                if (layer.properties[0].value == "true")
+                {
+                    var tile = getTile(layer, x / Map.TileWidth, y / Map.TileHeight);
+
+                    if (tile != null && tile.properties.Where(a => a.name == "Full Height").First().value == "false")
+                    {
+                        fullHeight = false;
                     }
                 }
+            }
             return fullHeight;
         }
 
@@ -155,7 +154,7 @@ namespace RogueliteSurvivor.Components
                 , grids[movementType]
                 );
 
-            if (path != null && path.Edges.Count > 0) 
+            if (path != null && path.Edges.Count > 0)
             {
                 var point = path.Edges.First().End;
                 return new Microsoft.Xna.Framework.Vector2(point.Position.X * Map.TileWidth + (Map.TileWidth / 2), point.Position.Y * Map.TileHeight + (Map.TileHeight / 2));

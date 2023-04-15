@@ -2,12 +2,8 @@
 using Arch.Core.Extensions;
 using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.Components;
-using RogueliteSurvivor.Containers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Helpers
 {
@@ -37,7 +33,7 @@ namespace RogueliteSurvivor.Helpers
             }
         }
 
-        public static void AddTraitsToEntity(Entity entity, List<string> traits) 
+        public static void AddTraitsToEntity(Entity entity, List<string> traits)
         {
             if (traits.Any())
             {

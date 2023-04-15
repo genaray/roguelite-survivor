@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
-using System;
 using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Systems
@@ -45,7 +44,7 @@ namespace RogueliteSurvivor.Systems
                 {
                     vel.Vector = Vector2.Zero;
                 }
-                else 
+                else
                 {
                     vel.Vector *= 0.5f;
                 }
@@ -76,15 +75,15 @@ namespace RogueliteSurvivor.Systems
                     body.SetAwake(false);
                 }
             });
-           
+
             physicsWorld.Step(1 / 60f, 8, 3);
 
             world.Query(in query, (in Entity entity, ref Position pos, ref Velocity vel, ref Body body) =>
             {
                 var position = body.GetPosition();
                 pos.XY = new Vector2(position.X, position.Y) * PhysicsConstants.PhysicsToPixelsRatio;
-            
-                if(entity.TryGet(out Spell1 spell1) && spell1.Type == SpellType.Aura)
+
+                if (entity.TryGet(out Spell1 spell1) && spell1.Type == SpellType.Aura)
                 {
                     var aura = spell1.ChildReference.Entity.Get<Position>();
 

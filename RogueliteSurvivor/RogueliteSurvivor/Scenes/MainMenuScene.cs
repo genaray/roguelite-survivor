@@ -1,19 +1,17 @@
-﻿using Arch.Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json.Linq;
-using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
+using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Helpers;
-using RogueliteSurvivor.Physics;
 using RogueliteSurvivor.Scenes.SceneComponents;
+using RogueliteSurvivor.Scenes.Windows;
 using RogueliteSurvivor.Utils;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,17 +29,14 @@ namespace RogueliteSurvivor.Scenes
         private float counter = 0f;
 
         private MainMenuState state;
+        private Dictionary<string, Window> subScenes;
+
         private string selectedPlayer;
         private int selectedButton = 1;
         private string selectedMap;
 
-        private List<Button> mainMenuButtons;
-        private List<Button> optionsButtons;
-        private List<Button> creditsButtons;
-        private List<Button> playStatsButtons;
         private List<IFormComponent> characterSelectionComponents;
         private List<Button> mapSelectionButtons;
-        private List<Button> playerUpgradeButtons;
 
         private Dictionary<string, PlayerContainer> playerContainers;
         Dictionary<string, EnemyContainer> enemyContainers;
@@ -49,7 +44,6 @@ namespace RogueliteSurvivor.Scenes
         private List<MapContainer> unlockedMaps;
         private CreditsContainer creditsContainer = null;
 
-        private int statsPage = 0;
         private int descriptionLength = 80;
 
 
@@ -110,7 +104,7 @@ namespace RogueliteSurvivor.Scenes
                     { "Denied", Content.Load<SoundEffect>(Path.Combine("Sound Effects", "033_Denied_03")) },
                 };
             }
-        
+
             if (creditsContainer == null)
             {
                 JObject credits = JObject.Parse(File.ReadAllText(Path.Combine(Content.RootDirectory, "Datasets", "credits.json")));
@@ -121,126 +115,79 @@ namespace RogueliteSurvivor.Scenes
             selectedPlayer = playerContainers.First().Key;
             selectedMap = mapContainers.First().Name;
 
-            mainMenuButtons = new List<Button>()
+            subScenes = new Dictionary<string, Window>()
             {
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 96),
-                    new Rectangle(0, 32, 128, 32),
-                    new Rectangle(128, 32, 128, 32),
-                    new Vector2(64, 16)
-                ),
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 48),
-                    new Rectangle(0, 480, 128, 32),
-                    new Rectangle(128, 480, 128, 32),
-                    new Vector2(64, 16)
-                ),
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2)),
-                    new Rectangle(0, 64, 128, 32),
-                    new Rectangle(128, 64, 128, 32),
-                    new Vector2(64, 16)
-                ),
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 48),
-                    new Rectangle(0, 160, 128, 32),
-                    new Rectangle(128, 160, 128, 32),
-                    new Vector2(64, 16)
-                ),
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 96),
-                    new Rectangle(0, 128, 128, 32),
-                    new Rectangle(128, 128, 128, 32),
-                    new Vector2(64, 16)
-                ),
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
-                    new Rectangle(0, 96, 128, 32),
-                    new Rectangle(128, 96, 128, 32),
-                    new Vector2(64, 16)
-                ),
-            };
-
-            optionsButtons = new List<Button>();
-            for(int i = 0; i < 4; i++)
-            {
-                optionsButtons.Add(
-                    new Button(
-                        textures["VolumeButtons"],
-                        new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 88 + (i * 32)),
-                        new Rectangle(0, 0, 16, 16),
-                        new Rectangle(16, 0, 16, 16),
-                        new Vector2(8, 8)
+                {
+                    MainMenuState.MainMenu.ToString(),
+                    MainMenuWindow.MainMenuWindowFactory(
+                        _graphics,
+                        textures,
+                        new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2)),
+                        soundEffects["Hover"],
+                        soundEffects["Confirm"],
+                        fonts
                     )
-                );
-                optionsButtons.Add(
-                    new Button(
-                        textures["VolumeButtons"],
-                        new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 88 + (i * 32)),
-                        new Rectangle(0, 16, 16, 16),
-                        new Rectangle(16, 16, 16, 16),
-                        new Vector2(8, 8)
+                },
+                {
+                    MainMenuState.Options.ToString(),
+                    OptionsMenuWindow.OptionsMenuWindowFactory(
+                        _graphics,
+                        textures,
+                        new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2)),
+                        soundEffects["Hover"],
+                        soundEffects["Confirm"],
+                        fonts,
+                        settingsContainer
                     )
-                );
-            }
-
-            optionsButtons.Add(
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
-                    new Rectangle(0, 192, 128, 32),
-                    new Rectangle(128, 192, 128, 32),
-                    new Vector2(64, 16)
-                )
-            );
-
-            creditsButtons = new List<Button>()
-            {
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
-                    new Rectangle(0, 192, 128, 32),
-                    new Rectangle(128, 192, 128, 32),
-                    new Vector2(64, 16)
-                ),
-            };
-
-            playStatsButtons = new List<Button>()
-            {
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) - 24, GetHeightOffset(2) + 104),
-                    new Rectangle(0, 32, 16, 16),
-                    new Rectangle(16, 32, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(textures["VolumeButtons"],
-                    new Vector2(GetWidthOffset(2) + 24, GetHeightOffset(2) + 104),
-                    new Rectangle(0, 48, 16, 16),
-                    new Rectangle(16, 48, 16, 16),
-                    new Vector2(8, 8)
-                ),
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
-                    new Rectangle(0, 192, 128, 32),
-                    new Rectangle(128, 192, 128, 32),
-                    new Vector2(64, 16)
-                ),
+                },
+                {
+                    MainMenuState.Credits.ToString(),
+                    CreditsWindow.CreditsWindowFactory(
+                        _graphics,
+                        textures,
+                        new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2)),
+                        soundEffects["Hover"],
+                        soundEffects["Confirm"],
+                        fonts,
+                        creditsContainer
+                    )
+                },
+                {
+                    MainMenuState.PlayerUpgrades.ToString(),
+                    PlayerUpgradesWindow.PlayerUpgradesWindowFactory(
+                        _graphics,
+                        textures,
+                        new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2)),
+                        soundEffects["Hover"],
+                        soundEffects["Confirm"],
+                        soundEffects["Denied"],
+                        fonts,
+                        progressionContainer
+                    )
+                },
+                {
+                    MainMenuState.PlayStats.ToString(),
+                    PlayStatsWindow.PlayStatsWindowFactory(
+                        _graphics,
+                        textures,
+                        new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2)),
+                        soundEffects["Hover"],
+                        soundEffects["Confirm"],
+                        fonts,
+                        progressionContainer,
+                        enemyContainers
+                    )
+                }
             };
 
             characterSelectionComponents = new List<IFormComponent>()
             {
                 new SelectableOption
                     (
+                    "seoFireWizard",
                     textures["FireWizard"],
                     textures["PlayerSelectOutline"],
-                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 64),
+                    new Vector2(_graphics.GetWidthOffset(10.66f), _graphics.GetHeightOffset(2) - 64),
                     new Rectangle(16, 0, 16, 16),
                     new Rectangle(0, 0, 20, 20),
                     new Vector2(8, 8),
@@ -248,9 +195,10 @@ namespace RogueliteSurvivor.Scenes
                 ),
                 new SelectableOption
                     (
+                    "seoIceWizard",
                     textures["IceWizard"],
                     textures["PlayerSelectOutline"],
-                    new Vector2(GetWidthOffset(10.66f) + 24, GetHeightOffset(2) - 64),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 24, _graphics.GetHeightOffset(2) - 64),
                     new Rectangle(16, 0, 16, 16),
                     new Rectangle(0, 0, 20, 20),
                     new Vector2(8, 8),
@@ -258,9 +206,10 @@ namespace RogueliteSurvivor.Scenes
                 ),
                 new SelectableOption
                     (
+                    "seoLightningWizard",
                     textures["LightningWizard"],
                     textures["PlayerSelectOutline"],
-                    new Vector2(GetWidthOffset(10.66f) + 48, GetHeightOffset(2) - 64),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 48, _graphics.GetHeightOffset(2) - 64),
                     new Rectangle(16, 0, 16, 16),
                     new Rectangle(0, 0, 20, 20),
                     new Vector2(8, 8),
@@ -268,17 +217,19 @@ namespace RogueliteSurvivor.Scenes
                 ),
                 new SelectableOption
                     (
+                    "seoFlyingWizard",
                     textures["FlyingWizard"],
                     textures["PlayerSelectOutline"],
-                    new Vector2(GetWidthOffset(10.66f) + 72, GetHeightOffset(2) - 64),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 72, _graphics.GetHeightOffset(2) - 64),
                     new Rectangle(16, 0, 16, 16),
                     new Rectangle(0, 0, 20, 20),
                     new Vector2(8, 8),
                     new Vector2(10, 10)
                 ),
                 new Button(
+                    "btnBack",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
+                    new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2) + 144),
                     new Rectangle(0, 0, 128, 32),
                     new Rectangle(128, 0, 128, 32),
                     new Vector2(64, 16)
@@ -288,68 +239,38 @@ namespace RogueliteSurvivor.Scenes
             mapSelectionButtons = new List<Button>()
             {
                 new Button(
+                    "btnPreviousMap",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2) - 160, GetHeightOffset(2) + 96),
+                    new Vector2(_graphics.GetWidthOffset(2) - 160, _graphics.GetHeightOffset(2) + 96),
                     new Rectangle(0, 288, 128, 32),
                     new Rectangle(128, 288, 128, 32),
                     new Vector2(64, 16)
                 ),
                 new Button(
+                    "btnStart",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 96),
+                    new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2) + 96),
                     new Rectangle(0, 224, 128, 32),
                     new Rectangle(128, 224, 128, 32),
                     new Vector2(64, 16)
                 ),
                 new Button(
+                    "btnNextMap",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2) + 160, GetHeightOffset(2) + 96),
+                    new Vector2(_graphics.GetWidthOffset(2) + 160, _graphics.GetHeightOffset(2) + 96),
                     new Rectangle(0, 256, 128, 32),
                     new Rectangle(128, 256, 128, 32),
                     new Vector2(64, 16)
                 ),
                 new Button(
+                    "btnBack",
                     textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
+                    new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2) + 144),
                     new Rectangle(0, 0, 128, 32),
                     new Rectangle(128, 0, 128, 32),
                     new Vector2(64, 16)
                 ),
             };
-
-            playerUpgradeButtons = new List<Button>();
-
-            for (int i = 0; i < 7; i++)
-            {
-                playerUpgradeButtons.Add(
-                    new Button(
-                        textures["VolumeButtons"],
-                        new Vector2(GetWidthOffset(2) + 26, GetHeightOffset(2) - 112 + (i * 32)),
-                        new Rectangle(0, 0, 16, 16),
-                        new Rectangle(16, 0, 16, 16),
-                        new Vector2(8, 8)
-                    )
-                );
-                playerUpgradeButtons.Add(
-                    new Button(
-                        textures["VolumeButtons"],
-                        new Vector2(GetWidthOffset(2) + 50, GetHeightOffset(2) - 112 + (i * 32)),
-                        new Rectangle(0, 16, 16, 16),
-                        new Rectangle(16, 16, 16, 16),
-                        new Vector2(8, 8)
-                    )
-                );
-            }
-
-            playerUpgradeButtons.Add(
-                new Button(
-                    textures["MainMenuButtons"],
-                    new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 144),
-                    new Rectangle(0, 192, 128, 32),
-                    new Rectangle(128, 192, 128, 32),
-                    new Vector2(64, 16)
-                )
-            );
 
             Loaded = true;
         }
@@ -380,66 +301,37 @@ namespace RogueliteSurvivor.Scenes
                 var gState = GamePad.GetState(PlayerIndex.One);
                 var mState = Mouse.GetState();
                 bool clicked = false;
+
                 if (state == MainMenuState.MainMenu)
                 {
-                    if(mState.LeftButton == ButtonState.Pressed && mainMenuButtons.Any(a => a.MouseOver()))
+                    string action = subScenes[state.ToString()].Update(gameTime);
+                    switch (action)
                     {
-                        clicked = true;
-                        selectedButton = mainMenuButtons.IndexOf(mainMenuButtons.First(a => a.MouseOver())) + 1;
+                        case "CharacterSelection":
+                            state = MainMenuState.CharacterSelection;
+                            selectedButton = 1;
+                            setSelectedPlayer();
+                            break;
+                        case "PlayerUpgrades":
+                            state = MainMenuState.PlayerUpgrades;
+                            break;
+                        case "PlayStats":
+                            state = MainMenuState.PlayStats;
+                            break;
+                        case "Options":
+                            state = MainMenuState.Options;
+                            break;
+                        case "Credits":
+                            state = MainMenuState.Credits;
+                            break;
+                        case "exit":
+                            retVal = "exit";
+                            break;
                     }
 
-                    if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
+                    if (!string.IsNullOrEmpty(action) && subScenes.ContainsKey(state.ToString()))
                     {
-                        switch (selectedButton)
-                        {
-                            case 1:
-                                state = MainMenuState.CharacterSelection;
-                                selectedButton = 1;
-                                setSelectedPlayer();
-                                break;
-                            case 2:
-                                state = MainMenuState.PlayerUpgrades;
-                                break;
-                            case 3:
-                                state = MainMenuState.PlayStats;
-                                break;
-                            case 4:
-                                state = MainMenuState.Options;
-                                break;
-                            case 5:
-                                state = MainMenuState.Credits;
-                                break;
-                            case 6:
-                                retVal = "exit";
-                                break;
-                        }
-                        soundEffects["Confirm"].Play();
-                        selectedButton = 1;
-                        readyForInput = false;
-                    }
-                    else if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
-                    {
-                        if(selectedButton > 1)
-                        {
-                            selectedButton--;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
-                    {
-                        if(selectedButton < mainMenuButtons.Count)
-                        {
-                            selectedButton++;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }                        
-                    }
-
-                    for (int i = 1; i <= mainMenuButtons.Count; i++)
-                    {
-                        mainMenuButtons[i - 1].Selected(i == selectedButton);
-                        mainMenuButtons[i - 1].MouseOver(mState);
+                        subScenes[state.ToString()].SetActive();
                     }
                 }
                 else if (state == MainMenuState.CharacterSelection)
@@ -511,12 +403,12 @@ namespace RogueliteSurvivor.Scenes
                     {
                         if (characterSelectionComponents[i - 1] is ISelectableComponent)
                         {
-                            ((ISelectableComponent)characterSelectionComponents[i - 1]).Selected(i == selectedButton);
+                            ((ISelectableComponent)characterSelectionComponents[i - 1]).Selected = i == selectedButton;
                             ((ISelectableComponent)characterSelectionComponents[i - 1]).MouseOver(mState);
                         }
                     }
                 }
-                else if(state == MainMenuState.MapSelection)
+                else if (state == MainMenuState.MapSelection)
                 {
                     if (mState.LeftButton == ButtonState.Pressed && mapSelectionButtons.Any(a => a.MouseOver()))
                     {
@@ -607,466 +499,21 @@ namespace RogueliteSurvivor.Scenes
 
                     for (int i = 1; i <= mapSelectionButtons.Count; i++)
                     {
-                        mapSelectionButtons[i - 1].Selected(i == selectedButton);
+                        mapSelectionButtons[i - 1].Selected = i == selectedButton;
                         mapSelectionButtons[i - 1].MouseOver(mState);
                     }
                 }
-                else if (state == MainMenuState.Credits)
+                else if (state == MainMenuState.Options ||
+                            state == MainMenuState.Credits ||
+                            state == MainMenuState.PlayerUpgrades ||
+                            state == MainMenuState.PlayStats)
                 {
-                    if (mState.LeftButton == ButtonState.Pressed && creditsButtons.Any(a => a.MouseOver()))
+                    switch (subScenes[state.ToString()].Update(gameTime))
                     {
-                        clicked = true;
-                        selectedButton = creditsButtons.IndexOf(creditsButtons.First(a => a.MouseOver())) + 1;
-                    }
-
-                    if (clicked || gState.Buttons.A == ButtonState.Pressed || kState.IsKeyDown(Keys.Enter))
-                    {
-                        state = MainMenuState.MainMenu;
-                        soundEffects["Confirm"].Play();
-                        readyForInput = false;
-                    }
-
-                    for (int i = 1; i <= creditsButtons.Count; i++)
-                    {
-                        creditsButtons[i - 1].Selected(i == selectedButton);
-                        creditsButtons[i - 1].MouseOver(mState);
-                    }
-                }
-                else if(state == MainMenuState.PlayStats)
-                {
-                    if (mState.LeftButton == ButtonState.Pressed && playStatsButtons.Any(a => a.MouseOver()))
-                    {
-                        clicked = true;
-                        selectedButton = playStatsButtons.IndexOf(playStatsButtons.First(a => a.MouseOver())) + 1;
-                    }
-
-                    if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
-                    {
-                        if (selectedButton == 3)
-                        {
-                            selectedButton = 1;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
-                    {
-                        if (selectedButton < 3)
-                        {
-                            selectedButton = 3;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
-                    {
-                        if (selectedButton == 2)
-                        {
-                            selectedButton--;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
-                    {
-                        if (selectedButton == 1)
-                        {
-                            selectedButton++;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
-                    {
-                        switch(selectedButton)
-                        {
-                            case 1:
-                                statsPage = (statsPage - 1) % 2;
-                                readyForInput = false;
-                                break;
-                            case 2:
-                                statsPage = (statsPage + 1) % 2;
-                                readyForInput = false;
-                                break;
-                            case 3:
-                                state = MainMenuState.MainMenu;
-                                readyForInput = false;
-                                selectedButton = 1;
-                                statsPage = 0;
-                                break;
-                        }
-                        soundEffects["Confirm"].Play();
-                    }
-
-                    for (int i = 1; i <= playStatsButtons.Count; i++)
-                    {
-                        playStatsButtons[i - 1].Selected(i == selectedButton);
-                        playStatsButtons[i - 1].MouseOver(mState);
-                    }
-                }
-                else if (state == MainMenuState.Options)
-                {
-                    if (mState.LeftButton == ButtonState.Pressed && optionsButtons.Any(a => a.MouseOver()))
-                    {
-                        clicked = true;
-                        selectedButton = optionsButtons.IndexOf(optionsButtons.First(a => a.MouseOver())) + 1;
-                    }
-
-                    if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
-                    {
-                        if(selectedButton - 2 > 0)
-                        {
-                            selectedButton -= 2;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
-                    {
-                        if (selectedButton + 2 < 10)
-                        {
-                            selectedButton += 2;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                        else if(selectedButton == 8)
-                        {
-                            selectedButton = 9;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
-                    {
-                        if(selectedButton < 9 && selectedButton % 2 == 0)
-                        {
-                            selectedButton--;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
-                    {
-                        if (selectedButton < 9 && selectedButton % 2 == 1)
-                        {
-                            selectedButton++;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
-                    {
-                        switch (selectedButton)
-                        {
-                            case 1:
-                                settingsContainer.MasterVolume = MathF.Max(0f, settingsContainer.MasterVolume - 0.05f);
-                                MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
-                                SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
-                                break;
-                            case 2:
-                                settingsContainer.MasterVolume = MathF.Min(1f, settingsContainer.MasterVolume + 0.05f);
-                                MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
-                                SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
-                                break;
-                            case 3:
-                                settingsContainer.MenuMusicVolume = MathF.Max(0f, settingsContainer.MenuMusicVolume - 0.05f);
-                                MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
-                                break;
-                            case 4:
-                                settingsContainer.MenuMusicVolume = MathF.Min(1f, settingsContainer.MenuMusicVolume + 0.05f);
-                                MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
-                                break;
-                            case 5:
-                                settingsContainer.GameMusicVolume = MathF.Max(0f, settingsContainer.GameMusicVolume - 0.05f);
-                                break;
-                            case 6:
-                                settingsContainer.GameMusicVolume = MathF.Min(1f, settingsContainer.GameMusicVolume + 0.05f);
-                                break;
-                            case 7:
-                                settingsContainer.SoundEffectsVolume = MathF.Max(0f, settingsContainer.SoundEffectsVolume - 0.05f);
-                                SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
-                                break;
-                            case 8:
-                                settingsContainer.SoundEffectsVolume = MathF.Min(1f, settingsContainer.SoundEffectsVolume + 0.05f);
-                                SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
-                                break;
-                            case 9:
-                                state = MainMenuState.MainMenu;
-                                settingsContainer.Save();
-                                selectedButton = 1;
-                                break;
-                        }
-
-                        if(selectedButton > 2 && selectedButton < 7)
-                        {
-                            SoundEffectInstance instance = soundEffects["Confirm"].CreateInstance();
-                            
-                            switch (selectedButton)
-                            {
-                                case 3:
-                                case 4:
-                                    instance.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
-                                    break;
-                                case 5:
-                                case 6:
-                                    instance.Volume = settingsContainer.MasterVolume * settingsContainer.GameMusicVolume;
-                                    break;
-                            }
-
-                            instance.Play();
-                        }
-                        else
-                        {
-                            soundEffects["Confirm"].Play();
-                        }
-
-                        readyForInput = false;
-                    }
-
-                    for (int i = 1; i <= optionsButtons.Count; i++)
-                    {
-                        optionsButtons[i - 1].Selected(i == selectedButton);
-                        optionsButtons[i - 1].MouseOver(mState);
-                    }
-                }
-                else if (state == MainMenuState.PlayerUpgrades)
-                {
-                    if (mState.LeftButton == ButtonState.Pressed && playerUpgradeButtons.Any(a => a.MouseOver()))
-                    {
-                        clicked = true;
-                        selectedButton = playerUpgradeButtons.IndexOf(playerUpgradeButtons.First(a => a.MouseOver())) + 1;
-                    }
-
-                    if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
-                    {
-                        bool failed = false;
-                        switch (selectedButton)
-                        {
-                            case 1:
-                                if (progressionContainer.PlayerUpgrades.Health > 0)
-                                {
-                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.Health / 4) * 10); 
-                                    progressionContainer.PlayerUpgrades.Health -= 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 2:
-                                int healthBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Health + 4) / 4) * 10);
-                                if (progressionContainer.NumBooks >= healthBookCost && progressionContainer.PlayerUpgrades.Health < 20)
-                                {
-                                    progressionContainer.NumBooks -= healthBookCost;
-                                    progressionContainer.PlayerUpgrades.Health += 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 3:
-                                if (progressionContainer.PlayerUpgrades.Damage > 0)
-                                {
-                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.Damage / 4) * 10);
-                                    progressionContainer.PlayerUpgrades.Damage -= 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 4:
-                                int damageBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Damage + 4) / 4) * 10);
-                                if (progressionContainer.NumBooks >= damageBookCost && progressionContainer.PlayerUpgrades.Damage < 20)
-                                {
-                                    progressionContainer.NumBooks -= damageBookCost;
-                                    progressionContainer.PlayerUpgrades.Damage += 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 5:
-                                if (progressionContainer.PlayerUpgrades.SpellEffectChance > 0)
-                                {
-                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.SpellEffectChance / 4) * 10);
-                                    progressionContainer.PlayerUpgrades.SpellEffectChance -= 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 6:
-                                int spellEffectChanceBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.SpellEffectChance + 4) / 4) * 10);
-                                if (progressionContainer.NumBooks >= spellEffectChanceBookCost && progressionContainer.PlayerUpgrades.SpellEffectChance < 20)
-                                {
-                                    progressionContainer.NumBooks -= spellEffectChanceBookCost;
-                                    progressionContainer.PlayerUpgrades.SpellEffectChance += 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 7:
-                                if (progressionContainer.PlayerUpgrades.Pierce > 0)
-                                {
-                                    progressionContainer.NumBooks += 100;
-                                    progressionContainer.PlayerUpgrades.Pierce -= 1;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 8:
-                                int pierceBookCost = 100;
-                                if (progressionContainer.NumBooks >= pierceBookCost && progressionContainer.PlayerUpgrades.Pierce < 1)
-                                {
-                                    progressionContainer.NumBooks -= pierceBookCost;
-                                    progressionContainer.PlayerUpgrades.Pierce += 1;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 9:
-                                if (progressionContainer.PlayerUpgrades.AttackSpeed > 0)
-                                {
-                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.AttackSpeed / 4) * 10);
-
-                                    progressionContainer.PlayerUpgrades.AttackSpeed -= 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 10:
-                                int attackSpeedBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AttackSpeed + 4) / 4) * 10);
-                                if (progressionContainer.NumBooks >= attackSpeedBookCost && progressionContainer.PlayerUpgrades.AttackSpeed < 20)
-                                {
-                                    progressionContainer.NumBooks -= attackSpeedBookCost;
-                                    progressionContainer.PlayerUpgrades.AttackSpeed += 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 11:
-                                if (progressionContainer.PlayerUpgrades.AreaOfEffect > 0)
-                                {
-                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.AreaOfEffect / 4) * 10);
-                                    progressionContainer.PlayerUpgrades.AreaOfEffect -= 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 12:
-                                int areaOfEffectBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AreaOfEffect + 4) / 4) * 10);
-                                if (progressionContainer.NumBooks >= areaOfEffectBookCost && progressionContainer.PlayerUpgrades.AreaOfEffect < 20)
-                                {
-                                    progressionContainer.NumBooks -= areaOfEffectBookCost;
-                                    progressionContainer.PlayerUpgrades.AreaOfEffect += 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 13:
-                                if (progressionContainer.PlayerUpgrades.MoveSpeed > 0)
-                                {
-                                    progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.MoveSpeed / 4) * 10);
-                                    progressionContainer.PlayerUpgrades.MoveSpeed -= 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 14:
-                                int moveSpeedBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.MoveSpeed + 4) / 4) * 10);
-                                if (progressionContainer.NumBooks >= moveSpeedBookCost && progressionContainer.PlayerUpgrades.MoveSpeed < 20)
-                                {
-                                    progressionContainer.NumBooks -= moveSpeedBookCost;
-                                    progressionContainer.PlayerUpgrades.MoveSpeed += 4;
-                                }
-                                else
-                                {
-                                    failed = true;
-                                }
-                                break;
-                            case 15:
-                                progressionContainer.Save();
-                                selectedButton = 1;
-                                state = MainMenuState.MainMenu;
-                                break;
-                        }
-                        if (failed)
-                        {
-                            soundEffects["Denied"].Play();
-                        }
-                        else
-                        {
-                            soundEffects["Confirm"].Play();
-                        }
-                        readyForInput = false;
-                    }
-                    else if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)
-                    {
-                        if (selectedButton - 2 > 0)
-                        {
-                            selectedButton -= 2;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Down) || gState.DPad.Down == ButtonState.Pressed || gState.ThumbSticks.Left.Y < -0.5f)
-                    {
-                        if (selectedButton + 2 <= playerUpgradeButtons.Count)
-                        {
-                            selectedButton += 2;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                        else if (selectedButton == (playerUpgradeButtons.Count - 1))
-                        {
-                            selectedButton = playerUpgradeButtons.Count;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
-                    {
-                        if (selectedButton < (playerUpgradeButtons.Count - 1) && selectedButton % 2 == 0)
-                        {
-                            selectedButton--;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-                    else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
-                    {
-                        if (selectedButton < (playerUpgradeButtons.Count - 1) && selectedButton % 2 == 1)
-                        {
-                            selectedButton++;
-                            soundEffects["Hover"].Play();
-                            readyForInput = false;
-                        }
-                    }
-
-                    for (int i = 1; i <= playerUpgradeButtons.Count; i++)
-                    {
-                        playerUpgradeButtons[i - 1].Selected(i == selectedButton);
-                        playerUpgradeButtons[i - 1].MouseOver(mState);
+                        case "menu":
+                            state = MainMenuState.MainMenu;
+                            subScenes[state.ToString()].SetActive();
+                            break;
                     }
                 }
             }
@@ -1090,26 +537,21 @@ namespace RogueliteSurvivor.Scenes
                     0f
                 );
 
-            _spriteBatch.DrawString(
-                fonts["Font"],
-                "Roguelite Survivor",
-                new Vector2(GetWidthOffset(2) - 62, GetHeightOffset(2) - 144),
-                Color.White
-            );
 
-            if (state == MainMenuState.MainMenu)
+            if (state == MainMenuState.MainMenu
+                || state == MainMenuState.Options
+                || state == MainMenuState.Credits
+                || state == MainMenuState.PlayerUpgrades
+                || state == MainMenuState.PlayStats)
             {
-                for(int i = 1; i <= mainMenuButtons.Count; i++)
-                {
-                    mainMenuButtons[i - 1].Draw(_spriteBatch);
-                }
+                subScenes[state.ToString()].Draw(_spriteBatch);
             }
             else if (state == MainMenuState.CharacterSelection)
             {
                 _spriteBatch.DrawString(
                     fonts["Font"],
                     "Choose your wizard:",
-                    new Vector2(GetWidthOffset(2) - 70, GetHeightOffset(2) - 96),
+                    new Vector2(_graphics.GetWidthOffset(2) - 70, _graphics.GetHeightOffset(2) - 96),
                     Color.White
                 );
 
@@ -1139,13 +581,13 @@ namespace RogueliteSurvivor.Scenes
                         descriptionLines.Add(paragraph.Substring(startCharacter));
                     }
 
-                    
+
                     foreach (var descriptionLine in descriptionLines)
                     {
                         _spriteBatch.DrawString(
                             fonts["FontSmall"],
                             descriptionLine,
-                            new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                            new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) + counter),
                             Color.White
                         );
                         counter += 12;
@@ -1158,82 +600,82 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     "Base Stats: ",
-                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) + counter),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Spell: ", playerContainer.StartingSpell.GetReadableSpellName()),
-                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 12),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) + counter + 12),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Starting Health: ", (int)(playerContainer.Health * 100 + progressionContainer.PlayerUpgrades.Health)),
-                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 24),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) + counter + 24),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Move Speed: ", (int)(playerContainer.Speed * 100 + progressionContainer.PlayerUpgrades.MoveSpeed)),
-                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 36),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) + counter + 36),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Spell Damage: ", (playerContainer.SpellDamage + 1f + (progressionContainer.PlayerUpgrades.Damage / 100f)).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter + 48),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) + counter + 48),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Spell Effect Chance: ", (playerContainer.SpellEffectChance + 1f + (progressionContainer.PlayerUpgrades.SpellEffectChance / 100f)).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 12),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 240, _graphics.GetHeightOffset(2) + counter + 12),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Attack Speed: ", (playerContainer.AttackSpeed + 1f + (progressionContainer.PlayerUpgrades.AttackSpeed / 100f)).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 24),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 240, _graphics.GetHeightOffset(2) + counter + 24),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Pierce: ", playerContainer.Pierce + progressionContainer.PlayerUpgrades.Pierce),
-                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 36),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 240, _graphics.GetHeightOffset(2) + counter + 36),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     string.Concat("Area of Effect: ", (playerContainer.AreaOfEffect + 1f + (progressionContainer.PlayerUpgrades.AreaOfEffect / 100f)).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(10.66f) + 240, GetHeightOffset(2) + counter + 48),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 240, _graphics.GetHeightOffset(2) + counter + 48),
                     Color.White
                 );
 
                 _spriteBatch.DrawString(
                     fonts["FontSmall"],
                     "Special Traits: ",
-                    new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 385, _graphics.GetHeightOffset(2) + counter),
                     Color.White
                 );
 
                 if (playerContainer.Traits.Any())
                 {
                     int offsetY = 12;
-                    foreach(var trait in playerContainer.Traits)
+                    foreach (var trait in playerContainer.Traits)
                     {
                         _spriteBatch.DrawString(
                             fonts["FontSmall"],
                             trait.ReadableTraitName(),
-                            new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter + offsetY),
+                            new Vector2(_graphics.GetWidthOffset(10.66f) + 385, _graphics.GetHeightOffset(2) + counter + offsetY),
                             Color.White
                         );
                         offsetY += 12;
@@ -1244,7 +686,7 @@ namespace RogueliteSurvivor.Scenes
                     _spriteBatch.DrawString(
                         fonts["FontSmall"],
                         "None",
-                        new Vector2(GetWidthOffset(10.66f) + 385, GetHeightOffset(2) + counter + 12),
+                        new Vector2(_graphics.GetWidthOffset(10.66f) + 385, _graphics.GetHeightOffset(2) + counter + 12),
                         Color.White
                     );
                 }
@@ -1254,7 +696,7 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.DrawString(
                     fonts["Font"],
                     "Select a map:",
-                    new Vector2(GetWidthOffset(2) - 50, GetHeightOffset(2) - 96),
+                    new Vector2(_graphics.GetWidthOffset(2) - 50, _graphics.GetHeightOffset(2) - 96),
                     Color.White
                 );
 
@@ -1263,13 +705,13 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.DrawString(
                     fonts["Font"],
                     map.Name,
-                    new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 64),
+                    new Vector2(_graphics.GetWidthOffset(10.66f), _graphics.GetHeightOffset(2) - 64),
                     Color.White
                 );
 
                 _spriteBatch.Draw(
                     textures[map.Name],
-                    new Vector2(GetWidthOffset(10.66f) + 48, GetHeightOffset(2)),
+                    new Vector2(_graphics.GetWidthOffset(10.66f) + 48, _graphics.GetHeightOffset(2)),
                     new Rectangle(0, 0, 64, 64),
                     Color.White,
                     0f,
@@ -1304,7 +746,7 @@ namespace RogueliteSurvivor.Scenes
                         _spriteBatch.DrawString(
                             fonts["FontSmall"],
                             descriptionLine,
-                            new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                            new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) + counter),
                             Color.White
                         );
                         counter += 12;
@@ -1314,7 +756,7 @@ namespace RogueliteSurvivor.Scenes
                     _spriteBatch.DrawString(
                         fonts["FontSmall"],
                         string.Concat("Best Time: ", (progressionContainer.LevelProgressions.Where(a => a.Name == map.Name).FirstOrDefault()?.BestTime ?? 0).ToFormattedTime()),
-                        new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) + counter),
+                        new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) + counter),
                         Color.White
                     );
                 }
@@ -1323,7 +765,7 @@ namespace RogueliteSurvivor.Scenes
                     _spriteBatch.DrawString(
                         fonts["FontSmall"],
                         "Locked",
-                        new Vector2(GetWidthOffset(10.66f) + 125, GetHeightOffset(2) - 64),
+                        new Vector2(_graphics.GetWidthOffset(10.66f) + 125, _graphics.GetHeightOffset(2) - 64),
                         Color.White
                     );
                 }
@@ -1333,317 +775,7 @@ namespace RogueliteSurvivor.Scenes
                     mapSelectionButtons[i - 1].Draw(_spriteBatch);
                 }
             }
-            else if (state == MainMenuState.Credits)
-            {
-                int counterX = 0, counterY = -96;
-                foreach(var outsideResource in creditsContainer.OutsideResources)
-                {
-                    _spriteBatch.DrawString(
-                        fonts["Font"],
-                        outsideResource.Author,
-                        new Vector2(GetWidthOffset(2) - 300 + counterX, GetHeightOffset(2) + counterY),
-                        Color.White
-                    );
-                    counterY += 18;
 
-                    foreach(var package in outsideResource.Packages)
-                    {
-                        if(package.Length > 40)
-                        {
-                            string part1, part2;
-                            part1 = package.Substring(0, package.IndexOf(' ', 30));
-                            part2 = package.Substring(package.IndexOf(' ', 30));
-                            _spriteBatch.DrawString(
-                                fonts["FontSmall"],
-                                part1,
-                                new Vector2(GetWidthOffset(2) - 288 + counterX, GetHeightOffset(2) + counterY),
-                                Color.White
-                            );
-                            counterY += 12;
-                            _spriteBatch.DrawString(
-                                fonts["FontSmall"],
-                                part2,
-                                new Vector2(GetWidthOffset(2) - 276 + counterX, GetHeightOffset(2) + counterY),
-                                Color.White
-                            );
-                        }
-                        else
-                        {
-                            _spriteBatch.DrawString(
-                                fonts["FontSmall"],
-                                package,
-                                new Vector2(GetWidthOffset(2) - 288 + counterX, GetHeightOffset(2) + counterY),
-                                Color.White
-                            );
-                        }
-                        
-                        counterY += 12;
-                    }
-
-                    counterY += 18;
-
-                    if(counterY > 90)
-                    {
-                        counterY = -96;
-                        counterX += 200;
-                    }
-                }
-
-                for (int i = 1; i <= creditsButtons.Count; i++)
-                {
-                    creditsButtons[i - 1].Draw(_spriteBatch);
-                }
-            }
-            else if (state == MainMenuState.PlayStats)
-            {
-                int counterX = 0, counterY = 0;
-                switch (statsPage)
-                {
-                    case 0:
-                        _spriteBatch.DrawString(
-                            fonts["Font"],
-                            "Play Stats - Maps",
-                            new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 96),
-                            Color.White
-                        );
-
-                        foreach(var map in progressionContainer.LevelProgressions)
-                        {
-                            _spriteBatch.DrawString(
-                                fonts["FontSmall"],
-                                map.Name,
-                                new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 72 + counterY),
-                                Color.White
-                            );
-                            _spriteBatch.DrawString(
-                                fonts["FontSmall"],
-                                string.Concat("  Best Time: ", map.BestTime.ToFormattedTime()),
-                                new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 60 + counterY),
-                                Color.White
-                            );
-                            
-                            counterY += 36;
-                        }
-                        break;
-                    case 1:
-                        _spriteBatch.DrawString(
-                            fonts["Font"],
-                            "Play Stats - Enemies",
-                            new Vector2(GetWidthOffset(10.66f), GetHeightOffset(2) - 96),
-                            Color.White
-                        );
-
-                        foreach(var enemy in enemyContainers)
-                        {
-                            var enemyProgression = progressionContainer.EnemyKillStats.Where(a => a.Name == enemy.Value.ReadableName).FirstOrDefault();
-                            _spriteBatch.DrawString(
-                                fonts["FontSmall"],
-                                enemy.Value.ReadableName,
-                                new Vector2(GetWidthOffset(10.66f) + counterX, GetHeightOffset(2) - 72 + counterY),
-                                Color.White
-                            );
-                            if (enemyProgression != null) {
-                                _spriteBatch.DrawString(
-                                    fonts["FontSmall"],
-                                    string.Concat("  Kills: ", enemyProgression.Kills),
-                                    new Vector2(GetWidthOffset(10.66f) + counterX, GetHeightOffset(2) - 60 + counterY),
-                                    Color.White
-                                );
-                                _spriteBatch.DrawString(
-                                    fonts["FontSmall"],
-                                    string.Concat("  Killed By: ", enemyProgression.KilledBy),
-                                    new Vector2(GetWidthOffset(10.66f) + counterX, GetHeightOffset(2) - 48+ counterY),
-                                    Color.White
-                                );
-                                counterY += 48;
-                            }
-                            else
-                            {
-                                _spriteBatch.DrawString(
-                                    fonts["FontSmall"],
-                                    "  Not Yet Found",
-                                    new Vector2(GetWidthOffset(10.66f) + counterX, GetHeightOffset(2) - 60 + counterY),
-                                    Color.White
-                                );
-
-                                counterY += 36;
-                            }
-
-                            if(counterY > 160)
-                            {
-                                counterX += 112;
-                                counterY = 0;
-                            }
-                        }
-                        break;
-                }
-
-                for (int i = 1; i <= playStatsButtons.Count; i++)
-                {
-                    playStatsButtons[i - 1].Draw(_spriteBatch);
-                }
-            }
-            else if(state == MainMenuState.Options)
-            {
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Master Volume: ", settingsContainer.MasterVolume.ToString("P0")),
-                    new Vector2(GetWidthOffset(2) - 125, GetHeightOffset(2) - 96),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Menu Music Volume: ", settingsContainer.MenuMusicVolume.ToString("P0")),
-                    new Vector2(GetWidthOffset(2) - 125, GetHeightOffset(2) - 64),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Game Music Volume: ", settingsContainer.GameMusicVolume.ToString("P0")),
-                    new Vector2(GetWidthOffset(2) - 125, GetHeightOffset(2) - 32),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Sound Effect Volume: ", settingsContainer.SoundEffectsVolume.ToString("P0")),
-                    new Vector2(GetWidthOffset(2) - 125, GetHeightOffset(2)),
-                    Color.White
-                );
-
-                for (int i = 1; i <= optionsButtons.Count; i++)
-                {
-                    optionsButtons[i - 1].Draw(_spriteBatch);
-                }   
-            }
-            else if(state == MainMenuState.PlayerUpgrades)
-            {
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Health: +", progressionContainer.PlayerUpgrades.Health),
-                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) - 120),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    progressionContainer.PlayerUpgrades.Health < 20
-                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Health + 4) / 4) * 10))
-                        : "Stat Maxed",
-                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) - 120),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Damage: +", (progressionContainer.PlayerUpgrades.Damage / 100f).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) - 88),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    progressionContainer.PlayerUpgrades.Damage < 20
-                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Damage + 4) / 4) * 10))
-                        : "Stat Maxed",
-                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) - 88),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Spell Effect Chance: +", (progressionContainer.PlayerUpgrades.SpellEffectChance / 100f).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) - 56),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    progressionContainer.PlayerUpgrades.SpellEffectChance < 20
-                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.SpellEffectChance + 4) / 4) * 10))
-                        : "Stat Maxed",
-                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) - 56),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Pierce: +", progressionContainer.PlayerUpgrades.Pierce),
-                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) - 24),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    progressionContainer.PlayerUpgrades.Pierce < 1
-                        ? string.Concat("Book Cost: ", 100)
-                        : "Stat Maxed",
-                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) - 24),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Attack Speed: +", (progressionContainer.PlayerUpgrades.AttackSpeed / 100f).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) + 8),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    progressionContainer.PlayerUpgrades.AttackSpeed < 20
-                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AttackSpeed + 4) / 4) * 10))
-                        : "Stat Maxed",
-                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) + 8),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Area Of Effect: +", (progressionContainer.PlayerUpgrades.AreaOfEffect / 100f).ToString("F"), "x"),
-                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) + 40),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    progressionContainer.PlayerUpgrades.AreaOfEffect < 20
-                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AreaOfEffect + 4) / 4) * 10))
-                        : "Stat Maxed",
-                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) + 40),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Move Speed: +", progressionContainer.PlayerUpgrades.MoveSpeed),
-                    new Vector2(GetWidthOffset(2) - 175, GetHeightOffset(2) + 72),
-                    Color.White
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    progressionContainer.PlayerUpgrades.MoveSpeed < 20 
-                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.MoveSpeed + 4) / 4) * 10))
-                        : "Stat Maxed",
-                    new Vector2(GetWidthOffset(2) + 75, GetHeightOffset(2) + 72),
-                    Color.White
-                );                
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    string.Concat("Books to read: ", progressionContainer.NumBooks),
-                    new Vector2(GetWidthOffset(2) - 55, GetHeightOffset(2) + 104),
-                    Color.White
-                );
-
-                for (int i = 1; i <= playerUpgradeButtons.Count; i++)
-                {
-                    playerUpgradeButtons[i - 1].Draw(_spriteBatch);
-                }
-            }
             _spriteBatch.End();
         }
 
@@ -1667,7 +799,7 @@ namespace RogueliteSurvivor.Scenes
         {
             unlockedMaps = new List<MapContainer>();
 
-            foreach(MapContainer map in mapContainers ) 
+            foreach (MapContainer map in mapContainers)
             {
                 bool canAdd = false;
                 switch (map.UnlockRequirement.MapUnlockType)

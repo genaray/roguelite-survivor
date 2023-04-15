@@ -1,5 +1,4 @@
-﻿using Arch.Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using RogueliteSurvivor.Containers;
@@ -32,13 +31,5 @@ namespace RogueliteSurvivor.Scenes
         public abstract void LoadContent();
         public abstract void SetActive();
         public abstract string Update(GameTime gameTime, params object[] values);
-        protected float GetWidthOffset(float divisor)
-        {
-            return _graphics.PreferredBackBufferWidth / (divisor * Game1.ScaleFactor);
-        }
-        protected float GetHeightOffset(float divisor)
-        {
-            return _graphics.PreferredBackBufferHeight / (divisor * Game1.ScaleFactor);
-        }
     }
 }

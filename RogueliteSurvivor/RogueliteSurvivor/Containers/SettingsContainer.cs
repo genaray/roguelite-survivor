@@ -1,10 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Containers
 {
@@ -23,7 +18,7 @@ namespace RogueliteSurvivor.Containers
             SoundEffectsVolume = 1f;
         }
 
-        public void Save() 
+        public void Save()
         {
             var jObject = JObject.FromObject(this);
 

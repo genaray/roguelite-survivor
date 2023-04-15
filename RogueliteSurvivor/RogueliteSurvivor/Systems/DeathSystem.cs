@@ -1,5 +1,4 @@
 ﻿using Arch.Core;
-using Arch.Core.Extensions;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -22,7 +21,7 @@ namespace RogueliteSurvivor.Systems
                                             .WithAny<Projectile, EnemyProjectile>();
 
         QueryDescription enemyQuery = new QueryDescription()
-                                            .WithAll<Enemy>(); 
+                                            .WithAll<Enemy>();
 
         Dictionary<string, Texture2D> textures;
         Box2D.NetStandard.Dynamics.World.World physicsWorld;
@@ -48,7 +47,7 @@ namespace RogueliteSurvivor.Systems
                 if (entityStatus.State == State.ReadyToDie)
                 {
                     entityStatus.State = State.Dying;
-                    
+
                     Spells spell = spriteSheet.TextureName.GetSpellFromString();
                     animation = SpellFactory.GetSpellHitAnimation(spellContainers[spell]);
                     spriteSheet = SpellFactory.GetSpellHitSpriteSheet(textures, spellContainers[spell], spriteSheet.Rotation);
@@ -101,9 +100,9 @@ namespace RogueliteSurvivor.Systems
                 }
             });
 
-            world.Query(in query, (in Entity entity, ref EntityStatus entityStatus, ref Body body) => 
-            { 
-                if(entityStatus.State != State.Alive)
+            world.Query(in query, (in Entity entity, ref EntityStatus entityStatus, ref Body body) =>
+            {
+                if (entityStatus.State != State.Alive)
                 {
                     physicsWorld.DestroyBody(body);
                     entity.Remove<Body, Burn, Slow, Shock, Poison>();

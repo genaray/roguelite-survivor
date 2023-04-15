@@ -15,7 +15,7 @@ namespace RogueliteSurvivor.Containers
         {
             List<EnemyWavesContainer> enemyWaves = new List<EnemyWavesContainer>();
 
-            foreach(var enemyWave in enemyWavesContainers)
+            foreach (var enemyWave in enemyWavesContainers)
             {
                 enemyWaves.Add(new EnemyWavesContainer()
                 {
@@ -36,11 +36,11 @@ namespace RogueliteSurvivor.Containers
         public string Type { get; set; }
         public int Weight { get; set; }
 
-        public static List<EnemyWeightContainer> ToEnemyWeightContainers(JToken enemyWeightContainers) 
+        public static List<EnemyWeightContainer> ToEnemyWeightContainers(JToken enemyWeightContainers)
         {
             List<EnemyWeightContainer> enemyWeights = new List<EnemyWeightContainer>();
 
-            foreach(var enemyWeightContainer in enemyWeightContainers)
+            foreach (var enemyWeightContainer in enemyWeightContainers)
             {
                 enemyWeights.Add(new EnemyWeightContainer()
                 {

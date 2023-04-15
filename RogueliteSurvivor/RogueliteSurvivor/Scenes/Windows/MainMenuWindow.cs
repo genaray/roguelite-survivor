@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Scenes.SceneComponents;
 using System.Collections.Generic;
@@ -9,63 +10,43 @@ using System.Linq;
 
 namespace RogueliteSurvivor.Scenes.Windows
 {
-    public class InGameMenuWindow : Window
+    public class MainMenuWindow : Window
     {
         int selectedButton = 0;
         List<ISelectableComponent> buttons;
-
         SoundEffect hover;
         SoundEffect confirm;
 
-        public static InGameMenuWindow InGameMenuWindowFactory(GraphicsDeviceManager graphics,
+        public static MainMenuWindow MainMenuWindowFactory(
+            GraphicsDeviceManager graphics,
             Dictionary<string, Texture2D> textures,
             Vector2 position,
             SoundEffect hover,
-            SoundEffect confirm)
+            SoundEffect confirm,
+            Dictionary<string, SpriteFont> fonts
+            )
         {
             var components = new Dictionary<string, IFormComponent>()
             {
-                {"btnContinue",
-                new Button(
-                    "btnContinue",
-                    textures["MainMenuButtons"],
-                    new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) - 72),
-                    new Rectangle(0, 448, 128, 32),
-                    new Rectangle(128, 448, 128, 32),
-                    new Vector2(64, 16)
-                ) },
-                { "btnOptions",
-                new Button(
-                    "btnOptions",
-                    textures["MainMenuButtons"],
-                    new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) - 24),
-                    new Rectangle(0, 160, 128, 32),
-                    new Rectangle(128, 160, 128, 32),
-                    new Vector2(64, 16)
-                ) },
-                {"btnRestart",
-                    new Button(
-                    "btnRestart",
-                    textures["MainMenuButtons"],
-                    new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) + 24),
-                    new Rectangle(0, 384, 128, 32),
-                    new Rectangle(128, 384, 128, 32),
-                    new Vector2(64, 16)
-                ) },
-                { "btnEndRun", new Button("btnEndRun", textures["MainMenuButtons"], new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) + 72), new Rectangle(0, 512, 128, 32), new Rectangle(128, 512, 128, 32), new Vector2(64, 16)) },
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Roguelite Survivor", new Vector2(graphics.GetWidthOffset(2) - 62, graphics.GetHeightOffset(2) - 144), Color.White) },
+                { "btnNewGame", new Button("btnNewGame", textures["MainMenuButtons"],new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) - 96),new Rectangle(0, 32, 128, 32),new Rectangle(128, 32, 128, 32),new Vector2(64, 16))},
+                { "btnPlayerUpgrades", new Button("btnPlayerUpgrades",textures["MainMenuButtons"],new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) - 48),new Rectangle(0, 480, 128, 32),new Rectangle(128, 480, 128, 32),new Vector2(64, 16))},
+                { "btnPlayStats", new Button("btnPlayStats",textures["MainMenuButtons"],new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2)),new Rectangle(0, 64, 128, 32),new Rectangle(128, 64, 128, 32),new Vector2(64, 16)) },
+                { "btnOptions", new Button("btnOptions", textures["MainMenuButtons"], new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) + 48), new Rectangle(0, 160, 128, 32), new Rectangle(128, 160, 128, 32), new Vector2(64, 16)) },
+                { "btnCredits", new Button("btnCredits", textures["MainMenuButtons"], new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) + 96), new Rectangle(0, 128, 128, 32), new Rectangle(128, 128, 128, 32), new Vector2(64, 16)) },
+                { "btnExit", new Button("btnExit", textures["MainMenuButtons"], new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) + 144), new Rectangle(0, 96, 128, 32), new Rectangle(128, 96, 128, 32), new Vector2(64, 16)) },
             };
-            return new InGameMenuWindow(graphics, textures["InGameMenuWindow"], position, components, hover, confirm);
+
+            return new MainMenuWindow(graphics, null, position, components, hover, confirm);
         }
 
-        private InGameMenuWindow
-        (
+        private MainMenuWindow(
             GraphicsDeviceManager graphics,
             Texture2D background,
             Vector2 position,
             Dictionary<string, IFormComponent> components,
             SoundEffect hover,
-            SoundEffect confirm
-        )
+            SoundEffect confirm)
             : base(graphics, background, position, components)
         {
             buttons = new List<ISelectableComponent>();
@@ -87,6 +68,11 @@ namespace RogueliteSurvivor.Scenes.Windows
             base.SetActive();
         }
 
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+        }
+
         public override string Update(GameTime gameTime, params object[] values)
         {
             var kState = Keyboard.GetState();
@@ -106,16 +92,21 @@ namespace RogueliteSurvivor.Scenes.Windows
                 if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                 {
                     confirm.Play();
+
                     switch (selectedButton)
                     {
                         case 0:
-                            return "continue";
+                            return MainMenuState.CharacterSelection.ToString();
                         case 1:
-                            return "options";
+                            return MainMenuState.PlayerUpgrades.ToString();
                         case 2:
-                            return "restart";
+                            return MainMenuState.PlayStats.ToString();
                         case 3:
-                            return "game-over";
+                            return MainMenuState.Options.ToString();
+                        case 4:
+                            return MainMenuState.Credits.ToString();
+                        case 5:
+                            return "exit";
                     }
                 }
                 else if (kState.IsKeyDown(Keys.Up) || gState.DPad.Up == ButtonState.Pressed || gState.ThumbSticks.Left.Y > 0.5f)

@@ -1,7 +1,6 @@
 ﻿using Arch.Core;
 using Arch.Core.Extensions;
 using Box2D.NetStandard.Collision;
-using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Dynamics.Fixtures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -11,10 +10,8 @@ using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
 using RogueliteSurvivor.Helpers;
-using RogueliteSurvivor.Physics;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace RogueliteSurvivor.Systems
 {
@@ -69,18 +66,19 @@ namespace RogueliteSurvivor.Systems
 
             world.Query(in stationaryQuery, (ref Stationary stationary, ref Position pos, ref EntityStatus entityStatus, ref AttackSpeed attackSpeed, ref Damage damage, ref Owner owner, ref SpellEffectChance spellEffectChance) =>
             {
-            if (entityStatus.State == State.Alive) {
-                stationary.Cooldown += (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
-                if (stationary.Cooldown > attackSpeed.CurrentAttackSpeed)
+                if (entityStatus.State == State.Alive)
                 {
-                    stationary.Cooldown -= attackSpeed.CurrentAttackSpeed;
+                    stationary.Cooldown += (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+                    if (stationary.Cooldown > attackSpeed.CurrentAttackSpeed)
+                    {
+                        stationary.Cooldown -= attackSpeed.CurrentAttackSpeed;
 
-                    checkHitInRadius(pos,
-                                        damage,
-                                        owner,
-                                        stationary.BaseRadius,
-                                        stationary.RadiusMultiplier,
-                                        spellEffectChance.CurrentSpellEffectChance);
+                        checkHitInRadius(pos,
+                                            damage,
+                                            owner,
+                                            stationary.BaseRadius,
+                                            stationary.RadiusMultiplier,
+                                            spellEffectChance.CurrentSpellEffectChance);
                     }
                 }
             });
@@ -119,16 +117,16 @@ namespace RogueliteSurvivor.Systems
                     {
                         SpellFactory.CreateSingleTarget(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect, soundEffects);
                     }
-                    else if(spell.Type == SpellType.EnemyProjectile)
+                    else if (spell.Type == SpellType.EnemyProjectile)
                     {
                         SpellFactory.CreateEnemyProjectile(world, textures, physicsWorld, spellContainers, entity, spell, target, pos, effect, soundEffects);
                     }
-                    else if(spell.Type == SpellType.Stationary)
+                    else if (spell.Type == SpellType.Stationary)
                     {
                         SpellFactory.CreateStationary(world, textures, spellContainers, entity, spell);
                     }
                 }
-                else if(spell.Type == SpellType.Aura)
+                else if (spell.Type == SpellType.Aura)
                 {
                     var aura = spell.ChildReference.Entity.Get<Aura>();
                     checkHitInRadius(spell.ChildReference.Entity.Get<Position>(),
@@ -138,7 +136,7 @@ namespace RogueliteSurvivor.Systems
                                         aura.RadiusMultiplier,
                                         spell.CurrentEffectChance);
                 }
-                else if(spell.Type == SpellType.MagicBeam)
+                else if (spell.Type == SpellType.MagicBeam)
                 {
                     var magicBeam = spell.ChildReference.Entity.Get<MagicBeam>();
                     checkHitInRadius(spell.ChildReference.Entity.Get<Position>(),

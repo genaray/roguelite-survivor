@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Constants
 {
@@ -46,7 +42,7 @@ namespace RogueliteSurvivor.Constants
                 Spells.IceAura,
                 Spells.LightningBlast,
                 Spells.LightningStrike,
-                Spells.LightningAura, 
+                Spells.LightningAura,
                 Spells.MagicShot,
                 Spells.MagicBeam,
                 Spells.MagicAura,
@@ -57,7 +53,7 @@ namespace RogueliteSurvivor.Constants
 
         public static Spells GetSpellFromString(this string spellString)
         {
-            switch(spellString)
+            switch (spellString)
             {
                 case "None":
                     return Spells.None;

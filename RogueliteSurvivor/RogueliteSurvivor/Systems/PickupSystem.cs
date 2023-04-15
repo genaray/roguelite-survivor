@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
-using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Helpers;
 using System;
 using System.Collections.Generic;
@@ -34,7 +33,7 @@ namespace RogueliteSurvivor.Systems
             world.Query(in invincibleQuery, (in Entity entity, ref Invincibility invincibility) =>
             {
                 invincibility.TimeRemaining -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
-                if(invincibility.TimeRemaining <= 0)
+                if (invincibility.TimeRemaining <= 0)
                 {
                     entity.Remove<Invincibility>();
                 }

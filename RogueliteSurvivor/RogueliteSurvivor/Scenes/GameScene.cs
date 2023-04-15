@@ -21,8 +21,6 @@ using RogueliteSurvivor.Systems;
 using RogueliteSurvivor.Utils;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 
@@ -58,7 +56,7 @@ namespace RogueliteSurvivor.Scenes
         private QueryDescription loopedSounds = new QueryDescription().WithAll<LoopSound>();
 
         private MapContainer mapContainer;
-        
+
         private Random random;
         private List<LevelUpType> levelUpChoices = new List<LevelUpType>();
         private List<Button> levelUpButtons;
@@ -113,7 +111,7 @@ namespace RogueliteSurvivor.Scenes
             }
             stats.PlayTime = totalGameTime;
             stats.Kills = new Dictionary<string, int>();
-            foreach(var enemy in killCount.Kills)
+            foreach (var enemy in killCount.Kills)
             {
                 stats.Kills.Add(enemyContainers[enemy.Key].ReadableName, enemy.Value);
             }
@@ -208,7 +206,7 @@ namespace RogueliteSurvivor.Scenes
 
         private void loadSoundEffects()
         {
-            if(soundEffects == null)
+            if (soundEffects == null)
             {
                 soundEffects = new Dictionary<string, SoundEffect>()
                 {
@@ -255,111 +253,22 @@ namespace RogueliteSurvivor.Scenes
         {
             subScenes = new Dictionary<string, Window>()
             {
-                { 
-                    "InGameMenuWindow", 
-                    new InGameMenuWindow
-                    (
-                        textures["InGameMenuWindow"], 
-                        new Vector2(GetWidthOffset(2), GetHeightOffset(2)), 
-                        new List<IFormComponent>()
-                        {
-                            new Button(
-                                textures["MainMenuButtons"],
-                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 72),
-                                new Rectangle(0, 448, 128, 32),
-                                new Rectangle(128, 448, 128, 32),
-                                new Vector2(64, 16)
-                            ),
-                            new Button(
-                                textures["MainMenuButtons"],
-                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) - 24),
-                                new Rectangle(0, 160, 128, 32),
-                                new Rectangle(128, 160, 128, 32),
-                                new Vector2(64, 16)
-                            ),
-                            new Button(
-                                textures["MainMenuButtons"],
-                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 24),
-                                new Rectangle(0, 384, 128, 32),
-                                new Rectangle(128, 384, 128, 32),
-                                new Vector2(64, 16)
-                            ),
-                            new Button(
-                                textures["MainMenuButtons"],
-                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 72),
-                                new Rectangle(0, 512, 128, 32),
-                                new Rectangle(128, 512, 128, 32),
-                                new Vector2(64, 16)
-                            ),
-                        },
+                {
+                    "InGameMenuWindow",
+                    InGameMenuWindow.InGameMenuWindowFactory(
+                        _graphics,
+                        textures,
+                        new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2)),
                         soundEffects["Hover"],
                         soundEffects["Confirm"]
-                    ) 
+                    )
                 },
                 {
                     "InGameOptionsWindow",
-                    new InGameOptionsMenuWindow
-                    (
-                        textures["InGameOptionsWindow"],
-                        new Vector2(GetWidthOffset(2), GetHeightOffset(2)),
-                        new List<IFormComponent>()
-                        {
-                            new Button(textures["VolumeButtons"],
-                                new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 64),
-                                new Rectangle(0, 0, 16, 16),
-                                new Rectangle(16, 0, 16, 16),
-                                new Vector2(8, 8)
-                            ),
-                            new Button(textures["VolumeButtons"],
-                                new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 64),
-                                new Rectangle(0, 16, 16, 16),
-                                new Rectangle(16, 16, 16, 16),
-                                new Vector2(8, 8)
-                            ),
-                            new Button(textures["VolumeButtons"],
-                                new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) - 32),
-                                new Rectangle(0, 0, 16, 16),
-                                new Rectangle(16, 0, 16, 16),
-                                new Vector2(8, 8)
-                            ),
-                            new Button(textures["VolumeButtons"],
-                                new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) - 32),
-                                new Rectangle(0, 16, 16, 16),
-                                new Rectangle(16, 16, 16, 16),
-                                new Vector2(8, 8)
-                            ),
-                            new Button(textures["VolumeButtons"],
-                                new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2)),
-                                new Rectangle(0, 0, 16, 16),
-                                new Rectangle(16, 0, 16, 16),
-                                new Vector2(8, 8)
-                            ),
-                            new Button(textures["VolumeButtons"],
-                                new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2)),
-                                new Rectangle(0, 16, 16, 16),
-                                new Rectangle(16, 16, 16, 16),
-                                new Vector2(8, 8)
-                            ),
-                            new Button(textures["VolumeButtons"],
-                                new Vector2(GetWidthOffset(2) + 85, GetHeightOffset(2) + 32),
-                                new Rectangle(0, 0, 16, 16),
-                                new Rectangle(16, 0, 16, 16),
-                                new Vector2(8, 8)
-                            ),
-                            new Button(textures["VolumeButtons"],
-                                new Vector2(GetWidthOffset(2) + 109, GetHeightOffset(2) + 32),
-                                new Rectangle(0, 16, 16, 16),
-                                new Rectangle(16, 16, 16, 16),
-                                new Vector2(8, 8)
-                            ),
-                            new Button(
-                                textures["MainMenuButtons"],
-                                new Vector2(GetWidthOffset(2), GetHeightOffset(2) + 64),
-                                new Rectangle(0, 0, 128, 32),
-                                new Rectangle(128, 0, 128, 32),
-                                new Vector2(64, 16)
-                            ),
-                        },
+                    InGameOptionsMenuWindow.InGameOptionsMenuWindowFactory(
+                        _graphics,
+                        textures,
+                        new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2)),
                         soundEffects["Hover"],
                         soundEffects["Confirm"],
                         fonts,
@@ -435,18 +344,18 @@ namespace RogueliteSurvivor.Scenes
                 textures.Add(tilesetImage.ToLower(), Content.Load<Texture2D>(Path.Combine("Maps", mapContainer.Folder, tilesetImage)));
             }
 
-            foreach(var wave in mapContainer.EnemyWaves)
+            foreach (var wave in mapContainer.EnemyWaves)
             {
-                foreach(var enemy in wave.Enemies)
+                foreach (var enemy in wave.Enemies)
                 {
-                    if(!textures.ContainsKey(enemy.Type))
+                    if (!textures.ContainsKey(enemy.Type))
                     {
                         textures.Add(enemy.Type, Content.Load<Texture2D>(Path.Combine("Enemies", enemy.Type)));
                     }
                 }
             }
 
-            songs = new Dictionary<string, Song> { {"GameMusic", Content.Load<Song>(Path.Combine("Music", mapContainer.Music)) } };
+            songs = new Dictionary<string, Song> { { "GameMusic", Content.Load<Song>(Path.Combine("Music", mapContainer.Music)) } };
         }
 
         private void placePlayer()
@@ -476,15 +385,19 @@ namespace RogueliteSurvivor.Scenes
                 PlayerFactory.GetPlayerSpriteSheet(playerContainer, textures),
                 new Target(),
                 spell,
-                new Health() { Current = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
-                                , Max = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
-                                , BaseMax = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
+                new Health()
+                {
+                    Current = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
+                                ,
+                    Max = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
+                                ,
+                    BaseMax = (int)(100 * playerContainer.Health + progressionContainer.PlayerUpgrades.Health)
                 },
                 new KillCount(),
                 BodyFactory.CreateCircularBody(player, 14, physicsWorld, body, 99)
             );
 
-            if(spell.Type == SpellType.Aura)
+            if (spell.Type == SpellType.Aura)
             {
                 var aura = SpellFactory.CreateAura(world, textures, physicsWorld, spellContainers, player, spell, spell.Effect);
                 spell.ChildReference = world.Reference(aura);
@@ -512,7 +425,7 @@ namespace RogueliteSurvivor.Scenes
 
         public override string Update(GameTime gameTime, params object[] values)
         {
-            if(firstLoop)
+            if (firstLoop)
             {
                 world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
                 {
@@ -555,7 +468,7 @@ namespace RogueliteSurvivor.Scenes
                             soundEffects["Hover"].Play();
                             stateChangeTime = 0f;
                         }
-                        
+
                     }
                     else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
                     {
@@ -570,12 +483,12 @@ namespace RogueliteSurvivor.Scenes
 
                     for (int i = 1; i <= levelUpButtons.Count; i++)
                     {
-                        levelUpButtons[i - 1].Selected(selectedLevelUpChoice == levelUpChoices[i - 1]);
+                        levelUpButtons[i - 1].Selected = selectedLevelUpChoice == levelUpChoices[i - 1];
                         levelUpButtons[i - 1].MouseOver(mState);
                     }
                 }
             }
-            else if(gameState == GameState.InGameMenu)
+            else if (gameState == GameState.InGameMenu)
             {
                 if (stateChangeTime > InputConstants.ResponseTime)
                 {
@@ -606,7 +519,7 @@ namespace RogueliteSurvivor.Scenes
                     }
                 }
             }
-            else if(gameState == GameState.Options)
+            else if (gameState == GameState.Options)
             {
                 if (stateChangeTime > InputConstants.ResponseTime)
                 {
@@ -629,7 +542,7 @@ namespace RogueliteSurvivor.Scenes
                 {
                     gameState = GameState.InGameMenu;
 
-                    world.Query(in loopedSounds, (ref LoopSound loopedSound) => 
+                    world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
                     {
                         loopedSound.SoundEffect.Stop();
                     });
@@ -639,7 +552,7 @@ namespace RogueliteSurvivor.Scenes
                 else if (player.Get<EntityStatus>().State == State.Dead)
                 {
                     Loaded = false;
-                    
+
                     world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
                     {
                         loopedSound.SoundEffect.Stop();
@@ -671,7 +584,7 @@ namespace RogueliteSurvivor.Scenes
                         var playerHealth = player.Get<Health>();
                         playerHealth.Max += (int)(0.05f * playerHealth.BaseMax);
                         playerHealth.Current = playerHealth.Max;
-                        
+
                         player.Set(playerInfo, playerHealth);
 
                         gameState = GameState.LevelUp;
@@ -684,7 +597,7 @@ namespace RogueliteSurvivor.Scenes
                             var playerUsableSpells = SpellsExtensions.PlayerUsableSpells();
                             playerUsableSpells.RemoveAll(a => spells.Exists(b => a == ((ISpell)b).Spell));
 
-                            foreach(var usableSpell in playerUsableSpells)
+                            foreach (var usableSpell in playerUsableSpells)
                             {
                                 pickupTable.Add(usableSpell.ToString().GetPickupTypeFromString(), 1);
                             }
@@ -699,18 +612,18 @@ namespace RogueliteSurvivor.Scenes
                                 .Add(LevelUpType.Pierce, 1)
                                 .Add(LevelUpType.AreaOfEffect, 1);
                         }
-                        
-                            
+
+
 
                         levelUpChoices.Clear();
                         int max = Math.Min(4, pickupTable.NumberOfEntries);
-                        for(int i = 0; i < max; i++)
+                        for (int i = 0; i < max; i++)
                         {
                             LevelUpType choice;
                             do
                             {
                                 choice = pickupTable.Roll(random);
-                            }while(levelUpChoices.Contains(choice));
+                            } while (levelUpChoices.Contains(choice));
 
                             levelUpChoices.Add(choice);
                         }
@@ -722,8 +635,9 @@ namespace RogueliteSurvivor.Scenes
                         {
                             levelUpButtons.Add(
                                 new Button(
+                                    string.Concat("btn", levelUpChoice.ToString()),
                                     textures["LevelUpChoices"],
-                                    new Vector2(GetWidthOffset(2) + counter, GetHeightOffset(2) + 32),
+                                    new Vector2(_graphics.GetWidthOffset(2) + counter, _graphics.GetHeightOffset(2) + 32),
                                     LevelUpChoiceHelper.GetLevelUpChoiceButton(levelUpChoice, false),
                                     LevelUpChoiceHelper.GetLevelUpChoiceButton(levelUpChoice, true),
                                     new Vector2(32, 32)
@@ -784,11 +698,11 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.DrawString(
                     fonts["Font"],
                     "Level Up! Select an upgrade:",
-                    new Vector2(GetWidthOffset(2) - 116, GetHeightOffset(2) - 64),
+                    new Vector2(_graphics.GetWidthOffset(2) - 116, _graphics.GetHeightOffset(2) - 64),
                     Color.White
                 );
 
-                foreach(var button in levelUpButtons)
+                foreach (var button in levelUpButtons)
                 {
                     button.Draw(_spriteBatch);
                 }
@@ -796,7 +710,7 @@ namespace RogueliteSurvivor.Scenes
                 _spriteBatch.DrawString(
                     fonts["Font"],
                     LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(selectedLevelUpChoice),
-                    new Vector2(GetWidthOffset(2) - LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(selectedLevelUpChoice).Length * 4.5f, GetHeightOffset(2) + 96),
+                    new Vector2(_graphics.GetWidthOffset(2) - LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(selectedLevelUpChoice).Length * 4.5f, _graphics.GetHeightOffset(2) + 96),
                     Color.White
                 );
 

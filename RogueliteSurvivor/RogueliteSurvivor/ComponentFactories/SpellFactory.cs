@@ -91,7 +91,7 @@ namespace RogueliteSurvivor.ComponentFactories
             };
         }
 
-        public static void CreateProjectile(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers,Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect, Dictionary<string, SoundEffect> soundEffects)
+        public static void CreateProjectile(World world, Dictionary<string, Texture2D> textures, Box2D.NetStandard.Dynamics.World.World physicsWorld, Dictionary<Spells, SpellContainer> spellContainers, Entity entity, ISpell spell, Target target, Position pos, SpellEffects effect, Dictionary<string, SoundEffect> soundEffects)
         {
             var projectile = world.Create<Projectile, EntityStatus, Position, Velocity, Speed, Animation, SpriteSheet, Damage, Owner, Pierce, HitSound, Body>();
 
@@ -201,7 +201,7 @@ namespace RogueliteSurvivor.ComponentFactories
             where T : ISpell
         {
             float radiusMultiplier = (entity.Has<AreaOfEffect>() ? entity.Get<AreaOfEffect>().Radius : 1f) + radiusIncrease;
-            
+
             var aura = spell.ChildReference.Entity.Get<Aura>();
             aura.RadiusMultiplier = radiusMultiplier;
             var spriteSheet = spell.ChildReference.Entity.Get<SpriteSheet>();
@@ -240,7 +240,7 @@ namespace RogueliteSurvivor.ComponentFactories
                 BodyFactory.CreateCircularBody(aura, 14, physicsWorld, body, .1f)
             );
 
-            
+
 
             return aura;
         }

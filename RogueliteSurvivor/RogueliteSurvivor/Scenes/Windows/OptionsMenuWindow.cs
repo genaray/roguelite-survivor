@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace RogueliteSurvivor.Scenes.Windows
 {
-    public class InGameOptionsMenuWindow : Window
+    public class OptionsMenuWindow : Window
     {
         int selectedButton = 0;
         List<ISelectableComponent> buttons;
@@ -20,7 +20,7 @@ namespace RogueliteSurvivor.Scenes.Windows
         SoundEffect confirm;
         SettingsContainer settingsContainer;
 
-        public static InGameOptionsMenuWindow InGameOptionsMenuWindowFactory(
+        public static OptionsMenuWindow OptionsMenuWindowFactory(
             GraphicsDeviceManager graphics,
             Dictionary<string, Texture2D> textures,
             Vector2 position,
@@ -29,7 +29,11 @@ namespace RogueliteSurvivor.Scenes.Windows
             Dictionary<string, SpriteFont> fonts,
             SettingsContainer settingsContainer)
         {
-            var components = new Dictionary<string, IFormComponent>();
+            var components = new Dictionary<string, IFormComponent>()
+            {
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Options", new Vector2(graphics.GetWidthOffset(2) - 62, graphics.GetHeightOffset(2) - 144), Color.White) }
+            };
+
             for (int i = 0; i < 4; i++)
             {
                 string componentBaseName = string.Empty;
@@ -100,17 +104,17 @@ namespace RogueliteSurvivor.Scenes.Windows
                 new Button(
                     "btnBack",
                     textures["MainMenuButtons"],
-                    new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) + 64),
-                    new Rectangle(0, 0, 128, 32),
-                    new Rectangle(128, 0, 128, 32),
+                    new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) + 144),
+                    new Rectangle(0, 192, 128, 32),
+                    new Rectangle(128, 192, 128, 32),
                     new Vector2(64, 16)
                 )
             );
 
-            return new InGameOptionsMenuWindow(graphics, textures["InGameOptionsWindow"], position, components, hover, confirm, fonts, settingsContainer);
+            return new OptionsMenuWindow(graphics, null, position, components, hover, confirm, fonts, settingsContainer);
         }
 
-        private InGameOptionsMenuWindow
+        private OptionsMenuWindow
         (
             GraphicsDeviceManager graphics,
             Texture2D background,
@@ -212,32 +216,32 @@ namespace RogueliteSurvivor.Scenes.Windows
                     {
                         case 0:
                             settingsContainer.MasterVolume = MathF.Max(0f, settingsContainer.MasterVolume - 0.05f);
-                            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.GameMusicVolume;
+                            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
                             SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
                             ((Label)Components["lblMasterVolume"]).Text = string.Concat("Master Volume: ", settingsContainer.MasterVolume.ToString("P0"));
                             break;
                         case 1:
                             settingsContainer.MasterVolume = MathF.Min(1f, settingsContainer.MasterVolume + 0.05f);
-                            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.GameMusicVolume;
+                            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
                             SoundEffect.MasterVolume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
                             ((Label)Components["lblMasterVolume"]).Text = string.Concat("Master Volume: ", settingsContainer.MasterVolume.ToString("P0"));
                             break;
                         case 2:
                             settingsContainer.MenuMusicVolume = MathF.Max(0f, settingsContainer.MenuMusicVolume - 0.05f);
+                            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
                             ((Label)Components["lblMenuMusicVolume"]).Text = string.Concat("Menu Music Volume: ", settingsContainer.MenuMusicVolume.ToString("P0"));
                             break;
                         case 3:
                             settingsContainer.MenuMusicVolume = MathF.Min(1f, settingsContainer.MenuMusicVolume + 0.05f);
+                            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.MenuMusicVolume;
                             ((Label)Components["lblMenuMusicVolume"]).Text = string.Concat("Menu Music Volume: ", settingsContainer.MenuMusicVolume.ToString("P0"));
                             break;
                         case 4:
                             settingsContainer.GameMusicVolume = MathF.Max(0f, settingsContainer.GameMusicVolume - 0.05f);
-                            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.GameMusicVolume;
                             ((Label)Components["lblGameMusicVolume"]).Text = string.Concat("Game Music Volume: ", settingsContainer.GameMusicVolume.ToString("P0"));
                             break;
                         case 5:
                             settingsContainer.GameMusicVolume = MathF.Min(1f, settingsContainer.GameMusicVolume + 0.05f);
-                            MediaPlayer.Volume = settingsContainer.MasterVolume * settingsContainer.GameMusicVolume;
                             ((Label)Components["lblGameMusicVolume"]).Text = string.Concat("Game Music Volume: ", settingsContainer.GameMusicVolume.ToString("P0"));
                             break;
                         case 6:

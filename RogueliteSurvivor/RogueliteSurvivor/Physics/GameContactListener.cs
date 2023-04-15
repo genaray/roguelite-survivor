@@ -38,7 +38,7 @@ namespace RogueliteSurvivor.Physics
                 Entity a = (Entity)contact.GetFixtureA().Body.UserData;
                 Entity b = (Entity)contact.GetFixtureB().Body.UserData;
 
-                
+
                 if ((a.Has<Player>() && (b.Has<Enemy>() || b.Has<EnemyProjectile>())) || (b.Has<Player>() && (a.Has<Enemy>() || a.Has<EnemyProjectile>())))
                 {
                     damagePlayer(a, b);
@@ -96,7 +96,7 @@ namespace RogueliteSurvivor.Physics
                         setEntityDead(b, b.Get<EntityStatus>());
                     }
                 }
-                
+
             }
         }
 
@@ -112,11 +112,11 @@ namespace RogueliteSurvivor.Physics
             }
         }
 
-        
+
         private void updateProjectile(Entity entity, EntityStatus entityStatus)
         {
             var pierce = entity.Get<Pierce>();
-            if(pierce.Num > 0)
+            if (pierce.Num > 0)
             {
                 pierce.Num--;
                 entity.Set(pierce);

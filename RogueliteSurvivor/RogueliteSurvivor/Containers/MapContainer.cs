@@ -42,11 +42,11 @@ namespace RogueliteSurvivor.Containers
             };
         }
 
-        private static string[] getTilesetImages(JToken map) 
+        private static string[] getTilesetImages(JToken map)
         {
             List<string> tilesetImages = new List<string>();
 
-            foreach(var tilesetImage in map["tilesetImages"])
+            foreach (var tilesetImage in map["tilesetImages"])
             {
                 tilesetImages.Add((string)tilesetImage);
             }
@@ -66,7 +66,7 @@ namespace RogueliteSurvivor.Containers
         {
             List<SpawnableAreaContainer> spawnableAreaContainers = new List<SpawnableAreaContainer>();
 
-            foreach(var spawnableArea in spawnables)
+            foreach (var spawnableArea in spawnables)
             {
                 spawnableAreaContainers.Add(
                     new SpawnableAreaContainer()
@@ -93,7 +93,7 @@ namespace RogueliteSurvivor.Containers
             var mapUnlockContainer = new MapUnlockRequirementContainer();
 
             mapUnlockContainer.MapUnlockType = mapUnlock["mapUnlockType"].ToObject<MapUnlockType>();
-            if(mapUnlockContainer.MapUnlockType != MapUnlockType.None)
+            if (mapUnlockContainer.MapUnlockType != MapUnlockType.None)
             {
                 mapUnlockContainer.RequirementText = (string)mapUnlock["requirementText"];
                 mapUnlockContainer.RequirementAmount = (float)mapUnlock["requirementAmount"];

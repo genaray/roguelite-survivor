@@ -1,5 +1,4 @@
 ﻿using Arch.Core;
-using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
 using RogueliteSurvivor.Components;
 using System;

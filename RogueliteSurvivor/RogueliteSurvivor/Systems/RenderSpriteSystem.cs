@@ -34,7 +34,7 @@ namespace RogueliteSurvivor.Systems
             Vector2 playerPosition = player.Get<Position>().XY;
             Vector2 offset = new Vector2(GetWidthOffset(graphics, scaleFactor, 2), GetHeightOffset(graphics, scaleFactor, 2));
 
-            if(layer == 3)
+            if (layer == 3)
             {
                 world.Query(in auraQuery, (ref EntityStatus entityStatus, ref Position pos, ref Animation anim, ref SpriteSheet sprite) =>
                 {

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using RogueliteSurvivor.Constants;
 using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Containers
@@ -8,13 +7,13 @@ namespace RogueliteSurvivor.Containers
     {
         public CreditsContainer() { }
         public List<OutsideResourceCreditContainer> OutsideResources { get; set; }
-        
+
         public static CreditsContainer ToCreditsContainer(JToken credits)
         {
             var creditsContainer = new CreditsContainer();
             creditsContainer.OutsideResources = new List<OutsideResourceCreditContainer>();
 
-            foreach(var outsideResource in credits["outsideResources"])
+            foreach (var outsideResource in credits["outsideResources"])
             {
                 creditsContainer.OutsideResources.Add(OutsideResourceCreditContainer.ToOutsideResourceCreditContainer(outsideResource));
             }
@@ -38,7 +37,7 @@ namespace RogueliteSurvivor.Containers
                 Packages = new List<string>()
             };
 
-            foreach(var package in outsideResource["packages"])
+            foreach (var package in outsideResource["packages"])
             {
                 outsideResourceContainer.Packages.Add((string)package);
             }

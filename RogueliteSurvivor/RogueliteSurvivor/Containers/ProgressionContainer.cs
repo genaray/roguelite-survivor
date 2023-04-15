@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Containers
 {
@@ -67,7 +63,7 @@ namespace RogueliteSurvivor.Containers
     {
         public string Name { get; set; }
         public float BestTime { get; set; }
-    
+
         public static LevelProgressionContainer ToLevelProgressionContainer(JToken level)
         {
             var levelProgression = new LevelProgressionContainer()

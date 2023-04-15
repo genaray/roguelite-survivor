@@ -82,7 +82,7 @@ namespace RogueliteSurvivor.Systems
             {
                 stationary.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
 
-                if(stationary.TimeLeft < 0)
+                if (stationary.TimeLeft < 0)
                 {
                     entityStatus.State = Constants.State.Dead;
                 }

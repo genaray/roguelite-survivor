@@ -1,11 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
@@ -17,13 +12,12 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
         Rectangle selectedSource;
         Vector2 center;
 
-        bool selected = false;
         bool mouseOver = false;
-        bool visible = true;
         Rectangle buttonArea;
 
-        public Button(Texture2D texture, Vector2 position, Rectangle nonSelectedSource, Rectangle selectedSource, Vector2 center)
+        public Button(string name, Texture2D texture, Vector2 position, Rectangle nonSelectedSource, Rectangle selectedSource, Vector2 center)
         {
+            Name = name;
             this.texture = texture;
             this.position = position;
             this.nonSelectedSource = nonSelectedSource;
@@ -33,14 +27,9 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
             buttonArea = new Rectangle(((position - center) * Game1.ScaleFactor).ToPoint(), new Point((int)(selectedSource.Width * Game1.ScaleFactor), (int)(selectedSource.Height * Game1.ScaleFactor)));
         }
 
-        public bool Selected()
-        {
-            return selected;
-        }
-        public void Selected(bool selected)
-        {
-            this.selected = selected;
-        }
+        public string Name { get; set; }
+        public bool Selected { get; set; } = false;
+        public bool Visible { get; set; } = true;
 
         public bool MouseOver()
         {
@@ -51,20 +40,11 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
             mouseOver = buttonArea.Contains(mState.Position);
         }
 
-        public bool Visible()
-        {
-            return visible;
-        }
-        public void Visible(bool visible)
-        {
-            this.visible = visible;
-        }
-
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (Visible())
+            if (Visible)
             {
-                if (Selected())
+                if (Selected)
                 {
                     spriteBatch.Draw(
                         texture,

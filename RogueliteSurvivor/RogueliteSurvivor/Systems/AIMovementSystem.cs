@@ -2,7 +2,6 @@
 using Arch.Core.Extensions;
 using Microsoft.Xna.Framework;
 using RogueliteSurvivor.Components;
-using System;
 
 namespace RogueliteSurvivor.Systems
 {
@@ -38,7 +37,7 @@ namespace RogueliteSurvivor.Systems
             world.Query(in query, (in Entity entity, ref EntityStatus status, ref Position pos, ref Velocity vel, ref Speed sp, ref Target target) =>
             {
                 target.TargetPosition = entity.Has<Enemy>() ? findTarget(playerQuery, pos.XY, pos.XY) : findTarget(enemyQuery, entity.Get<Owner>().EntityReference.Entity.Get<Position>().XY, entity.Get<Owner>().EntityReference.Entity.Get<Position>().XY);
-                if ( (((entity.Id % maxModulus) - modulus) == 0 || entity.Has<MagicBeam>()) 
+                if ((((entity.Id % maxModulus) - modulus) == 0 || entity.Has<MagicBeam>())
                     && status.State == Constants.State.Alive)
                 {
                     Vector2 destination = map.GetNextPathStep(pos.XY, target.TargetPosition, entity.Has<CanFly>() ? MovementType.Air : MovementType.Ground);
@@ -63,7 +62,7 @@ namespace RogueliteSurvivor.Systems
                 }
             });
 
-            if(targetPos.X == 9999)
+            if (targetPos.X == 9999)
             {
                 targetPos = defaultPosition;
             }

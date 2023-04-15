@@ -8,7 +8,7 @@ try
         game.Run();
     }
 }
-catch(Exception ex)
+catch (Exception ex)
 {
     if (!Directory.Exists(Path.Combine("Logs")))
     {

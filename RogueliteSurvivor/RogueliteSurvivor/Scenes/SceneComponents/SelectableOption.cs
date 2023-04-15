@@ -1,12 +1,6 @@
-﻿using Box2D.NetStandard.Dynamics.Fixtures;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
@@ -20,13 +14,12 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
         Vector2 itemCenter;
         Vector2 outlineCenter;
 
-        bool selected = false;
         bool mouseOver = false;
-        bool visible = true;
         Rectangle buttonArea;
 
-        public SelectableOption(Texture2D itemTexture, Texture2D outlineTexture, Vector2 position, Rectangle itemSource, Rectangle outlineSource, Vector2 itemCenter, Vector2 outlineCenter)
+        public SelectableOption(string name, Texture2D itemTexture, Texture2D outlineTexture, Vector2 position, Rectangle itemSource, Rectangle outlineSource, Vector2 itemCenter, Vector2 outlineCenter)
         {
+            Name = name;
             this.itemTexture = itemTexture;
             this.outlineTexture = outlineTexture;
             this.position = position;
@@ -38,14 +31,9 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
             buttonArea = new Rectangle(((position - outlineCenter) * Game1.ScaleFactor).ToPoint(), new Point((int)(outlineSource.Width * Game1.ScaleFactor), (int)(outlineSource.Height * Game1.ScaleFactor)));
         }
 
-        public bool Selected()
-        {
-            return selected;
-        }
-        public void Selected(bool selected)
-        {
-            this.selected = selected;
-        }
+        public string Name { get; set; }
+        public bool Selected { get; set; } = false;
+        public bool Visible { get; set; } = true;
 
         public bool MouseOver()
         {
@@ -56,18 +44,10 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
             mouseOver = buttonArea.Contains(mState.Position);
         }
 
-        public bool Visible()
-        {
-            return visible;
-        }
-        public void Visible(bool visible)
-        {
-            this.visible = visible;
-        }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (Visible())
+            if (Visible)
             {
                 spriteBatch.Draw(
                     itemTexture,
@@ -81,7 +61,7 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
                     0f
                 );
 
-                if (Selected())
+                if (Selected)
                 {
                     spriteBatch.Draw(
                         outlineTexture,

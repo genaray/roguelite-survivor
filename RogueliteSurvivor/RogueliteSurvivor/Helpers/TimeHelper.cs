@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RogueliteSurvivor.Helpers
+﻿namespace RogueliteSurvivor.Helpers
 {
     public static class TimeHelper
     {
@@ -18,19 +11,19 @@ namespace RogueliteSurvivor.Helpers
             {
                 time -= 60;
                 minutes++;
-                if(minutes == 60)
+                if (minutes == 60)
                 {
                     hours++;
                     minutes = 0;
                 }
-                if(hours == 24)
+                if (hours == 24)
                 {
                     days++;
                     hours = 0;
                 }
             }
 
-            if(days > 0)
+            if (days > 0)
             {
                 retVal = string.Concat(days, ":", hours.ToTwoDigits(), ":", minutes.ToTwoDigits(), ":", ((int)time).ToTwoDigits());
             }
@@ -46,7 +39,7 @@ namespace RogueliteSurvivor.Helpers
             {
                 retVal = string.Concat(":", ((int)time).ToTwoDigits());
             }
-            
+
             return retVal;
         }
 

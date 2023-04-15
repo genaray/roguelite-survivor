@@ -1,11 +1,8 @@
-﻿using Arch.Core;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json.Linq;
 using RogueliteSurvivor.Containers;
-using RogueliteSurvivor.Physics;
 using RogueliteSurvivor.Scenes;
 using RogueliteSurvivor.Utils;
 using System.Collections.Generic;
@@ -128,12 +125,12 @@ namespace RogueliteSurvivor
 
         private void loadProgression()
         {
-            if(!File.Exists(Path.Combine("Saves", "savegame.json")))
+            if (!File.Exists(Path.Combine("Saves", "savegame.json")))
             {
                 progressionContainer = new ProgressionContainer();
                 progressionContainer.LevelProgressions = new List<LevelProgressionContainer>();
-                
-                foreach(var map in mapContainers)
+
+                foreach (var map in mapContainers)
                 {
                     progressionContainer.LevelProgressions.Add(new LevelProgressionContainer()
                     {
@@ -149,9 +146,9 @@ namespace RogueliteSurvivor
                 JObject progression = JObject.Parse(File.ReadAllText(Path.Combine("Saves", "savegame.json")));
                 progressionContainer = ProgressionContainer.ToProgressionContainer(progression);
 
-                foreach(var map in mapContainers)
+                foreach (var map in mapContainers)
                 {
-                    if(!progressionContainer.LevelProgressions.Exists(a => a.Name == map.Key))
+                    if (!progressionContainer.LevelProgressions.Exists(a => a.Name == map.Key))
                     {
                         progressionContainer.LevelProgressions.Add(new LevelProgressionContainer()
                         {

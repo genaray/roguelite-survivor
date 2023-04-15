@@ -1,6 +1,5 @@
 ﻿using Arch.Core;
 using Arch.Core.Extensions;
-using Box2D.NetStandard.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -8,8 +7,6 @@ using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Helpers;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Reflection;
 
 namespace RogueliteSurvivor.Systems
 {
@@ -48,7 +45,7 @@ namespace RogueliteSurvivor.Systems
                         player = entity;
                     });
 
-                    if(player.HasValue)
+                    if (player.HasValue)
                     {
                         if (statPage == StatPage.Spell2 && !player.Value.Has<Spell2>())
                         {
@@ -59,7 +56,7 @@ namespace RogueliteSurvivor.Systems
                             incrementStatPageInt();
                         }
                     }
-                    
+
                     stateChangeTime = 0f;
                 }
             }
@@ -265,14 +262,14 @@ namespace RogueliteSurvivor.Systems
         private void renderPowerupTimers(SpriteBatch spriteBatch, Dictionary<string, Texture2D> textures, Entity player)
         {
             Vector2 position = new Vector2(9, 306);
-            
+
             if (player.TryGet(out Invincibility invincibility))
             {
-                renderPowerupTimer(spriteBatch, 
-                    textures, 
+                renderPowerupTimer(spriteBatch,
+                    textures,
                     PickupHelper.GetPickupSourceRectangle(PickupType.Invincibility),
                     position,
-                    invincibility.TimeRemaining, 
+                    invincibility.TimeRemaining,
                     invincibility.MaxTime
                 );
 
@@ -405,7 +402,7 @@ namespace RogueliteSurvivor.Systems
                 Color.White
             );
         }
-    
+
         private void renderSpellStats(SpriteBatch spriteBatch, Entity player, ISpell spell, Pierce pierce, AreaOfEffect areaOfEffect)
         {
             spriteBatch.DrawString(
@@ -429,7 +426,7 @@ namespace RogueliteSurvivor.Systems
                 Color.White
             );
 
-            if(spell.Type == SpellType.Projectile)
+            if (spell.Type == SpellType.Projectile)
             {
                 spriteBatch.DrawString(
                     fonts["FontSmall"],
@@ -438,7 +435,7 @@ namespace RogueliteSurvivor.Systems
                     Color.White
                 );
             }
-            else if(spell.Type == SpellType.SingleTarget || spell.Type == SpellType.Aura)
+            else if (spell.Type == SpellType.SingleTarget || spell.Type == SpellType.Aura)
             {
                 spriteBatch.DrawString(
                     fonts["FontSmall"],
@@ -448,7 +445,7 @@ namespace RogueliteSurvivor.Systems
                 );
             }
         }
-    
+
         private Rectangle getSpellHudSourceRectangle(Spells spell)
         {
             Rectangle rectangle = new Rectangle();

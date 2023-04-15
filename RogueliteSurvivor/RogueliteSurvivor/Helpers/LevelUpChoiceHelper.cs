@@ -9,10 +9,7 @@ using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Helpers
 {
@@ -22,7 +19,7 @@ namespace RogueliteSurvivor.Helpers
         {
             int xOffset = isSelected ? 64 : 0;
 
-            switch(levelUpType)
+            switch (levelUpType)
             {
                 case LevelUpType.Damage:
                     return new Rectangle(128 + xOffset, 128, 64, 64);
@@ -351,7 +348,7 @@ namespace RogueliteSurvivor.Helpers
                 {
                     SpellFactory.UpdateAura(player, spell1, pickupAmount);
                 }
-                else if(spell1.Type == SpellType.MagicBeam)
+                else if (spell1.Type == SpellType.MagicBeam)
                 {
                     SpellFactory.UpdateMagicBeam(player, spell1, pickupAmount);
                 }

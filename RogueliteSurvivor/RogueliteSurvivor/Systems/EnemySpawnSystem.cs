@@ -7,13 +7,11 @@ using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
 using RogueliteSurvivor.Containers;
-using RogueliteSurvivor.Extensions;
 using RogueliteSurvivor.Helpers;
 using RogueliteSurvivor.Physics;
 using RogueliteSurvivor.Utils;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 
 namespace RogueliteSurvivor.Systems
@@ -71,7 +69,7 @@ namespace RogueliteSurvivor.Systems
 
             world.Query(in mapQuery, (ref MapInfo mapInfo) =>
             {
-                if(map == null)
+                if (map == null)
                 {
                     map = mapInfo;
                 }
@@ -116,7 +114,7 @@ namespace RogueliteSurvivor.Systems
             {
                 x = random.Next(int.Max(0, (int)(playerPosition.X - (2 * offset.X))), int.Min(map.Map.Width * map.Map.TileWidth, (int)(playerPosition.X + (2 * offset.X))));
                 y = random.Next(int.Max(0, (int)(playerPosition.Y - (2 * offset.Y))), int.Min(map.Map.Height * map.Map.TileHeight, (int)(playerPosition.Y + (2 * offset.Y))));
-            } while (((x > (playerPosition.X - offset.X) && x < (playerPosition.X + offset.X)) 
+            } while (((x > (playerPosition.X - offset.X) && x < (playerPosition.X + offset.X))
                         && (y > (playerPosition.Y - offset.Y) && y < (playerPosition.Y + offset.Y)))
                         || !map.IsTilePassable(x, y));
 
@@ -130,12 +128,12 @@ namespace RogueliteSurvivor.Systems
 
             var enemyWave = mapContainer.EnemyWaves.Where(a => a.Start == time).FirstOrDefault();
 
-            if(enemyWave != null)
+            if (enemyWave != null)
             {
                 if (enemyWave.Repeat)
                 {
                     enemyTable = new RandomTable<string>();
-                    foreach(var enemyWeight in enemyWave.Enemies)
+                    foreach (var enemyWeight in enemyWave.Enemies)
                     {
                         enemyTable.Add(enemyWeight.Type, enemyWeight.Weight);
                     }
@@ -148,7 +146,7 @@ namespace RogueliteSurvivor.Systems
                     {
                         tempTable.Add(enemyWeight.Type, enemyWeight.Weight);
                     }
-                    for(int i = 0; i < enemyWave.MaxEnemies; i++)
+                    for (int i = 0; i < enemyWave.MaxEnemies; i++)
                     {
                         createEnemyFromContainer(tempTable.Roll(random), player, offset, map);
                     }
@@ -202,7 +200,7 @@ namespace RogueliteSurvivor.Systems
                             new Experience(container.Experience)
                         );
 
-                if(container.Spell2 != Spells.None)
+                if (container.Spell2 != Spells.None)
                 {
                     entity.Add(SpellFactory.CreateSpell<Spell2>(spellContainers[container.Spell2]));
                 }
@@ -226,7 +224,7 @@ namespace RogueliteSurvivor.Systems
 
             entity.Set(
                 new PickupSprite() { Type = pickup.Type, PickupAmount = pickup.PickupAmount },
-                new Position() { XY = new Vector2(position.XY.X, position.XY.Y) }, 
+                new Position() { XY = new Vector2(position.XY.X, position.XY.Y) },
                 new EntityStatus()
             );
         }

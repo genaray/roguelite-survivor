@@ -1,20 +1,8 @@
 ﻿using Arch.Core;
 using Arch.Core.Extensions;
-using Box2D.NetStandard.Dynamics.Bodies;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using RogueliteSurvivor.ComponentFactories;
 using RogueliteSurvivor.Components;
 using RogueliteSurvivor.Constants;
-using RogueliteSurvivor.Containers;
-using RogueliteSurvivor.Physics;
-using RogueliteSurvivor.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RogueliteSurvivor.Helpers
 {
@@ -100,7 +88,7 @@ namespace RogueliteSurvivor.Helpers
                     }
                     break;
                 case PickupType.Invincibility:
-                    if(player.Entity.TryGet(out Invincibility invincibility))
+                    if (player.Entity.TryGet(out Invincibility invincibility))
                     {
                         invincibility.TimeRemaining = pickupAmount;
                         invincibility.MaxTime = pickupAmount;
@@ -157,6 +145,6 @@ namespace RogueliteSurvivor.Helpers
             return destroy;
         }
 
-        
+
     }
 }
