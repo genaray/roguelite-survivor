@@ -139,6 +139,10 @@ namespace RogueliteSurvivor
                     });
                 }
 
+                progressionContainer.EnemyKillStats = new List<EnemyKillStatsContainer>();
+                progressionContainer.PlayerUpgrades = new PlayerUpgradesContainer();
+                progressionContainer.NumBooks = 0;
+
                 progressionContainer.Save();
             }
             else

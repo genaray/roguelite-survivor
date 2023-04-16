@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
-    public abstract class Window : IWindow, IFormComponent, IDrawableComponent
+    public abstract class Window : IWindow, IFormComponent
     {
         protected GraphicsDeviceManager graphics;
         Texture2D background;
@@ -18,6 +18,9 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
         public Dictionary<string, IFormComponent> Components { get; set; }
         public string Name { get; set; }
         public bool Visible { get; set; }
+
+        protected List<ISelectableComponent> buttons;
+        protected int selectedButton = 0;
 
 
         public Window(GraphicsDeviceManager graphics, Texture2D background, Vector2 position, Dictionary<string, IFormComponent> components)
@@ -32,10 +35,20 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
                 source = new Rectangle(0, 0, background.Width, background.Height);
                 center = new Vector2(background.Width / 2, background.Height / 2);
             }
+
+            buttons = new List<ISelectableComponent>();
+            foreach (var component in components)
+            {
+                if (component.Value is ISelectableComponent)
+                {
+                    buttons.Add((ISelectableComponent)component.Value);
+                }
+            }
         }
 
         public virtual void SetActive()
         {
+            selectedButton = 0;
             resetReadyForInput();
         }
 

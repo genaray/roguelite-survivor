@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
-    public class Button : IFormComponent, IDrawableComponent, ISelectableComponent
+    public class Button : IFormComponent, ISelectableComponent
     {
         Texture2D texture;
         Vector2 position;
@@ -38,6 +38,12 @@ namespace RogueliteSurvivor.Scenes.SceneComponents
         public void MouseOver(MouseState mState)
         {
             mouseOver = buttonArea.Contains(mState.Position);
+        }
+
+        public void ResetButtonTexture(Rectangle nonSelectedSource, Rectangle selectedSource)
+        {
+            this.nonSelectedSource = nonSelectedSource;
+            this.selectedSource = selectedSource;
         }
 
         public void Draw(SpriteBatch spriteBatch)

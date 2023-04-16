@@ -59,7 +59,6 @@ namespace RogueliteSurvivor.Scenes
 
         private Random random;
         private List<LevelUpType> levelUpChoices = new List<LevelUpType>();
-        private List<Button> levelUpButtons;
         private LevelUpType selectedLevelUpChoice;
 
         private Dictionary<string, Window> subScenes;
@@ -274,6 +273,18 @@ namespace RogueliteSurvivor.Scenes
                         fonts,
                         settingsContainer
                     )
+                },
+                {
+                    "LevelUpWindow",
+                    LevelUpWindow.LevelUpWindowFactory(
+                        _graphics,
+                        textures["MainBackground"],
+                        new Vector2(_graphics.GetWidthOffset(2), _graphics.GetHeightOffset(2)),
+                        soundEffects["Hover"],
+                        soundEffects["Confirm"],
+                        fonts,
+                        textures
+                        )
                 }
             };
         }
@@ -441,99 +452,55 @@ namespace RogueliteSurvivor.Scenes
 
             if (gameState == GameState.LevelUp)
             {
-                if (stateChangeTime > InputConstants.ResponseTime)
+                string action = subScenes["LevelUpWindow"].Update(gameTime);
+
+                if (!string.IsNullOrEmpty(action))
                 {
-                    var mState = Mouse.GetState();
-                    bool clicked = false;
-
-                    if (mState.LeftButton == ButtonState.Pressed && levelUpButtons.Any(a => a.MouseOver()))
-                    {
-                        clicked = true;
-                        selectedLevelUpChoice = levelUpChoices[levelUpButtons.IndexOf(levelUpButtons.First(a => a.MouseOver()))];
-                    }
-
-                    if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
-                    {
-                        gameState = GameState.Running;
-                        LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers, soundEffects);
-                        soundEffects["Confirm"].Play();
-                        stateChangeTime = 0f;
-                    }
-                    else if (kState.IsKeyDown(Keys.Left) || gState.DPad.Left == ButtonState.Pressed || gState.ThumbSticks.Left.X < -0.5f)
-                    {
-                        if (selectedLevelUpChoice != levelUpChoices[0])
-                        {
-                            int index = levelUpChoices.IndexOf(levelUpChoices.Where(a => a == selectedLevelUpChoice).First()) - 1;
-                            selectedLevelUpChoice = levelUpChoices[index];
-                            soundEffects["Hover"].Play();
-                            stateChangeTime = 0f;
-                        }
-
-                    }
-                    else if (kState.IsKeyDown(Keys.Right) || gState.DPad.Right == ButtonState.Pressed || gState.ThumbSticks.Left.X > 0.5f)
-                    {
-                        if (selectedLevelUpChoice != levelUpChoices.Last())
-                        {
-                            int index = levelUpChoices.IndexOf(levelUpChoices.Where(a => a == selectedLevelUpChoice).First()) + 1;
-                            selectedLevelUpChoice = levelUpChoices[index];
-                            soundEffects["Hover"].Play();
-                            stateChangeTime = 0f;
-                        }
-                    }
-
-                    for (int i = 1; i <= levelUpButtons.Count; i++)
-                    {
-                        levelUpButtons[i - 1].Selected = selectedLevelUpChoice == levelUpChoices[i - 1];
-                        levelUpButtons[i - 1].MouseOver(mState);
-                    }
+                    selectedLevelUpChoice = levelUpChoices.Where(a => a.ToString() == action).First();
+                    gameState = GameState.Running;
+                    LevelUpChoiceHelper.ProcessLevelUp(world, textures, physicsWorld, ref player, selectedLevelUpChoice, spellContainers, soundEffects);
                 }
             }
             else if (gameState == GameState.InGameMenu)
             {
-                if (stateChangeTime > InputConstants.ResponseTime)
+                switch (subScenes["InGameMenuWindow"].Update(gameTime))
                 {
-                    switch (subScenes["InGameMenuWindow"].Update(gameTime))
-                    {
-                        case "continue":
-                            gameState = GameState.Running;
-                            stateChangeTime = 0f;
-                            world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
-                            {
-                                loopedSound.SoundEffect.Resume();
-                            });
-                            break;
-                        case "options":
-                            gameState = GameState.Options;
-                            stateChangeTime = 0f;
-                            break;
-                        case "restart":
-                            retVal = "loading";
-                            stateChangeTime = 0f;
-                            Loaded = false;
-                            break;
-                        case "game-over":
-                            stateChangeTime = 0f;
-                            Loaded = false;
-                            retVal = "game-over";
-                            break;
-                    }
+                    case "continue":
+                        gameState = GameState.Running;
+                        stateChangeTime = 0f;
+                        world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
+                        {
+                            loopedSound.SoundEffect.Resume();
+                        });
+                        break;
+                    case "options":
+                        gameState = GameState.Options;
+                        stateChangeTime = 0f;
+                        break;
+                    case "restart":
+                        retVal = "loading";
+                        stateChangeTime = 0f;
+                        Loaded = false;
+                        break;
+                    case "game-over":
+                        stateChangeTime = 0f;
+                        Loaded = false;
+                        retVal = "game-over";
+                        break;
                 }
             }
             else if (gameState == GameState.Options)
             {
-                if (stateChangeTime > InputConstants.ResponseTime)
+                switch (subScenes["InGameOptionsWindow"].Update(gameTime))
                 {
-                    switch (subScenes["InGameOptionsWindow"].Update(gameTime))
-                    {
-                        case "menu":
-                            gameState = GameState.InGameMenu;
-                            world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
-                            {
-                                loopedSound.SoundEffect.Volume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
-                            });
-                            stateChangeTime = 0f;
-                            break;
-                    }
+                    case "menu":
+                        gameState = GameState.InGameMenu;
+                        world.Query(in loopedSounds, (ref LoopSound loopedSound) =>
+                        {
+                            loopedSound.SoundEffect.Volume = settingsContainer.MasterVolume * settingsContainer.SoundEffectsVolume;
+                        });
+                        stateChangeTime = 0f;
+                        break;
                 }
             }
             else
@@ -613,8 +580,6 @@ namespace RogueliteSurvivor.Scenes
                                 .Add(LevelUpType.AreaOfEffect, 1);
                         }
 
-
-
                         levelUpChoices.Clear();
                         int max = Math.Min(4, pickupTable.NumberOfEntries);
                         for (int i = 0; i < max; i++)
@@ -627,25 +592,9 @@ namespace RogueliteSurvivor.Scenes
 
                             levelUpChoices.Add(choice);
                         }
-                        selectedLevelUpChoice = levelUpChoices[0];
-                        levelUpButtons = new List<Button>();
 
-                        int counter = -136;
-                        foreach (var levelUpChoice in levelUpChoices)
-                        {
-                            levelUpButtons.Add(
-                                new Button(
-                                    string.Concat("btn", levelUpChoice.ToString()),
-                                    textures["LevelUpChoices"],
-                                    new Vector2(_graphics.GetWidthOffset(2) + counter, _graphics.GetHeightOffset(2) + 32),
-                                    LevelUpChoiceHelper.GetLevelUpChoiceButton(levelUpChoice, false),
-                                    LevelUpChoiceHelper.GetLevelUpChoiceButton(levelUpChoice, true),
-                                    new Vector2(32, 32)
-                                )
-                            );
-
-                            counter += 80;
-                        }
+                        ((LevelUpWindow)subScenes["LevelUpWindow"]).SetLevelUpOptions(levelUpChoices);
+                        subScenes["LevelUpWindow"].SetActive();
                     }
                 }
             }
@@ -683,36 +632,7 @@ namespace RogueliteSurvivor.Scenes
             {
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend, transformMatrix: transformMatrix);
 
-                _spriteBatch.Draw(
-                    textures["MainBackground"],
-                    Vector2.Zero,
-                    new Rectangle(0, 0, 640, 360),
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    1f,
-                    SpriteEffects.None,
-                    0f
-                );
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    "Level Up! Select an upgrade:",
-                    new Vector2(_graphics.GetWidthOffset(2) - 116, _graphics.GetHeightOffset(2) - 64),
-                    Color.White
-                );
-
-                foreach (var button in levelUpButtons)
-                {
-                    button.Draw(_spriteBatch);
-                }
-
-                _spriteBatch.DrawString(
-                    fonts["Font"],
-                    LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(selectedLevelUpChoice),
-                    new Vector2(_graphics.GetWidthOffset(2) - LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(selectedLevelUpChoice).Length * 4.5f, _graphics.GetHeightOffset(2) + 96),
-                    Color.White
-                );
+                subScenes["LevelUpWindow"].Draw(_spriteBatch);
 
                 _spriteBatch.End();
             }

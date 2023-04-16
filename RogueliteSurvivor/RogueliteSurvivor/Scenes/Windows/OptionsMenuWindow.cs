@@ -14,8 +14,6 @@ namespace RogueliteSurvivor.Scenes.Windows
 {
     public class OptionsMenuWindow : Window
     {
-        int selectedButton = 0;
-        List<ISelectableComponent> buttons;
         SoundEffect hover;
         SoundEffect confirm;
         SettingsContainer settingsContainer;
@@ -127,29 +125,9 @@ namespace RogueliteSurvivor.Scenes.Windows
         )
             : base(graphics, background, position, components)
         {
-            buttons = new List<ISelectableComponent>();
-            foreach (var component in components)
-            {
-                if (component.Value is ISelectableComponent)
-                {
-                    buttons.Add((ISelectableComponent)component.Value);
-                }
-            }
-
             this.hover = hover;
             this.confirm = confirm;
             this.settingsContainer = settingsContainer;
-        }
-
-        public override void SetActive()
-        {
-            selectedButton = 0;
-            base.SetActive();
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
         }
 
         public override string Update(GameTime gameTime, params object[] values)

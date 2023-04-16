@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
-    public class SelectableOption : IFormComponent, IDrawableComponent, ISelectableComponent
+    public class SelectableOption : IFormComponent, ISelectableComponent
     {
         Texture2D itemTexture;
         Texture2D outlineTexture;

@@ -13,8 +13,6 @@ namespace RogueliteSurvivor.Scenes.Windows
 {
     public class PlayStatsWindow : Window
     {
-        int selectedButton = 0;
-        List<ISelectableComponent> buttons;
         List<Window> statPages;
         SoundEffect hover;
         SoundEffect confirm;
@@ -198,14 +196,9 @@ namespace RogueliteSurvivor.Scenes.Windows
         )
             : base(graphics, background, position, components)
         {
-            buttons = new List<ISelectableComponent>();
             statPages = new List<Window>();
             foreach (var component in components)
             {
-                if (component.Value is ISelectableComponent)
-                {
-                    buttons.Add((ISelectableComponent)component.Value);
-                }
                 if (component.Value is Window)
                 {
                     statPages.Add((Window)component.Value);
@@ -218,14 +211,8 @@ namespace RogueliteSurvivor.Scenes.Windows
 
         public override void SetActive()
         {
-            selectedButton = 0;
             statsPage = 0;
             base.SetActive();
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
         }
 
         public override string Update(GameTime gameTime, params object[] values)
