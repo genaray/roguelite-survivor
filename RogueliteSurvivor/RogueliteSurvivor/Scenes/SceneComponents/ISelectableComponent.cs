@@ -2,10 +2,8 @@
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
-    public interface ISelectableComponent
+    public interface ISelectableComponent : IClickableComponent
     {
         bool Selected { get; set; }
-        bool MouseOver();
-        void MouseOver(MouseState mState);
     }
 }

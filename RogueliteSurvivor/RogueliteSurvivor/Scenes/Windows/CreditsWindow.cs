@@ -34,13 +34,14 @@ namespace RogueliteSurvivor.Scenes.Windows
             foreach (var outsideResource in creditsContainer.OutsideResources)
             {
                 components.Add(
-                    string.Concat("lbl", outsideResource.Author),
-                    new Label(
-                        string.Concat("lbl", outsideResource.Author),
+                    string.Concat("lnk", outsideResource.Author),
+                    new LinkLabel(
+                        string.Concat("lnk", outsideResource.Author),
                         fonts["Font"],
                         outsideResource.Author,
                         new Vector2(graphics.GetWidthOffset(2) - 300 + counterX, graphics.GetHeightOffset(2) + counterY),
-                        Color.White
+                        Color.Blue,
+                        outsideResource.Link
                     )
                 );
 
@@ -142,11 +143,26 @@ namespace RogueliteSurvivor.Scenes.Windows
             {
                 bool clicked = false;
 
-                if (mState.LeftButton == ButtonState.Pressed && buttons.Any(a => a.MouseOver()))
+                if (mState.LeftButton == ButtonState.Pressed)
                 {
-                    clicked = true;
-                    selectedButton = buttons.IndexOf(buttons.First(a => a.MouseOver()));
-                }
+                    if (buttons.Any(a => a.MouseOver()))
+                    {
+                        clicked = true;
+                        selectedButton = buttons.IndexOf(buttons.First(a => a.MouseOver()));
+                    }
+                    else
+                    {
+                        for(int i = 0; i < Components.Count; i++)
+                        {
+                            if (Components.Values.ToList()[i] is LinkLabel &&
+                                ((LinkLabel)Components.Values.ToList()[i]).MouseOver())
+                            {
+                                ((LinkLabel)Components.Values.ToList()[i]).GoToLink();
+                                resetReadyForInput();
+                            }
+                        }
+                    }
+            }
 
                 if (clicked || gState.Buttons.A == ButtonState.Pressed || kState.IsKeyDown(Keys.Enter))
                 {
@@ -160,6 +176,14 @@ namespace RogueliteSurvivor.Scenes.Windows
             {
                 buttons[i].Selected = i == selectedButton;
                 buttons[i].MouseOver(mState);
+            }
+
+            for (int i = 0; i < Components.Count; i++)
+            {
+                if (Components.Values.ToList()[i] is LinkLabel)
+                {
+                    ((LinkLabel)Components.Values.ToList()[i]).MouseOver(mState);
+                }
             }
 
             return string.Empty;

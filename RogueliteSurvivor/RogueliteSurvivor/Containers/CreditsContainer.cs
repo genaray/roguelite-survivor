@@ -27,6 +27,7 @@ namespace RogueliteSurvivor.Containers
         public OutsideResourceCreditContainer() { }
 
         public string Author { get; set; }
+        public string Link { get; set; }
         public List<string> Packages { get; set; }
 
         public static OutsideResourceCreditContainer ToOutsideResourceCreditContainer(JToken outsideResource)
@@ -34,6 +35,7 @@ namespace RogueliteSurvivor.Containers
             var outsideResourceContainer = new OutsideResourceCreditContainer()
             {
                 Author = (string)outsideResource["author"],
+                Link = (string)outsideResource["link"],
                 Packages = new List<string>()
             };
 

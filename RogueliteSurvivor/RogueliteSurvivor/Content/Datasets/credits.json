@@ -4,6 +4,7 @@
       "outsideResources": [
         {
           "author": "DeepDiveGameStudio",
+          "link": "https://deepdivegamestudio.itch.io/",
           "packages": [
             "Humanoid Asset Pack",
             "Undead Asset Pack"
@@ -11,6 +12,7 @@
         },
         {
           "author": "pimen",
+          "link": "https://pimen.itch.io/",
           "packages": [
             "Ice Spell Effect 01",
             "Thunder Spell Effect 02",
@@ -18,25 +20,22 @@
           ]
         },
         {
-          "author": "Anokolisa",
-          "packages": [
-            "Free - Pixel Art Asset Pack"
-          ]
-        },
-        {
           "author": "HumbleCrow",
+          "link": "https://humblecrow.itch.io/",
           "packages": [
             "Itty Bitty RPG Complete: 60 Characters asset pack"
           ]
         },
         {
           "author": "Kyrise",
+          "link": "https://kyrise.itch.io/",
           "packages": [
             "Kyrise's Free 16x16 RPG Icon Pack"
           ]
         },
         {
           "author": "XYEzawr",
+          "link": "https://xyezawr.itch.io/",
           "packages": [
             "Free Pixel Effects Pack #11 - Mini Blood Splash",
             "GIF Free Pixel Effects Pack #5 - Blood Effects"
@@ -44,12 +43,14 @@
         },
         {
           "author": "Pipoya",
+          "link": "https://pipoya.itch.io/",
           "packages": [
             "Free RPG Tileset 16x16"
           ]
         },
         {
           "author": "alkakrab",
+          "link": "https://alkakrab.itch.io/",
           "packages": [
             "Fantasy RPG Soundtrack Music",
             "Free 25 Fantasy RPG Game Tracks Vol. 2"
@@ -57,16 +58,19 @@
         },
         {
           "author": "Leohpaz",
+          "link": "https://leohpaz.itch.io/",
           "packages": [
             "RPG Essentials SFX - Free"
           ]
         },
         {
           "author": "FlakDeau",
+          "link": "https://flakdeau19.itch.io/",
           "packages": [ "Pixel Art Texture Pack" ]
         },
         {
           "author": "Dagurasu",
+          "link": "https://dagurasusketch.itch.io/",
           "packages": [ "Retro Sounds" ]
         }
       ]

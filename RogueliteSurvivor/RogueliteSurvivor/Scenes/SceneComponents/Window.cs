@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using RogueliteSurvivor.Constants;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {

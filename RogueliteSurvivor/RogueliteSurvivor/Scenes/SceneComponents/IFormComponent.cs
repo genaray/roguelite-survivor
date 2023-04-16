@@ -2,7 +2,7 @@
 
 namespace RogueliteSurvivor.Scenes.SceneComponents
 {
-    public interface IFormComponent
+    public interface IFormComponent : IComponent
     {
         string Name { get; set; }
         bool Visible { get; set; }
