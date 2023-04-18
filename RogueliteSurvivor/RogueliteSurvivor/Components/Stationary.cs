@@ -1,6 +1,6 @@
 ﻿namespace RogueliteSurvivor.Components
 {
-    public struct Stationary
+    public struct Stationary : IDuration
     {
         public float TimeLeft { get; set; }
         public float Cooldown { get; set; }

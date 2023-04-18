@@ -32,7 +32,7 @@ namespace RogueliteSurvivor.Scenes.Windows
         {
             var components = new Dictionary<string, IFormComponent>()
             {
-                { "lblTitle", new Label("lblTitle", fonts["Font"], "Character Selection", new Vector2(graphics.GetWidthOffset(2) - 62, graphics.GetHeightOffset(2) - 144), Color.White) }
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Character Selection", new Vector2(graphics.GetWidthOffset(2) - fonts["Font"].MeasureString("Character Selection").X / 2, graphics.GetHeightOffset(2) - 144), Color.White) }
             };
 
             int offsetX = 0, offsetY = 0;

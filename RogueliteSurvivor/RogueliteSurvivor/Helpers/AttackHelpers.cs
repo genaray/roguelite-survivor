@@ -14,11 +14,8 @@ namespace RogueliteSurvivor.Helpers
                 SpellEffects spellEffectToUse = spellEffects ?? damage.SpellEffect;
                 Health health = entity.Get<Health>();
                 bool hasPoison = entity.Has<Poison>();
-                health.Current -= (int)(damage.Amount * (hasPoison ? 1.2f : 1f));
-                if (owner.EntityReference.Entity.Has<DoubleDamage>())
-                {
-                    health.Current -= (int)(damage.Amount * (hasPoison ? 1.2f : 1f));
-                }
+                bool doubleDamage = owner.EntityReference.Entity.Has<DoubleDamage>();
+                health.Current -= (int)(damage.Amount * (hasPoison ? 1.2f : 1f)) * (doubleDamage ? 2 : 1);
                 if (health.Current < 1)
                 {
                     entityStatus.State = State.ReadyToDie;
@@ -45,18 +42,19 @@ namespace RogueliteSurvivor.Helpers
                     anim.Overlay = Microsoft.Xna.Framework.Color.Red;
 
                     entity.Set(health, anim);
-                    if (damage.SpellEffect != SpellEffects.None)
+                    if (spellEffectToUse != SpellEffects.None)
                     {
-                        switch (damage.SpellEffect)
+                        switch (spellEffectToUse)
                         {
                             case SpellEffects.Burn:
+                                var damageMultiplier = owner.EntityReference.Entity.Get<SpellDamage>();
                                 if (!entity.Has<Burn>())
                                 {
-                                    entity.Add(new Burn() { TimeLeft = 5f, TickRate = .5f, NextTick = .5f });
+                                    entity.Add(new Burn() { TimeLeft = 5f, TickRate = .5f, NextTick = .5f, DamagePerTick = damageMultiplier.CurrentSpellDamage * (doubleDamage ? 2 : 1) });
                                 }
                                 else
                                 {
-                                    entity.Set(new Burn() { TimeLeft = 5f, TickRate = .5f, NextTick = .5f });
+                                    entity.Set(new Burn() { TimeLeft = 5f, TickRate = .5f, NextTick = .5f, DamagePerTick = damageMultiplier.CurrentSpellDamage * (doubleDamage ? 2 : 1) });
                                 }
                                 break;
                             case SpellEffects.Slow:

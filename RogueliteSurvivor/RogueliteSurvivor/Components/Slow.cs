@@ -1,6 +1,6 @@
 ﻿namespace RogueliteSurvivor.Components
 {
-    public struct Slow
+    public struct Slow : IDuration
     {
         public float TimeLeft { get; set; }
     }

@@ -27,12 +27,11 @@ namespace RogueliteSurvivor.Systems
         {
             world.Query(in burnQuery, (in Entity entity, ref EntityStatus entityStatus, ref Burn burn, ref Health health, ref Animation anim) =>
             {
-                burn.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
                 burn.NextTick -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
 
                 if (burn.NextTick < 0)
                 {
-                    health.Current -= 1;
+                    health.Current -= (int)burn.DamagePerTick;
                     burn.NextTick += burn.TickRate;
                     anim.Overlay = Color.Red;
 
@@ -40,19 +39,17 @@ namespace RogueliteSurvivor.Systems
                     {
                         entityStatus.State = Constants.State.ReadyToDie;
                     }
+                }
 
-                    if (burn.TimeLeft < 0)
-                    {
-                        entity.Remove<Burn>();
-                    }
+                if (isDurationFinished(burn, gameTime))
+                {
+                    entity.Remove<Burn>();
                 }
             });
 
             world.Query(in slowQuery, (in Entity entity, ref Slow slow) =>
             {
-                slow.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
-
-                if (slow.TimeLeft < 0)
+                if (isDurationFinished(slow, gameTime))
                 {
                     entity.Remove<Slow>();
                 }
@@ -60,9 +57,7 @@ namespace RogueliteSurvivor.Systems
 
             world.Query(in shockQuery, (in Entity entity, ref Shock shock) =>
             {
-                shock.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
-
-                if (shock.TimeLeft < 0)
+                if (isDurationFinished(shock, gameTime))
                 {
                     entity.Remove<Shock>();
                 }
@@ -70,23 +65,26 @@ namespace RogueliteSurvivor.Systems
 
             world.Query(in poisonQuery, (in Entity entity, ref Poison poison) =>
             {
-                poison.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
-
-                if (poison.TimeLeft < 0)
+                if (isDurationFinished(poison, gameTime))
                 {
-                    entity.Remove<Shock>();
+                    entity.Remove<Poison>();
                 }
             });
 
             world.Query(in stationaryQuery, (ref Stationary stationary, ref EntityStatus entityStatus) =>
             {
-                stationary.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
-
-                if (stationary.TimeLeft < 0)
+                if (isDurationFinished(stationary, gameTime))
                 {
                     entityStatus.State = Constants.State.Dead;
                 }
             });
+        }
+
+        private bool isDurationFinished(IDuration duration, GameTime gameTime)
+        {
+            duration.TimeLeft -= (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+
+            return duration.TimeLeft < 0;
         }
     }
 }

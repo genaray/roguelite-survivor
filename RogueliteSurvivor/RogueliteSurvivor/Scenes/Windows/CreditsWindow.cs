@@ -26,7 +26,8 @@ namespace RogueliteSurvivor.Scenes.Windows
         {
             var components = new Dictionary<string, IFormComponent>()
             {
-                { "lblTitle", new Label("lblTitle", fonts["Font"], "Credits", new Vector2(graphics.GetWidthOffset(2) - 62, graphics.GetHeightOffset(2) - 144), Color.White) }
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Credits", new Vector2(graphics.GetWidthOffset(2) - fonts["Font"].MeasureString("Credits").X / 2, graphics.GetHeightOffset(2) - 144), Color.White) },
+                { "lblSubtitle", new Label("lblSubtitle", fonts["FontSmall"], "Clicking on an author's name will open their website", new Vector2(graphics.GetWidthOffset(2) - fonts["FontSmall"].MeasureString("Clicking on an author's name will open their website").X / 2, graphics.GetHeightOffset(2) - 124), Color.White) }
             };
 
 
@@ -94,7 +95,7 @@ namespace RogueliteSurvivor.Scenes.Windows
                     counterY += 12;
                 }
 
-                counterY += 18;
+                counterY += 6;
 
                 if (counterY > 86)
                 {

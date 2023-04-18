@@ -26,7 +26,7 @@ namespace RogueliteSurvivor.Scenes.Windows
         {
             var components = new Dictionary<string, IFormComponent>()
             {
-                { "lblTitle", new Label("lblTitle", fonts["Font"], "Roguelite Survivor", new Vector2(graphics.GetWidthOffset(2) - 62, graphics.GetHeightOffset(2) - 144), Color.White) },
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Roguelite Survivor", new Vector2(graphics.GetWidthOffset(2) - fonts["Font"].MeasureString("Roguelite Survivor").X / 2, graphics.GetHeightOffset(2) - 144), Color.White) },
                 { "btnNewGame", new Button("btnNewGame", textures["MainMenuButtons"],new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) - 96),new Rectangle(0, 32, 128, 32),new Rectangle(128, 32, 128, 32),new Vector2(64, 16))},
                 { "btnPlayerUpgrades", new Button("btnPlayerUpgrades",textures["MainMenuButtons"],new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) - 48),new Rectangle(0, 480, 128, 32),new Rectangle(128, 480, 128, 32),new Vector2(64, 16))},
                 { "btnPlayStats", new Button("btnPlayStats",textures["MainMenuButtons"],new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2)),new Rectangle(0, 64, 128, 32),new Rectangle(128, 64, 128, 32),new Vector2(64, 16)) },

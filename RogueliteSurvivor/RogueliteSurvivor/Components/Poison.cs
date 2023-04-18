@@ -1,6 +1,6 @@
 ﻿namespace RogueliteSurvivor.Components
 {
-    public struct Poison
+    public struct Poison : IDuration
     {
         public float TimeLeft { get; set; }
     }

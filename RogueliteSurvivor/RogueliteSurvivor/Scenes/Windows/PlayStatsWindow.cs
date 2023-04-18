@@ -30,12 +30,12 @@ namespace RogueliteSurvivor.Scenes.Windows
         {
             var mapComponents = new Dictionary<string, IFormComponent>()
             {
-                { "lblTitle", new Label("lblTitle", fonts["Font"], "Maps", new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) - 96), Color.White) }
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Maps", new Vector2(graphics.GetWidthOffset(2)- fonts["Font"].MeasureString("Maps").X / 2, graphics.GetHeightOffset(2) - 96), Color.White) }
             };
 
             var enemyComponents = new Dictionary<string, IFormComponent>()
             {
-                { "lblTitle", new Label("lblTitle", fonts["Font"], "Enemies", new Vector2(graphics.GetWidthOffset(2), graphics.GetHeightOffset(2) - 96), Color.White) }
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Enemies", new Vector2(graphics.GetWidthOffset(2)- fonts["Font"].MeasureString("Enemies").X / 2, graphics.GetHeightOffset(2) - 96), Color.White) }
             };
 
             int counterX = 0, counterY = 0;
@@ -137,7 +137,7 @@ namespace RogueliteSurvivor.Scenes.Windows
 
             var components = new Dictionary<string, IFormComponent>()
             {
-                { "lblTitle", new Label("lblTitle", fonts["Font"], "Play Stats", new Vector2(graphics.GetWidthOffset(2) - 62, graphics.GetHeightOffset(2) - 144), Color.White) },
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Play Stats", new Vector2(graphics.GetWidthOffset(2) - fonts["Font"].MeasureString("Play Stats").X / 2, graphics.GetHeightOffset(2) - 144), Color.White) },
                 { "btnPrevious",  new Button(
                     "btnPrevious",
                     textures["VolumeButtons"],

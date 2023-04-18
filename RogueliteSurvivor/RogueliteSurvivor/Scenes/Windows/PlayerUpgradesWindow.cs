@@ -30,7 +30,7 @@ namespace RogueliteSurvivor.Scenes.Windows
         {
             var components = new Dictionary<string, IFormComponent>()
             {
-                { "lblTitle", new Label("lblTitle", fonts["Font"], "Player Upgrades", new Vector2(graphics.GetWidthOffset(2) - 62, graphics.GetHeightOffset(2) - 144), Color.White) }
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Player Upgrades", new Vector2(graphics.GetWidthOffset(2) - fonts["Font"].MeasureString("Player Upgrades").X / 2, graphics.GetHeightOffset(2) - 144), Color.White) }
             };
 
             for (int i = 0; i < 7; i++)
@@ -244,174 +244,16 @@ namespace RogueliteSurvivor.Scenes.Windows
                 else if (clicked || kState.IsKeyDown(Keys.Enter) || gState.Buttons.A == ButtonState.Pressed)
                 {
                     bool failed = false;
-                    switch (selectedButton)
-                    {
-                        case 0:
-                            if (progressionContainer.PlayerUpgrades.Health > 0)
-                            {
-                                progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.Health / 4) * 10);
-                                progressionContainer.PlayerUpgrades.Health -= 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 1:
-                            int healthBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Health + 4) / 4) * 10);
-                            if (progressionContainer.NumBooks >= healthBookCost && progressionContainer.PlayerUpgrades.Health < 20)
-                            {
-                                progressionContainer.NumBooks -= healthBookCost;
-                                progressionContainer.PlayerUpgrades.Health += 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 2:
-                            if (progressionContainer.PlayerUpgrades.Damage > 0)
-                            {
-                                progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.Damage / 4) * 10);
-                                progressionContainer.PlayerUpgrades.Damage -= 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 3:
-                            int damageBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Damage + 4) / 4) * 10);
-                            if (progressionContainer.NumBooks >= damageBookCost && progressionContainer.PlayerUpgrades.Damage < 20)
-                            {
-                                progressionContainer.NumBooks -= damageBookCost;
-                                progressionContainer.PlayerUpgrades.Damage += 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 4:
-                            if (progressionContainer.PlayerUpgrades.SpellEffectChance > 0)
-                            {
-                                progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.SpellEffectChance / 4) * 10);
-                                progressionContainer.PlayerUpgrades.SpellEffectChance -= 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 5:
-                            int spellEffectChanceBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.SpellEffectChance + 4) / 4) * 10);
-                            if (progressionContainer.NumBooks >= spellEffectChanceBookCost && progressionContainer.PlayerUpgrades.SpellEffectChance < 20)
-                            {
-                                progressionContainer.NumBooks -= spellEffectChanceBookCost;
-                                progressionContainer.PlayerUpgrades.SpellEffectChance += 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 6:
-                            if (progressionContainer.PlayerUpgrades.Pierce > 0)
-                            {
-                                progressionContainer.NumBooks += 100;
-                                progressionContainer.PlayerUpgrades.Pierce -= 1;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 7:
-                            int pierceBookCost = 100;
-                            if (progressionContainer.NumBooks >= pierceBookCost && progressionContainer.PlayerUpgrades.Pierce < 1)
-                            {
-                                progressionContainer.NumBooks -= pierceBookCost;
-                                progressionContainer.PlayerUpgrades.Pierce += 1;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 8:
-                            if (progressionContainer.PlayerUpgrades.AttackSpeed > 0)
-                            {
-                                progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.AttackSpeed / 4) * 10);
 
-                                progressionContainer.PlayerUpgrades.AttackSpeed -= 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 9:
-                            int attackSpeedBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AttackSpeed + 4) / 4) * 10);
-                            if (progressionContainer.NumBooks >= attackSpeedBookCost && progressionContainer.PlayerUpgrades.AttackSpeed < 20)
-                            {
-                                progressionContainer.NumBooks -= attackSpeedBookCost;
-                                progressionContainer.PlayerUpgrades.AttackSpeed += 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 10:
-                            if (progressionContainer.PlayerUpgrades.AreaOfEffect > 0)
-                            {
-                                progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.AreaOfEffect / 4) * 10);
-                                progressionContainer.PlayerUpgrades.AreaOfEffect -= 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 11:
-                            int areaOfEffectBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AreaOfEffect + 4) / 4) * 10);
-                            if (progressionContainer.NumBooks >= areaOfEffectBookCost && progressionContainer.PlayerUpgrades.AreaOfEffect < 20)
-                            {
-                                progressionContainer.NumBooks -= areaOfEffectBookCost;
-                                progressionContainer.PlayerUpgrades.AreaOfEffect += 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 12:
-                            if (progressionContainer.PlayerUpgrades.MoveSpeed > 0)
-                            {
-                                progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.MoveSpeed / 4) * 10);
-                                progressionContainer.PlayerUpgrades.MoveSpeed -= 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 13:
-                            int moveSpeedBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.MoveSpeed + 4) / 4) * 10);
-                            if (progressionContainer.NumBooks >= moveSpeedBookCost && progressionContainer.PlayerUpgrades.MoveSpeed < 20)
-                            {
-                                progressionContainer.NumBooks -= moveSpeedBookCost;
-                                progressionContainer.PlayerUpgrades.MoveSpeed += 4;
-                            }
-                            else
-                            {
-                                failed = true;
-                            }
-                            break;
-                        case 14:
-                            progressionContainer.Save();
-                            confirm.Play();
-                            return "menu";
+                    if (((IFormComponent)buttons[selectedButton]).Name == "btnBack")
+                    {
+                        progressionContainer.Save();
+                        confirm.Play();
+                        return "menu";
+                    }
+                    else
+                    {
+                        failed = processPlayerUpgrade();
                     }
 
                     if (failed)
@@ -421,59 +263,7 @@ namespace RogueliteSurvivor.Scenes.Windows
                     else
                     {
                         confirm.Play();
-
-                        switch (selectedButton)
-                        {
-                            case 0:
-                            case 1:
-                                ((Label)Components["lblHealth"]).Text = string.Concat("Health: +", progressionContainer.PlayerUpgrades.Health);
-                                ((Label)Components["lblHealthCost"]).Text = progressionContainer.PlayerUpgrades.Health < 20
-                                    ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Health + 4) / 4) * 10))
-                                    : "Stat Maxed";
-                                break;
-                            case 2:
-                            case 3:
-                                ((Label)Components["lblDamage"]).Text = string.Concat("Damage: +", (progressionContainer.PlayerUpgrades.Damage / 100f).ToString("F"), "x");
-                                ((Label)Components["lblDamageCost"]).Text = progressionContainer.PlayerUpgrades.Damage < 20
-                                    ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Damage + 4) / 4) * 10))
-                                    : "Stat Maxed";
-                                break;
-                            case 4:
-                            case 5:
-                                ((Label)Components["lblSpellEffectChance"]).Text = string.Concat("Spell Effect Chance: +", (progressionContainer.PlayerUpgrades.SpellEffectChance / 100f).ToString("F"), "x");
-                                ((Label)Components["lblSpellEffectChanceCost"]).Text = progressionContainer.PlayerUpgrades.SpellEffectChance < 20
-                                    ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.SpellEffectChance + 4) / 4) * 10))
-                                    : "Stat Maxed";
-                                break;
-                            case 6:
-                            case 7:
-                                ((Label)Components["lblPierce"]).Text = string.Concat("Pierce: +", progressionContainer.PlayerUpgrades.Pierce);
-                                ((Label)Components["lblPierceCost"]).Text = progressionContainer.PlayerUpgrades.Pierce < 1
-                                    ? string.Concat("Book Cost: ", 100)
-                                    : "Stat Maxed";
-                                break;
-                            case 8:
-                            case 9:
-                                ((Label)Components["lblAttackSpeed"]).Text = string.Concat("Attack Speed: +", (progressionContainer.PlayerUpgrades.AttackSpeed / 100f).ToString("F"), "x");
-                                ((Label)Components["lblAttackSpeedCost"]).Text = progressionContainer.PlayerUpgrades.AttackSpeed < 20
-                                    ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AttackSpeed + 4) / 4) * 10))
-                                    : "Stat Maxed";
-                                break;
-                            case 10:
-                            case 11:
-                                ((Label)Components["lblAreaOfEffect"]).Text = string.Concat("Area Of Effect: +", (progressionContainer.PlayerUpgrades.AreaOfEffect / 100f).ToString("F"), "x");
-                                ((Label)Components["lblAreaOfEffectCost"]).Text = progressionContainer.PlayerUpgrades.AreaOfEffect < 20
-                                    ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AreaOfEffect + 4) / 4) * 10))
-                                    : "Stat Maxed";
-                                break;
-                            case 12:
-                            case 13:
-                                ((Label)Components["lblMoveSpeed"]).Text = string.Concat("Move Speed: +", progressionContainer.PlayerUpgrades.MoveSpeed);
-                                ((Label)Components["lblMoveSpeedCost"]).Text = progressionContainer.PlayerUpgrades.MoveSpeed < 20
-                                    ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.MoveSpeed + 4) / 4) * 10))
-                                    : "Stat Maxed";
-                                break;
-                        }
+                        updateLabels();
                     }
 
                     resetReadyForInput();
@@ -487,6 +277,233 @@ namespace RogueliteSurvivor.Scenes.Windows
             }
 
             return string.Empty;
+        }
+
+        private bool processPlayerUpgrade()
+        {
+            bool failed = false;
+            switch (selectedButton)
+            {
+                case 0:
+                    if (progressionContainer.PlayerUpgrades.Health > 0)
+                    {
+                        progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.Health / 4) * 10);
+                        progressionContainer.PlayerUpgrades.Health -= 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 1:
+                    int healthBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Health + 4) / 4) * 10);
+                    if (progressionContainer.NumBooks >= healthBookCost && progressionContainer.PlayerUpgrades.Health < 20)
+                    {
+                        progressionContainer.NumBooks -= healthBookCost;
+                        progressionContainer.PlayerUpgrades.Health += 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 2:
+                    if (progressionContainer.PlayerUpgrades.Damage > 0)
+                    {
+                        progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.Damage / 4) * 10);
+                        progressionContainer.PlayerUpgrades.Damage -= 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 3:
+                    int damageBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Damage + 4) / 4) * 10);
+                    if (progressionContainer.NumBooks >= damageBookCost && progressionContainer.PlayerUpgrades.Damage < 20)
+                    {
+                        progressionContainer.NumBooks -= damageBookCost;
+                        progressionContainer.PlayerUpgrades.Damage += 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 4:
+                    if (progressionContainer.PlayerUpgrades.SpellEffectChance > 0)
+                    {
+                        progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.SpellEffectChance / 4) * 10);
+                        progressionContainer.PlayerUpgrades.SpellEffectChance -= 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 5:
+                    int spellEffectChanceBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.SpellEffectChance + 4) / 4) * 10);
+                    if (progressionContainer.NumBooks >= spellEffectChanceBookCost && progressionContainer.PlayerUpgrades.SpellEffectChance < 20)
+                    {
+                        progressionContainer.NumBooks -= spellEffectChanceBookCost;
+                        progressionContainer.PlayerUpgrades.SpellEffectChance += 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 6:
+                    if (progressionContainer.PlayerUpgrades.Pierce > 0)
+                    {
+                        progressionContainer.NumBooks += 100;
+                        progressionContainer.PlayerUpgrades.Pierce -= 1;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 7:
+                    int pierceBookCost = 100;
+                    if (progressionContainer.NumBooks >= pierceBookCost && progressionContainer.PlayerUpgrades.Pierce < 1)
+                    {
+                        progressionContainer.NumBooks -= pierceBookCost;
+                        progressionContainer.PlayerUpgrades.Pierce += 1;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 8:
+                    if (progressionContainer.PlayerUpgrades.AttackSpeed > 0)
+                    {
+                        progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.AttackSpeed / 4) * 10);
+
+                        progressionContainer.PlayerUpgrades.AttackSpeed -= 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 9:
+                    int attackSpeedBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AttackSpeed + 4) / 4) * 10);
+                    if (progressionContainer.NumBooks >= attackSpeedBookCost && progressionContainer.PlayerUpgrades.AttackSpeed < 20)
+                    {
+                        progressionContainer.NumBooks -= attackSpeedBookCost;
+                        progressionContainer.PlayerUpgrades.AttackSpeed += 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 10:
+                    if (progressionContainer.PlayerUpgrades.AreaOfEffect > 0)
+                    {
+                        progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.AreaOfEffect / 4) * 10);
+                        progressionContainer.PlayerUpgrades.AreaOfEffect -= 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 11:
+                    int areaOfEffectBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AreaOfEffect + 4) / 4) * 10);
+                    if (progressionContainer.NumBooks >= areaOfEffectBookCost && progressionContainer.PlayerUpgrades.AreaOfEffect < 20)
+                    {
+                        progressionContainer.NumBooks -= areaOfEffectBookCost;
+                        progressionContainer.PlayerUpgrades.AreaOfEffect += 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 12:
+                    if (progressionContainer.PlayerUpgrades.MoveSpeed > 0)
+                    {
+                        progressionContainer.NumBooks += (int)(MathF.Pow(2, progressionContainer.PlayerUpgrades.MoveSpeed / 4) * 10);
+                        progressionContainer.PlayerUpgrades.MoveSpeed -= 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+                case 13:
+                    int moveSpeedBookCost = (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.MoveSpeed + 4) / 4) * 10);
+                    if (progressionContainer.NumBooks >= moveSpeedBookCost && progressionContainer.PlayerUpgrades.MoveSpeed < 20)
+                    {
+                        progressionContainer.NumBooks -= moveSpeedBookCost;
+                        progressionContainer.PlayerUpgrades.MoveSpeed += 4;
+                    }
+                    else
+                    {
+                        failed = true;
+                    }
+                    break;
+            }
+            return failed;
+        }
+
+        private void updateLabels()
+        {
+            switch (selectedButton)
+            {
+                case 0:
+                case 1:
+                    ((Label)Components["lblHealth"]).Text = string.Concat("Health: +", progressionContainer.PlayerUpgrades.Health);
+                    ((Label)Components["lblHealthCost"]).Text = progressionContainer.PlayerUpgrades.Health < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Health + 4) / 4) * 10))
+                        : "Stat Maxed";
+                    break;
+                case 2:
+                case 3:
+                    ((Label)Components["lblDamage"]).Text = string.Concat("Damage: +", (progressionContainer.PlayerUpgrades.Damage / 100f).ToString("F"), "x");
+                    ((Label)Components["lblDamageCost"]).Text = progressionContainer.PlayerUpgrades.Damage < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.Damage + 4) / 4) * 10))
+                        : "Stat Maxed";
+                    break;
+                case 4:
+                case 5:
+                    ((Label)Components["lblSpellEffectChance"]).Text = string.Concat("Spell Effect Chance: +", (progressionContainer.PlayerUpgrades.SpellEffectChance / 100f).ToString("F"), "x");
+                    ((Label)Components["lblSpellEffectChanceCost"]).Text = progressionContainer.PlayerUpgrades.SpellEffectChance < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.SpellEffectChance + 4) / 4) * 10))
+                        : "Stat Maxed";
+                    break;
+                case 6:
+                case 7:
+                    ((Label)Components["lblPierce"]).Text = string.Concat("Pierce: +", progressionContainer.PlayerUpgrades.Pierce);
+                    ((Label)Components["lblPierceCost"]).Text = progressionContainer.PlayerUpgrades.Pierce < 1
+                        ? string.Concat("Book Cost: ", 100)
+                        : "Stat Maxed";
+                    break;
+                case 8:
+                case 9:
+                    ((Label)Components["lblAttackSpeed"]).Text = string.Concat("Attack Speed: +", (progressionContainer.PlayerUpgrades.AttackSpeed / 100f).ToString("F"), "x");
+                    ((Label)Components["lblAttackSpeedCost"]).Text = progressionContainer.PlayerUpgrades.AttackSpeed < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AttackSpeed + 4) / 4) * 10))
+                        : "Stat Maxed";
+                    break;
+                case 10:
+                case 11:
+                    ((Label)Components["lblAreaOfEffect"]).Text = string.Concat("Area Of Effect: +", (progressionContainer.PlayerUpgrades.AreaOfEffect / 100f).ToString("F"), "x");
+                    ((Label)Components["lblAreaOfEffectCost"]).Text = progressionContainer.PlayerUpgrades.AreaOfEffect < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.AreaOfEffect + 4) / 4) * 10))
+                        : "Stat Maxed";
+                    break;
+                case 12:
+                case 13:
+                    ((Label)Components["lblMoveSpeed"]).Text = string.Concat("Move Speed: +", progressionContainer.PlayerUpgrades.MoveSpeed);
+                    ((Label)Components["lblMoveSpeedCost"]).Text = progressionContainer.PlayerUpgrades.MoveSpeed < 20
+                        ? string.Concat("Book Cost: ", (int)(MathF.Pow(2, (progressionContainer.PlayerUpgrades.MoveSpeed + 4) / 4) * 10))
+                        : "Stat Maxed";
+                    break;
+            }
         }
     }
 }

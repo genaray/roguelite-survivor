@@ -15,7 +15,6 @@ namespace RogueliteSurvivor.Scenes.Windows
     {
         SoundEffect hover;
         SoundEffect confirm;
-        Dictionary<string, Texture2D> textures;
         List<LevelUpType> levelUpChoices;
 
         public static LevelUpWindow LevelUpWindowFactory(
@@ -29,7 +28,7 @@ namespace RogueliteSurvivor.Scenes.Windows
         {
             var components = new Dictionary<string, IFormComponent>()
             {
-                { "lblTitle", new Label("lblTitle", fonts["Font"], "Level Up! Select an upgrade:", new Vector2(graphics.GetWidthOffset(2) - 116, graphics.GetHeightOffset(2) - 144), Color.White) }
+                { "lblTitle", new Label("lblTitle", fonts["Font"], "Level Up! Select an upgrade:", new Vector2(graphics.GetWidthOffset(2) - fonts["Font"].MeasureString("Level Up! Select an upgrade:").X / 2, graphics.GetHeightOffset(2) - 144), Color.White) }
             };
 
             int offsetX = -136;
@@ -59,7 +58,7 @@ namespace RogueliteSurvivor.Scenes.Windows
                 );
             }
 
-            return new LevelUpWindow(graphics, background, position, components, hover, confirm, textures);
+            return new LevelUpWindow(graphics, background, position, components, hover, confirm);
         }
         private LevelUpWindow(
             GraphicsDeviceManager graphics,
@@ -67,13 +66,11 @@ namespace RogueliteSurvivor.Scenes.Windows
             Vector2 position,
             Dictionary<string, IFormComponent> components,
             SoundEffect hover,
-            SoundEffect confirm,
-            Dictionary<string, Texture2D> textures)
+            SoundEffect confirm)
             : base(graphics, background, position, components)
         {
             this.hover = hover;
             this.confirm = confirm;
-            this.textures = textures;
         }
 
         public void SetLevelUpOptions(List<LevelUpType> levelUpChoices)
@@ -88,7 +85,7 @@ namespace RogueliteSurvivor.Scenes.Windows
                 );
 
                 ((Label)Components[string.Concat("lblOption", i)]).Text = LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(levelUpChoices[i]);
-                ((Label)Components[string.Concat("lblOption", i)]).Position = new Vector2(graphics.GetWidthOffset(2) - LevelUpChoiceHelper.GetLevelUpDisplayTextForLevelUpChoice(levelUpChoices[i]).Length * 4.5f, graphics.GetHeightOffset(2) + 96);
+                ((Label)Components[string.Concat("lblOption", i)]).Position = new Vector2(graphics.GetWidthOffset(2) - ((Label)Components[string.Concat("lblOption", i)]).Font.MeasureString(((Label)Components[string.Concat("lblOption", i)]).Text).X / 2, graphics.GetHeightOffset(2) + 96);
                 Components[string.Concat("lblOption", i)].Visible = i == 0;
             }
         }
